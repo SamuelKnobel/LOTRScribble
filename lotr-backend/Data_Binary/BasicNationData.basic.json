@@ -1,0 +1,123 @@
+{
+  "Angmar": {
+    "Identifier": "Angmar",
+    "eNation": 1,
+    "CounterMax": 4,
+    "CounterMaxPopDependend": 0,
+    "maxPopulation": 3,
+    "reductionMilitary": 1,
+    "reductionCivil": 0.9,
+    "side": 0,
+    "BasicFood": 1
+  },
+  "Gondor": {
+    "Identifier": "Gondor",
+    "eNation": 2,
+    "CounterMax": 5,
+    "CounterMaxPopDependend": 1,
+    "maxPopulation": 2,
+    "reductionMilitary": 1,
+    "reductionCivil": 1,
+    "side": 1,
+    "BasicFood": 2
+  },
+  "Harad": {
+    "Identifier": "Harad",
+    "eNation": 3,
+    "CounterMax": 5,
+    "CounterMaxPopDependend": 1,
+    "maxPopulation": 2,
+    "reductionMilitary": 1,
+    "reductionCivil": 1,
+    "side": 0,
+    "BasicFood": 2
+  },
+  "Isengart": {
+    "Identifier": "Isengart",
+    "eNation": 4,
+    "CounterMax": 5,
+    "CounterMaxPopDependend": 0,
+    "maxPopulation": 2.5,
+    "reductionMilitary": 1,
+    "reductionCivil": 0.95,
+    "side": 0,
+    "BasicFood": 1.5
+  },
+  "Khazad": {
+    "Identifier": "Khazad",
+    "eNation": 5,
+    "CounterMax": 6,
+    "CounterMaxPopDependend": 1,
+    "maxPopulation": 2,
+    "reductionMilitary": 0.95,
+    "reductionCivil": 1,
+    "side": 1,
+    "BasicFood": 1.5
+  },
+  "Mordor": {
+    "Identifier": "Mordor",
+    "eNation": 6,
+    "CounterMax": 4,
+    "CounterMaxPopDependend": 0,
+    "maxPopulation": 3,
+    "reductionMilitary": 1,
+    "reductionCivil": 0.9,
+    "side": 0,
+    "BasicFood": 1
+  },
+  "Elben": {
+    "Identifier": "Elben",
+    "eNation": 7,
+    "CounterMax": 6,
+    "CounterMaxPopDependend": 1,
+    "maxPopulation": 2,
+    "reductionMilitary": 1,
+    "reductionCivil": 0.9,
+    "side": 1,
+    "BasicFood": 1.5
+  },
+  "Numenor": {
+    "Identifier": "Numenor",
+    "eNation": 8,
+    "CounterMax": 5,
+    "CounterMaxPopDependend": 1,
+    "maxPopulation": 2,
+    "reductionMilitary": 1,
+    "reductionCivil": 1,
+    "side": 1,
+    "BasicFood": 2
+  },
+  "Rhun": {
+    "Identifier": "Rhun",
+    "eNation": 9,
+    "CounterMax": 5,
+    "CounterMaxPopDependend": 1,
+    "maxPopulation": 2,
+    "reductionMilitary": 0.8,
+    "reductionCivil": 0.9,
+    "side": 0,
+    "BasicFood": 2
+  },
+  "Rohan": {
+    "Identifier": "Rohan",
+    "eNation": 10,
+    "CounterMax": 5,
+    "CounterMaxPopDependend": 0,
+    "maxPopulation": 2.5,
+    "reductionMilitary": 0.8,
+    "reductionCivil": 0.9,
+    "side": 1,
+    "BasicFood": 2
+  },
+  "Nobody": {
+    "Identifier": "Nobody",
+    "eNation": 0,
+    "CounterMax": 5,
+    "CounterMaxPopDependend": 1,
+    "maxPopulation": 2,
+    "reductionMilitary": 1,
+    "reductionCivil": 1,
+    "side": 2,
+    "BasicFood": 0
+  }
+}
