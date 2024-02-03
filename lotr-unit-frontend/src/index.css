@@ -24,6 +24,7 @@ h1, h2, h3 {
 body {
   background-color: #f8f8f8;
   color: #333;
+  margin: 10px;
 }
 
 .table {

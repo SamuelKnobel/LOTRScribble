@@ -1,70 +1,44 @@
 import React from 'react';
-import { useTable, useFilters, useSortBy } from 'react-table';
+import { useTable, useFilters, useSortBy ,usePagination } from 'react-table';
+
+import Config_ColumnName from './configs/Config_ColumnName.json';
 
 const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
   return <input value={filterValue || ''} onChange={(e) => setFilter(e.target.value)} />;
 };
 
-const DummyTable = ({ data }) => {
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Identifier',
-        accessor: 'Identifier',
-        Filter: DefaultColumnFilter,
-      },
-      {
-        Header: 'eNation',
-        accessor: 'eNation',
-        Filter: DefaultColumnFilter,
-      },
-      {
-        Header: 'CounterMax',
-        accessor: 'CounterMax',
-        Filter: DefaultColumnFilter,
-      },
-      {
-        Header: 'CounterMaxPopDependend',
-        accessor: 'CounterMaxPopDependend',
-        Filter: DefaultColumnFilter,
-      },
-      {
-        Header: 'maxPopulation',
-        accessor: 'maxPopulation',
-        Filter: DefaultColumnFilter,
-      },
-      {
-        Header: 'reductionMilitary',
-        accessor: 'reductionMilitary',
-        Filter: DefaultColumnFilter,
-      },
-      {
-        Header: 'reductionCivil',
-        accessor: 'reductionCivil',
-        Filter: DefaultColumnFilter,
-      },
-      {
-        Header: 'side',
-        accessor: 'side',
-        Filter: DefaultColumnFilter,
-      },
-      {
-        Header: 'BasicFood',
-        accessor: 'BasicFood',
-        Filter: DefaultColumnFilter,
-      },
-    ],
-    []
-  );
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
-    {
-      columns,
-      data,
-    },
-    useFilters,
-    useSortBy
-  );
+
+const DummyTable = ({ data ,tableName}) => {
+  const tableConfig = Config_ColumnName.tables[tableName];  
+  const columns = React.useMemo(() => {
+    if (data.length === 0) {
+      return [];
+    }
+
+    const keys = Object.keys(data[0]);
+
+    return tableConfig.columns.map((key) => ({
+      Header: tableConfig.columnNames[key] || key, // Use config value if available, else use key
+      accessor: key,
+      Filter: DefaultColumnFilter,
+    }));
+  }, [data,tableConfig]);
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    page,
+    state: { pageIndex, pageSize },
+    previousPage,
+    nextPage,
+    canPreviousPage,
+    canNextPage,
+  } = useTable({ columns, data, initialState: { pageIndex: 0, pageSize:10 } }, useFilters, useSortBy, usePagination);
+
 
   return (
     <div>
@@ -73,17 +47,17 @@ const DummyTable = ({ data }) => {
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                  {column.render('Header')}
-                  <div>{column.canFilter ? column.render('Filter') : null}</div>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())} className="column-style">
+                  {column.render('Header')}                  
                   <span>{column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}</span>
+                  <div>{column.canFilter ? column.render('Filter') : null}</div>                  
                 </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
+          {page.map((row) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
@@ -93,8 +67,22 @@ const DummyTable = ({ data }) => {
               </tr>
             );
           })}
-        </tbody>
+        </tbody>        
       </table>
+      <div>
+        <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+          Previous Page
+        </button>
+        <span>
+          Page{' '}
+          <strong>
+            {pageIndex + 1} of {Math.ceil(rows.length / pageSize)}
+          </strong>{' '}
+        </span>
+        <button onClick={() => nextPage()} disabled={!canNextPage}>
+          Next Page
+        </button>
+      </div>      
     </div>
   );
 };

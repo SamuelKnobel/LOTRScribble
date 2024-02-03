@@ -1,0 +1,108 @@
+{
+  "tables": {
+    "Nations": {
+      "columns": [
+        "Identifier",
+        "eNation",
+        "side",        
+        "CounterMax",
+        "CounterMaxPopDependend",
+        "maxPopulation",
+        "reductionMilitary",
+        "reductionCivil",       
+        "BasicFood"
+      ],
+      "columnNames": {
+        "Identifier": "Identifier",
+        "eNation": "Nation",
+        "CounterMax": "Max Count",
+        "CounterMaxPopDependend": "Max Pop",
+        "maxPopulation": "Max Pop",
+        "reductionMilitary": "Military Reduction",
+        "reductionCivil": "Civil Reduction",
+        "side": "Side",
+        "BasicFood": "Basic Food"
+      }
+    },
+    "Buildings": {
+      "columns": [
+        "Identifier",
+        "eBuilding",
+        "ConstructionTime",
+        "BaseIncomeGold",
+        "BaseIncomeFood",
+        "MinimalPopulation",
+        "BasePopulation"
+      ],
+      "columnNames": {
+        "Identifier": "Identifier",
+        "eBuilding": "Building",
+        "ConstructionTime": "Construction Time",
+        "BaseIncomeGold": "Gold Income",
+        "BaseIncomeFood": "Food Income",
+        "MinimalPopulation": "Min Pop",
+        "BasePopulation": "Base Pop"
+      }
+    },
+    "Units":{
+      "columns":[
+        "Unit_name",
+        "Equipment",
+        "nation",
+        "Identifier",
+        "attack_KK_FK",
+        "attack_KK_NK",
+        "attack_S",
+        "defense_KK",
+        "defense_RM",        
+        "defense_S",
+        "size",
+        "lifes",  
+        "NbOfAttacks"    ,          
+        "unitType",        
+        "fernkampfTreffer",  
+        "nahkampfTreffer",                
+        "heldentum",
+        "willenskraft",
+        "Schicksal",
+        "mut",
+        "price",
+        "people" ,       
+        "movedistance"   ,     
+        "rules" ,   
+        "_rules",
+        "name"
+
+    ],
+      "columnNames":{
+        "Equipment": "Equipment",
+        "Identifier": "Identifier",
+        "NbOfAttacks": "Nb of Attacks",
+        "Schicksal": "Schicksal",
+        "Unit_name": "Unit name",
+        "_id": "MongoDB ID",
+        "_rules": "Rules",
+        "attack_KK_FK": "Attack KK FK",
+        "attack_KK_NK": "Attack KK NK",
+        "attack_S":  "Attack S",
+        "defense_KK": "Defense KK",
+        "defense_RM":  "Defense RM",
+        "defense_S":  "Defense S",
+        "fernkampfTreffer": "Fernkamp fTreffer",
+        "heldentum": "Heldentum",
+        "lifes": "lifes",
+        "movedistance": "Bewegungsreichweite",
+        "mut": "mut",
+        "nahkampfTreffer": "Nahkampf Treffer",
+        "name": "Name",
+        "nation": "Nation ID",
+        "people": "Volk",
+        "price": "Price",
+        "rules": "Regeln"      ,
+        "size": "Einheit Grösse",
+        "unitType": "Einheit Typ",
+        "willenskraft": "willenskraft"
+      }
+    }
+  }
+}

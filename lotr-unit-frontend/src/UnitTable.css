@@ -37,4 +37,6 @@
   margin-right: 10px;
 }
 
-  
+.column-style {
+  width: auto; /* or 'auto' or 'fit-content' */
+}
