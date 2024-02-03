@@ -22,6 +22,10 @@
         "reductionCivil": "Civil Reduction",
         "side": "Side",
         "BasicFood": "Basic Food"
+      },
+      "searchableColumns":{
+        "Identifier": true,
+        "eNation" : false
       }
     },
     "Buildings": {
@@ -42,6 +46,10 @@
         "BaseIncomeFood": "Food Income",
         "MinimalPopulation": "Min Pop",
         "BasePopulation": "Base Pop"
+      },
+      "searchableColumns":{
+        "Identifier": true,
+        "eBuilding" : false
       }
     },
     "Units":{
@@ -70,7 +78,6 @@
         "people" ,       
         "movedistance"   ,     
         "rules" ,   
-        "_rules",
         "name"
 
     ],
@@ -90,9 +97,9 @@
         "defense_S":  "Defense S",
         "fernkampfTreffer": "Fernkamp fTreffer",
         "heldentum": "Heldentum",
-        "lifes": "lifes",
+        "lifes": "Leben",
         "movedistance": "Bewegungsreichweite",
-        "mut": "mut",
+        "mut": "Mut",
         "nahkampfTreffer": "Nahkampf Treffer",
         "name": "Name",
         "nation": "Nation ID",
@@ -101,7 +108,13 @@
         "rules": "Regeln"      ,
         "size": "Einheit Grösse",
         "unitType": "Einheit Typ",
-        "willenskraft": "willenskraft"
+        "willenskraft": "Willenskraft"
+      },
+      "searchableColumns":{
+        "Unit_name": true,
+        "Identifier": true,
+        "Equipment" : true,
+        "_rules": true
       }
     }
   }

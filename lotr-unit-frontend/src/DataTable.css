@@ -1,4 +1,4 @@
-/* UnitTable.css */
+/* DataTable.css */
 
 .react-table {
     width: 100%;
@@ -38,5 +38,5 @@
 }
 
 .column-style {
-  width: auto; /* or 'auto' or 'fit-content' */
+  width: fit-content; /* or 'auto' or 'fit-content' */
 }
