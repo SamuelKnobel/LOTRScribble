@@ -2,7 +2,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import json
 import Utils
-
+import os
 client = Utils.connect_to_mongodb()
 
 
@@ -12,14 +12,15 @@ db = client.LOTR_BaseData
 if not Utils.database_exists(client, 'LOTR_BaseData'):
     client.create_database('LOTR_BaseData')
 
+cwd = os.getcwd()
 # Access the Nation collection
-pathToNationData = 'C:/Users/samue/PycharmProjects/BattleScribeClone2/Data_Binary/BasicNationData.basic.json'
-pathToBuildingData = 'C:/Users/samue/PycharmProjects/BattleScribeClone2/Data_Binary/BasicBuildingData.basic.json'
-pathToFieldData = 'C:/Users/samue/PycharmProjects/BattleScribeClone2/Data_Binary/BasicFieldData.basic.json'
-pathToUnitData = 'C:/Users/samue/PycharmProjects/BattleScribeClone2/Data_Binary/BasicUnitData.basic.json'
-pathToMachineData = 'C:/Users/samue/PycharmProjects/BattleScribeClone2/Data_Binary/BasicMaschineData.basic.json'
-pathToShipData = 'C:/Users/samue/PycharmProjects/BattleScribeClone2/Data_Binary/BasicShipData.basic.json'
-pathToRules = 'C:/Users/samue/PycharmProjects/BattleScribeClone2/Data_Binary/Rules.basic.json'
+pathToNationData = cwd + '/Data_Binary/BasicNationData.basic.json'
+pathToBuildingData = cwd + '/Data_Binary/BasicBuildingData.basic.json'
+pathToFieldData = cwd + '/Data_Binary/BasicFieldData.basic.json'
+pathToUnitData = cwd + '/Data_Binary/BasicUnitData.basic.json'
+pathToMachineData = cwd + '/Data_Binary/BasicMaschineData.basic.json'
+pathToShipData = cwd + '/Data_Binary/BasicShipData.basic.json'
+pathToRules = cwd + '/Data_Binary/Rules.basic.json'
 
 
 nation_collection = Utils.recreate_collection(db, db.NationData, 'NationData', True)

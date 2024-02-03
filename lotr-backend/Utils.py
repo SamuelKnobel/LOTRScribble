@@ -136,3 +136,27 @@ def link_collections(source_collection: Collection, target_collection: Collectio
             {"$set": {link_field_target: source_document_id}}
         )
 
+from bson import ObjectId, json_util
+
+def convert_objectid_to_string(data):
+    """
+    Recursively converts ObjectId fields to string in a dictionary or a list.
+
+    Parameters:
+    - data: Dictionary or list containing MongoDB ObjectId fields.
+
+    Returns:
+    - Dictionary or list with ObjectId fields converted to strings.
+    """
+    if isinstance(data, list):
+        return [convert_objectid_to_string(item) for item in data]
+    elif isinstance(data, dict):
+        return {key: convert_objectid_to_string(value) for key, value in data.items()}
+    elif isinstance(data, ObjectId):
+        return str(data)
+    else:
+        return data
+
+# # Example usage
+# units = list(collection.find())
+# units_json = json_util.dumps(convert_objectid_to_string(units), indent=2)

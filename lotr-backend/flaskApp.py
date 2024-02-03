@@ -49,11 +49,14 @@ def get_units():
         description: Units not found.
     """
     units = list(collection.find())
-
+    units_clean = Utils.convert_objectid_to_string(units)
+    print(units_clean)
+    print(jsonify(units_clean))
     # Serialize ObjectId to string using bson.json_util.dumps
     units_json = dumps(units, indent=2)
 
-    return units_json
+    return jsonify(units_clean)
+    # return units_json
 
 
 # Route to get a specific unit by ID
@@ -77,9 +80,15 @@ def get_unit(id):
         description: Unit not found.
     """
     unit = collection.find_one({'_id': ObjectId(id)})
+    print(unit)
+    print(dumps(unit))
+    print(jsonify(dumps(unit)))
+
     if unit:
         unit['_id'] = str(unit['_id'])  # Convert ObjectId to string
-        return dumps(unit, indent=2)
+        print(unit)
+
+        return jsonify([unit, unit])
     else:
         return dumps({'error': 'Unit not found'}), 404
 
@@ -121,12 +130,12 @@ def update_unit(id):
     collection.update_one({'_id': ObjectId(id)}, update_data)
     return dumps({'message': 'Unit updated successfully'})
 
-# @app.after_request
-# def after_request(response):
-#     response.headers.add('Access-Control-Allow-Origin', '*')
-#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-#     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-#     return response
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
 
 
 
