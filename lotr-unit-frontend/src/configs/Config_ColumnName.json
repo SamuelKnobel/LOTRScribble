@@ -56,7 +56,6 @@
       "columns":[
         "Unit_name",
         "Equipment",
-        "nation",
         "Identifier",
         "attack_KK_FK",
         "attack_KK_NK",
@@ -78,7 +77,8 @@
         "people" ,       
         "movedistance"   ,     
         "rules" ,   
-        "name"
+        "name",
+        "nation"
 
     ],
       "columnNames":{

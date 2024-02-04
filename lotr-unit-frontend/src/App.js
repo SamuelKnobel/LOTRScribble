@@ -3,15 +3,12 @@
 // App.js
 import React, { useState, useEffect } from 'react';
 
-
 import axios from 'axios';
 import DataTable from './DataTable';
-//import UnitsList from './UnitsList';
 
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
-import Config_ColumnName from  './configs/Config_ColumnName.json';
 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -138,8 +135,8 @@ const App = () => {
     Units: null,
   });
 
-
   useEffect(() => {
+    fetchData('Units') // preload it in the beginning as there is a lot of data!
     fetchData(activeTab);
   }, [activeTab]);
 
@@ -154,16 +151,12 @@ const App = () => {
         },
       });
 
-      if (tabName === 'Nations') {
-        setNations(response.data);
-      } else if (tabName === 'Units') {
-        setUnits(response.data);
-      }
-
-      setErrors((prevErrors) => ({ ...prevErrors, [tabName]: null }));
-    } catch (error) {
+      console.log(response.data)
+      updateState(tabName, response.data);
+      clearErrors(tabName);
+        } catch (error) {
       console.error(`Error fetching ${tabName}:`, error);
-      setErrors((prevErrors) => ({ ...prevErrors, [tabName]: error }));
+      updateErrors(tabName, error);;
 
       if (tabName === getCurrentTabName()) {
         showFetchErrorPopup(tabName);
@@ -179,13 +172,36 @@ const App = () => {
     setActiveTab(tabName);
   };
 
+  const updateState = (tabName, data) => {
+    switch (tabName.toLowerCase()) {
+      case 'nations':
+        setNations(data);
+        break;
+      case 'units':
+        setUnits(data);
+        break;
+      // Add more cases for other tabs as needed
+      default:
+        break;
+    }
+    
+  };
+
+  const updateErrors = (tabName, error) => {
+    setErrors((prevErrors) => ({ ...prevErrors, [tabName]: error }));
+  };
+  
+  const clearErrors = (tabName) => {
+    setErrors((prevErrors) => ({ ...prevErrors, [tabName]: null }));
+  };
+
   const showFetchErrorPopup = (tabName) => {
-    toast.error(`Failed to fetch ${tabName.toLowerCase()}. Check Network Connection.`, {
+    toast.error(`Failed to fetch ${tabName.toLowerCase()}. Check Network Connection or Database.`, {
       position: 'top-center',
       autoClose: 5000,
       hideProgressBar: false,
       closeOnClick: true,
-      pauseOnHover: true,
+      pauseOnHover: false,
       draggable: true,
       progress: undefined,
     });
@@ -202,19 +218,19 @@ const App = () => {
 
         <TabPanel>
           <h2>Nations</h2>
-          <DataTable data={nations} tableName ="Nations" />
+          <DataTable data={nations} tableName ="Nations" fetchData= {fetchData}/>
           {errors.Nations && <div>Error: {errors.Nations.message}</div>}          
         </TabPanel>
         
         <TabPanel>
           <h2>Buildings</h2>
-          <DataTable data={buildingsData} tableName ="Buildings" />
+          <DataTable data={buildingsData} tableName ="Buildings" fetchData= {fetchData}/>
           {errors.Buildings && <div>Error: {errors.Buildings.message}</div>}          
         </TabPanel>
 
         <TabPanel>
           <h2>Units</h2>
-          <DataTable data={units} tableName ="Units" />
+          <DataTable data={units} tableName ="Units" fetchData= {fetchData}/>
           {errors.Units && <div>Error: {errors.Units.message}</div>}          
         </TabPanel>
       </Tabs>  
