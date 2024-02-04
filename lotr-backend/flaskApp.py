@@ -1,96 +1,257 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from pymongo import MongoClient, collection
 from bson import ObjectId
 from flasgger import Swagger
 from bson.json_util import dumps
-
+import json
 import Utils
 
 # Connect to MongoDB
 client = Utils.connect_to_mongodb()
 db = client['LOTR_BaseData']
-collection = db['UnitData']
 
 # Create Flask app
 app = Flask(__name__)
 CORS(app)  # Enable CORS
 Swagger(app)
 
-# Route to get all units
-# @app.route('/units', methods=['GET'])
-# def get_units():
-#     """
-#     Get a list of all units.
-#
-#     ---
-#     responses:
-#       200:
-#         description: List of units.
-#       404:
-#         description: Units not found.
-#     """
-#     units = list(collection.find())
-#     for unit in units:
-#         unit['_id'] = str(unit['_id'])  # Convert ObjectId to string
-#     return jsonify(units)
+
 
 
 @app.route('/units', methods=['GET'])
 def get_units():
     """
-    Get a list of all units.
-
-    ---
-    responses:
-      200:
-        description: List of units.
-      404:
-        description: Units not found.
-    """
-    units = list(collection.find())
-    units_clean = Utils.convert_objectid_to_string(units)
-    print(units_clean)
-    print(jsonify(units_clean))
-    # Serialize ObjectId to string using bson.json_util.dumps
-    units_json = dumps(units, indent=2)
-
-    return jsonify(units_clean)
-    # return units_json
-
-
-# Route to get a specific unit by ID
-@app.route('/units/<id>', methods=['GET'])
-def get_unit(id):
-    """
-    Get information about a specific unit by its ID.
+    Get a list of all units in the specified collection.
 
     ---
     parameters:
-      - name: id
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection to retrieve data from.
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    return get_data('UnitData')
+
+
+@app.route('/nations', methods=['GET'])
+def get_nations():
+    """
+    Get a list of all nations in the specified collection.
+
+    ---
+    parameters:
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection to retrieve data from.
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    return get_data('NationData')
+
+
+@app.route('/fields', methods=['GET'])
+def get_fields():
+    """
+    Get a list of all fields in the specified collection.
+
+    ---
+    parameters:
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection to retrieve data from.
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    return get_data('FieldData')
+
+
+@app.route('/buildings', methods=['GET'])
+def get_buildings():
+    """
+    Get a list of all buildings in the specified collection.
+
+    ---
+    parameters:
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection to retrieve data from.
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    return get_data('BuildingData')
+
+
+def get_data(collection_name):
+    """
+    Get a list of all items in the specified collection.
+
+    ---
+    parameters:
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection to retrieve data from.
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    collection = db[collection_name]
+    items = list(collection.find())
+    items_clean = Utils.convert_objectid_to_string(items)
+
+    return jsonify(items_clean)
+
+
+def get_item_by_id(collection_name, item_id):
+    """
+    Get information about a specific item by its ID from the specified collection.
+
+    ---
+    parameters:
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection.
+      - name: item_id
         in: path
         type: string
         required: true
-        description: ID of the unit.
+        description: ID of the item.
 
     responses:
       200:
-        description: Information about the unit.
+        description: Information about the item.
       404:
-        description: Unit not found.
+        description: Item not found.
     """
-    unit = collection.find_one({'_id': ObjectId(id)})
-    print(unit)
-    print(dumps(unit))
-    print(jsonify(dumps(unit)))
+    collection = db[collection_name]
+    item = collection.find_one({'_id': ObjectId(item_id)})
 
-    if unit:
-        unit['_id'] = str(unit['_id'])  # Convert ObjectId to string
-        print(unit)
-
-        return jsonify([unit, unit])
+    if item:
+        item_clean = Utils.convert_objectid_to_string(item)
+        return jsonify(item_clean)
     else:
-        return dumps({'error': 'Unit not found'}), 404
+        return jsonify({'error': f'{collection_name.capitalize()} not found'}), 404
+
+
+@app.route('/units/<id>', methods=['GET'])
+def get_unit(id):
+    """
+     Get information about a specific unit by its ID from the specified collection.
+     ---
+     parameters:
+       - name: collection_name
+         in: path
+         type: string
+         description: The name of the collection.
+       - name: item_id
+         in: path
+         type: string
+         required: true
+         description: ID of the item.
+
+     responses:
+       200:
+         description: Information about the item.
+       404:
+         description: Item not found.
+     """
+    return get_item_by_id('UnitData', id)
+
+
+@app.route('/nations/<id>', methods=['GET'])
+def get_nation(id):
+    """
+     Get information about a specific nation by its ID from the specified collection.
+     ---
+     parameters:
+       - name: collection_name
+         in: path
+         type: string
+         description: The name of the collection.
+       - name: item_id
+         in: path
+         type: string
+         required: true
+         description: ID of the item.
+
+     responses:
+       200:
+         description: Information about the item.
+       404:
+         description: Item not found.
+     """
+    return get_item_by_id('NationData', id)
+
+
+@app.route('/buildings/<id>', methods=['GET'])
+def get_building(id):
+    """
+     Get information about a specific building by its ID from the specified collection.
+     ---
+     parameters:
+       - name: collection_name
+         in: path
+         type: string
+         description: The name of the collection.
+       - name: item_id
+         in: path
+         type: string
+         required: true
+         description: ID of the item.
+
+     responses:
+       200:
+         description: Information about the item.
+       404:
+         description: Item not found.
+     """
+    return get_item_by_id('BuildingData', id)
+
+
+@app.route('/fields/<id>', methods=['GET'])
+def get_field(id):
+    """
+     Get information about a specific field by its ID from the specified collection.
+     ---
+     parameters:
+       - name: collection_name
+         in: path
+         type: string
+         description: The name of the collection.
+       - name: item_id
+         in: path
+         type: string
+         required: true
+         description: ID of the item.
+
+     responses:
+       200:
+         description: Information about the item.
+       404:
+         description: Item not found.
+     """
+    return get_item_by_id('FieldData', id)
+
 
 # Route to update a specific unit by ID
 @app.route('/units/<id>', methods=['PUT'])
@@ -123,11 +284,17 @@ def update_unit(id):
       200:
         description: Unit updated successfully.
     """
+    collection = db['UnitData']
     data = request.get_json()
     # Ensure that the data is structured as {'$set': {field_name: new_value}}
-    update_data = {'$set': {data['field_name']: data['new_value']}}
+    # update_data = {'$set': {data['field_name']: data['new_value']}}
+    update_data = json.loads(data['body'])
+    update_data.pop("_id", None)
 
-    collection.update_one({'_id': ObjectId(id)}, update_data)
+    filter_ = {'_id': ObjectId(id)}
+    new_values = {"$set": update_data}
+    collection.update_one(filter_, new_values)
+
     return dumps({'message': 'Unit updated successfully'})
 
 @app.after_request
