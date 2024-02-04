@@ -1,5 +1,19 @@
 {
   "tables": {
+    "Fields":  {
+      "columns":["Identifier",
+        "FieldName",
+        "fertility",
+        "oreOutput",
+        "trade",
+        "usable",
+        "speciales"],
+      "columnNames":{
+        "Identifier": true,
+        "FieldName" : true
+            },
+      "searchableColumns":["Identifier"]
+    },
     "Nations": {
       "columns": [
         "Identifier",

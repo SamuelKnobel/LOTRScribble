@@ -123,20 +123,25 @@ const App = () => {
     nations: 'http://localhost:5000/nations',
     buildings: 'http://localhost:5000/buildings',
     units: 'http://localhost:5000/units',
+    fields: 'http://localhost:5000/fields',
+
   };
 
 
   const [activeTab, setActiveTab] = useState('Nations');
   const [units, setUnits] = useState([]);
   const [nations, setNations] = useState([]);
+  const [buildings, setBuildings] = useState([]);
+  const [fields, setFields] = useState([]);
+
   const [errors, setErrors] = useState({
+
     Nations: null,
     Buildings: null,
     Units: null,
   });
 
   useEffect(() => {
-    fetchData('Units') // preload it in the beginning as there is a lot of data!
     fetchData(activeTab);
   }, [activeTab]);
 
@@ -180,6 +185,12 @@ const App = () => {
       case 'units':
         setUnits(data);
         break;
+      case 'buildings':
+        setBuildings(data);
+        break;
+        case 'fields':
+          setFields(data);
+          break;
       // Add more cases for other tabs as needed
       default:
         break;
@@ -214,6 +225,7 @@ const App = () => {
           <Tab onClick={() => handleTabClick('Nations')}>Nations</Tab>
           <Tab onClick={() => handleTabClick('Buildings')}>Buildings</Tab>
           <Tab onClick={() => handleTabClick('Units')}>Units</Tab>
+          <Tab onClick={() => handleTabClick('Fields')}>Fields</Tab>
         </TabList>
 
         <TabPanel>
@@ -224,7 +236,7 @@ const App = () => {
         
         <TabPanel>
           <h2>Buildings</h2>
-          <DataTable data={buildingsData} tableName ="Buildings" fetchData= {fetchData}/>
+          <DataTable data={buildings} tableName ="Buildings" fetchData= {fetchData}/>
           {errors.Buildings && <div>Error: {errors.Buildings.message}</div>}          
         </TabPanel>
 
@@ -233,6 +245,12 @@ const App = () => {
           <DataTable data={units} tableName ="Units" fetchData= {fetchData}/>
           {errors.Units && <div>Error: {errors.Units.message}</div>}          
         </TabPanel>
+        <TabPanel>
+          
+          <h2>Fields</h2>
+          <DataTable data={fields} tableName ="Fields" fetchData= {fetchData}/>
+          {errors.Units && <div>Error: {errors.Units.message}</div>}          
+        </TabPanel>        
       </Tabs>  
       <ToastContainer />
     </div>
