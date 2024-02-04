@@ -21,12 +21,33 @@ const DataTable = ({ data, tableName, fetchData }) => {
     const keys = Object.keys(data[0]);
 
     return tableConfig.columns.map((key, columnIndex) => {
-      const isSearchable = tableConfig.searchableColumns[key] === true ? true : false;
+
+      const keyName= key
+      let header = key
+      if (!tableConfig.columnProps[key])
+      {
+        key= "Default"
+      }
+      else{
+        header= tableConfig.columnProps[key].Name
+      }
+
+      const isSearchable = tableConfig.columnProps[key].searchable === true ? true : false;
 
       return {
-        Header: tableConfig.columnNames[key] || key,
-        accessor: key,
+        Header: header,
+        accessor: keyName,
         Filter: isSearchable ? DefaultColumnFilter : false,
+        Cell: ({ row, value }) =>
+          typeof value === 'boolean' ? (
+            <input
+              type="checkbox"
+              checked={value}
+              readOnly={true}
+            />
+          ) : (
+            <span>{value}</span>
+          ),
       };
     });
   }, [data, tableConfig]);
@@ -51,43 +72,7 @@ const DataTable = ({ data, tableName, fetchData }) => {
 
   const closeEditPopup = () => {
     setSelectedRow(null);
-  };
-
-  const logDataChanges = (existingData, newData) => {
-    // Assume both datasets have the same structure with unique identifiers
-    const identifierKey = '_id'; // Replace with the actual key used for identification
-  
-    // Find the keys present in both datasets
-    const keys = new Set([
-      ...Object.keys(existingData),
-      ...Object.keys(newData)
-    ]);
-  
-    // Find added, removed, and updated items
-    const addedItems = [];
-    const removedItems = [];
-    const updatedItems = [];
-  
-    keys.forEach((key) => {
-      const existingItem = existingData[key];
-      const newItem = newData[key];
-  
-      if (!existingItem) {
-        addedItems.push({ id: key, value: newItem });
-      } else if (!newItem) {
-        removedItems.push({ id: key, value: existingItem });
-      } else if (existingItem !== newItem) {
-        updatedItems.push({ id: key, oldValue: existingItem, newValue: newItem });
-      }
-    });
-  
-    // Log the changes
-    console.log('Added items:', addedItems);
-    console.log('Removed items:', removedItems);
-    console.log('Updated items:', updatedItems);
-  };
-  
-  
+  };  
 
   const handleSaveEdit = async (editedData) => {
     try {
@@ -101,14 +86,10 @@ const DataTable = ({ data, tableName, fetchData }) => {
             'Content-Type': 'application/json',
           },
         });
-        logDataChanges(response.data,editedData)
       }
     catch (error) {
       console.error(`Error:`, error);
       };
-
-
-
       
       const response = await axios.put(`http://localhost:5000/${tableName.toLowerCase()}/${editedData._id}`, {
         headers: {

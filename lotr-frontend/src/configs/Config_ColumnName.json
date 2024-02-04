@@ -1,135 +1,391 @@
 {
   "tables": {
-    "Fields":  {
-      "columns":["Identifier",
+    "Fields": {
+      "columns": [
         "FieldName",
+        "Identifier",
         "fertility",
         "oreOutput",
         "trade",
         "usable",
-        "speciales"],
-      "columnNames":{
-        "Identifier": true,
-        "FieldName" : true
-            },
-      "searchableColumns":["Identifier"]
+        "speciales"
+      ],
+      "columnProps": {
+        "Default": {
+          "Name": "Default",
+          "searchable": false,
+          "immutable": false,
+          "type": "number",
+          "componentType": "input"
+        },
+        "FieldName": {
+          "Name": "Field Name",
+          "searchable": true,
+          "type": "text"
+        },     
+        "FieldNbName": {
+          "Name": "Field Name Nummer",
+          "type": "text"
+        },
+        "FieldType": {
+          "Name": "Field Type"
+        },                   
+        "Identifier": {
+          "Name": "Identifier",
+          "immutable": true,
+          "searchable": true,
+          "type": "text"
+        },
+        "_id": {
+          "Name": "MongoDB_ID",
+          "immutable": true,
+          "type": "text"
+        },        
+        "fertility": {
+          "Name": "Fruchtbarkeit"
+        },
+        "name": {
+          "Name": "Name",
+          "type": "text"
+        },         
+        "oreOutput": {
+          "Name": "Erz"
+        },      
+        "speciales": {
+          "Name": "Specials",
+          "immutable": true,
+          "type": "text"
+        }   ,     
+        "trade": {
+          "Name": "Handel"
+        },             
+        "usable": {
+          "Name": "usable",
+          "immutable": true,
+          "type": "text"
+        }
+
+      }
     },
     "Nations": {
       "columns": [
         "Identifier",
         "eNation",
-        "side",        
+        "side",
         "CounterMax",
         "CounterMaxPopDependend",
         "maxPopulation",
         "reductionMilitary",
-        "reductionCivil",       
+        "reductionCivil",
         "BasicFood"
       ],
-      "columnNames": {
-        "Identifier": "Identifier",
-        "eNation": "Nation",
-        "CounterMax": "Max Count",
-        "CounterMaxPopDependend": "Max Pop",
-        "maxPopulation": "Max Pop",
-        "reductionMilitary": "Military Reduction",
-        "reductionCivil": "Civil Reduction",
-        "side": "Side",
-        "BasicFood": "Basic Food"
-      },
-      "searchableColumns":{
-        "Identifier": true,
-        "eNation" : false
+      "columnProps": {
+        "Default": {
+          "Name": "Default",
+          "searchable": false,
+          "immutable": false,
+          "type": "number",
+          "componentType": "input"
+        },
+        "BasicFood": {
+          "Name": "Basic Food"
+        },         
+        "CounterMax": {
+          "Name": "Max Count"
+        },   
+        "maxPopulation": {
+          "Name": "Max Pop"
+        },                    
+        "Identifier": {
+          "Name": "Identifier",
+          "searchable": true,
+          "type":"text"
+        },
+        "_id": {
+          "Name": "MongoDB_ID",
+          "immutable": true,
+          "type": "text"
+        },         
+        "eNation": {
+          "Name": "Nation ID",
+          "searchable": false
+        },
+        "CounterMaxPopDependend": {
+          "Name": "Max Pop"
+        },
+        "name": {
+          "Name": "Name",
+          "type": "text"
+        },
+        "reductionCivil": {
+          "Name": "Baukosten Reduktion (Zivil-Gebäude)"
+        },         
+        "reductionMilitary": {
+          "Name": "Baukosten Reduktion(Militär-Gebäude)"
+        },    
+           "side": {
+          "Name": "Side",
+          "immutable": true
+        }
+
       }
     },
     "Buildings": {
       "columns": [
         "Identifier",
         "eBuilding",
+        "next_eBuilding_string",
+        "prevoius_eBuilding_string",
         "ConstructionTime",
+        "Price",
         "BaseIncomeGold",
         "BaseIncomeFood",
         "MinimalPopulation",
-        "BasePopulation"
+        "BasePopulation",
+        "upgradable"
       ],
-      "columnNames": {
-        "Identifier": "Identifier",
-        "eBuilding": "Building",
-        "ConstructionTime": "Construction Time",
-        "BaseIncomeGold": "Gold Income",
-        "BaseIncomeFood": "Food Income",
-        "MinimalPopulation": "Min Pop",
-        "BasePopulation": "Base Pop"
-      },
-      "searchableColumns":{
-        "Identifier": true,
-        "eBuilding" : false
+      "columnProps": {
+        "Default": {
+          "Name": "Default",
+          "searchable": false,
+          "immutable": false,
+          "type": "number",
+          "componentType": "input"
+        },
+        "BaseIncomeFood": {
+          "Name": "Food Income"
+        },        
+        "BaseIncomeGold": {
+          "Name": "Gold Income"
+        },
+        "BasePopulation": {
+          "Name": "Base Pop"
+        },
+        "ConstructionTime": {
+          "Name": "Construction Time"
+        },           
+        "FoodPerFertility": {
+          "Name": "Food Per Fertility"
+        },       
+        "FoodPerPopulation": {
+          "Name": "Food Per Population"
+        },  
+        "GoldPerFertility": {
+          "Name": "Gold Per Fertility"
+        },  
+        "GoldPerPopulation": {
+          "Name": "Gold Per Population"
+        },                  
+        "Identifier": {
+          "Name": "Identifier",
+          "immutable": true,
+          "searchable": true,
+          "type":"text"
+        },
+        "MinimalPopulation": {
+          "Name": "Min Pop"
+        },  
+        "Price": {
+          "Name": "Baukosten"
+        },  
+        "_id": {
+          "Name": "MongoDB_ID",
+          "immutable": true,
+          "type": "text"
+        },        
+        "constructable": {
+          "Name": "Kann gebaut werded"
+        },
+        "destructable": {
+          "Name": "Kann abgerissen werden"
+        },     
+        "eBuilding": {
+          "Name": "Building ID",
+          "immutable": true
+        },
+        "eBuildingType": {
+          "Name": "Gebäude Type"
+        },    
+        "name": {
+          "Name": "Name",
+          "type":"text"
+        },          
+        "next_eBuilding": {
+          "Name": "Next Building ID", 
+          "immutable": true
+        },    
+        "next_eBuilding_id": {
+          "Name": "next eBuilding Mongo id",
+          "immutable": true,
+          "type":"text"
+        },                
+        "next_eBuilding_string": {
+          "Name": "Next Building",
+          "type": "text",
+          "immutable": true    
+        },
+        "prevoius_eBuilding": {
+          "Name": "prevoius eBuilding ID", 
+          "immutable": true
+        },      
+        "prevoius_eBuilding_id": {
+          "Name": "prevoius eBuilding Mongo id",
+          "type": "text",
+          "immutable": true    
+        },               
+        "prevoius_eBuilding_string": {
+          "Name": "Previous Building",
+          "type": "text",
+          "immutable": true
+        }
       }
     },
-    "Units":{
-      "columns":[
+    "Units": {
+      "columns": [
         "Unit_name",
         "Equipment",
-        "Identifier",
         "attack_KK_FK",
         "attack_KK_NK",
         "attack_S",
         "defense_KK",
-        "defense_RM",        
+        "defense_RM",
         "defense_S",
         "size",
-        "lifes",  
-        "NbOfAttacks"    ,          
-        "unitType",        
-        "fernkampfTreffer",  
-        "nahkampfTreffer",                
+        "lifes",
+        "NbOfAttacks",
+        "unitType",
+        "fernkampfTreffer",
+        "nahkampfTreffer",
         "heldentum",
         "willenskraft",
         "Schicksal",
         "mut",
         "price",
-        "people" ,       
-        "movedistance"   ,     
-        "rules" ,   
+        "people",
+        "movedistance",
+        "rules",
         "name",
         "nation"
-
-    ],
-      "columnNames":{
-        "Equipment": "Equipment",
-        "Identifier": "Identifier",
-        "NbOfAttacks": "Nb of Attacks",
-        "Schicksal": "Schicksal",
-        "Unit_name": "Unit name",
-        "_id": "MongoDB ID",
-        "_rules": "Rules",
-        "attack_KK_FK": "Attack KK FK",
-        "attack_KK_NK": "Attack KK NK",
-        "attack_S":  "Attack S",
-        "defense_KK": "Defense KK",
-        "defense_RM":  "Defense RM",
-        "defense_S":  "Defense S",
-        "fernkampfTreffer": "Fernkamp fTreffer",
-        "heldentum": "Heldentum",
-        "lifes": "Leben",
-        "movedistance": "Bewegungsreichweite",
-        "mut": "Mut",
-        "nahkampfTreffer": "Nahkampf Treffer",
-        "name": "Name",
-        "nation": "Nation ID",
-        "people": "Volk",
-        "price": "Price",
-        "rules": "Regeln"      ,
-        "size": "Einheit Grösse",
-        "unitType": "Einheit Typ",
-        "willenskraft": "Willenskraft"
-      },
-      "searchableColumns":{
-        "Unit_name": true,
-        "Identifier": true,
-        "Equipment" : true,
-        "_rules": true
+      ],
+      "columnProps": {
+        "Default": {
+          "Name": "Default",
+          "searchable": false,
+          "immutable": false,
+          "type": "number",
+          "componentType": "input"
+        },
+        "Unit_name": {
+          "Name": "Unit name",
+          "searchable": true,
+          "type": "text"
+        },
+        "Equipment": {
+          "Name": "Equipment",
+          "searchable": true,
+          "type": "text"
+        },
+        "Identifier": {
+          "Name": "Identifier",
+          "immutable": true,
+          "type": "text",
+          "componentType": "textarea"
+        },
+        "attack_KK_FK": {
+          "Name": "Attack KK FK"
+        },
+        "attack_KK_NK": {
+          "Name": "Attack KK NK"
+        },
+        "attack_S": {
+          "Name": "Attack S"
+        },
+        "defense_KK": {
+          "Name": "Defense KK"
+        },
+        "defense_RM": {
+          "Name": "Defense RM"
+        },
+        "heldentum": {
+          "Name": "H"
+        },
+        "willenskraft": {
+          "Name": "W"
+        },
+        "Schicksal": {
+          "Name": "S"
+        },
+        "defense_S": {
+          "Name": "Defense S"
+        },
+        "name": {
+          "Name": "Name",
+          "type":"text"
+        },  
+        "price": {
+          "Name": "Price"
+        },  
+        "_id": {
+          "Name": "MongoDB_ID",
+          "immutable": true,
+          "type": "text"
+        } ,
+        "_rules": {
+          "Name": "Regeln",
+          "type": "text",
+          "componentType": "textarea"
+        } ,
+        "rules": {
+          "Name": "Regeln",
+          "type": "text",
+          "immutable": true
+        } ,        
+        "nation_id": {
+          "Name": "Nation mongo ID",
+          "immutable": true,
+          "type": "text"
+        } ,
+        "nation_string": {
+          "Name": "Nation",
+          "immutable": true,
+          "type": "text"
+        }    ,
+        "people": {
+          "Name": "Volk",
+          "type": "text"
+        }   ,
+        "movedistance": {
+          "Name": "Bew"
+        }  
+      }
+    },
+    "Rules":
+    {
+      "columns":["name",
+      "Description"],
+      "columnProps":{
+        "Default": {
+          "Name": "Default",
+          "searchable": false,
+          "immutable": false,
+          "type": "text",
+          "componentType": "textarea"
+        },
+        "name": {
+          "Name": "Regel"
+        },  
+        "_id": {
+          "Name": "MongoDB_ID",
+          "immutable": true,
+          "componentType": "input"
+        },          
+        "Description": {
+          "Name": "Beschreibung"
+        }
       }
     }
   }
 }
+
+
+
