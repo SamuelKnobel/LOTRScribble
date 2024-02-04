@@ -40,13 +40,13 @@ ship_collection = Utils.write_to_db_from_json(pathToShipData, ship_collection)
 rules_collection = Utils.write_to_db_from_json(pathToRules, rules_collection)
 
 # linking buildings
-Utils.link_collections(building_collection, building_collection, 'next_eBuilding', 'next_eBuilding')
-Utils.link_collections(building_collection, building_collection, 'prevoius_eBuilding', 'prevoius_eBuilding')
+Utils.link_collections(building_collection, building_collection, 'eBuilding', 'next_eBuilding')
+Utils.link_collections(building_collection, building_collection, 'eBuilding', 'prevoius_eBuilding')
 
-# linking units to nations
-Utils.link_collections(nation_collection, unit_collection, 'nation', 'nation')
-Utils.link_collections(nation_collection, ship_collection, 'eNation', 'nation')
-Utils.link_collections(nation_collection, machine_collection, 'eNation', 'nation')
+# # linking units to nations
+Utils.link_collections(nation_collection, unit_collection, 'eNation', 'nation')
+Utils.link_collections(nation_collection, ship_collection, 'eNation', 'eNation')
+Utils.link_collections(nation_collection, machine_collection, 'eNation', 'eNation')
 
 
 

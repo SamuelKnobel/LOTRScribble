@@ -1,10 +1,16 @@
 import json
+import logging
+from datetime import datetime
+
 from pymongo.collection import Collection
 from pymongo.database import Database
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
 from pymongo.server_api import ServerApi
+from bson import ObjectId, json_util
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def connect_to_mongodb():
@@ -22,9 +28,9 @@ def connect_to_mongodb():
     # Send a ping to confirm a successful connection
     try:
         client.admin.command('ping')
-        print("Pinged your deployment. You successfully connected to MongoDB!")
+        logging.info("Pinged your deployment. You successfully connected to MongoDB!")
     except Exception as e:
-        print(e)
+        logging.warning(e)
     return client
 
 
@@ -69,12 +75,16 @@ def recreate_collection(database: Database, collection: Collection, collection_n
     - Collection: The recreated MongoDB collection.
     """
     if not collection_exists(database, collection):
+        logging.info(f"Database not existing, create new Database: {collection_name}")
+
         return database.create_collection(collection_name)
     else:
         if recreate:
+            logging.info(f"Drop and Recreate Database: {collection_name}")
             collection.drop()
             return database.create_collection(collection_name)
         else:
+            logging.info(f"Database existing, return Database: {collection_name} . To reset database, set recreate to true ")
             return collection
 
 
@@ -101,42 +111,49 @@ def write_to_db_from_json(path: str, collection: Collection) -> Collection:
 
 def link_collections(source_collection: Collection, target_collection: Collection, link_field_source: str, link_field_target: str):
     """
-    Update documents in the target collection to set links based on order in the source collection.
+    Update documents in the target collection to set links based on a specific field in the source collection.
 
     Parameters:
     - source_collection (Collection): The MongoDB collection containing data for linking.
     - target_collection (Collection): The MongoDB collection to update with links.
-    - link_field_source (str): The field name in the source collection representing the link index.
+    - link_field_source (str): The field name in the source collection representing the link.
     - link_field_target (str): The field name in the target collection to be updated with links.
 
     Returns:
     - None
     """
     source_ids = {}
+    source_map = {}
     source_names = []
+
     # Retrieve the source document names and IDs
     for source_document in source_collection.find({}):
         source_name = source_document['name']
         source_id = source_document['_id']
         source_ids[source_name] = source_id
         source_names.append(source_name)
+        source_document_index = source_document[link_field_source]
+        source_map[source_document_index] = source_name
+    logging.debug(source_map)
 
     # Update documents in the target collection to set links
     for target_document_name in target_collection.distinct("name"):
         current_target_document = target_collection.find_one({"name": target_document_name})
-        source_document_index = current_target_document[link_field_source]
 
-        source_document_name = source_names[source_document_index - 1] if source_document_index > 0 else None
-
+        source_document_name = source_map.get(current_target_document[link_field_target])
         # Find the corresponding IDs for the source document
         source_document_id = source_ids.get(source_document_name)
+
         # Update the document in the target collection with the corresponding IDs
         target_collection.update_one(
             {"name": target_document_name},
-            {"$set": {link_field_target: source_document_id}}
+            {"$set": {
+                f"{link_field_target}_id": source_document_id,
+                f"{link_field_target}_string": source_document_name
+            }}
         )
 
-from bson import ObjectId, json_util
+        # link_collections(source_collection, target_collection, "eBuilding", "linked_building")
 
 def convert_objectid_to_string(data):
     """
@@ -160,3 +177,25 @@ def convert_objectid_to_string(data):
 # # Example usage
 # units = list(collection.find())
 # units_json = json_util.dumps(convert_objectid_to_string(units), indent=2)
+
+
+def log_changes(db, collection_name, item_id, item_identifier, changes):
+    """
+    Log changes between existing data and updated data.
+
+    Parameters:
+    - collection_name: The name of the collection where the update occurred.
+    - item_id: The ID of the item that was updated.
+    - changes: A dictionary containing the changes.
+    """
+
+    change_logs_collection=recreate_collection(db,db['ChangeLogs'], 'ChangeLogs', True)
+
+    change_log_entry = {
+        'timestamp': datetime.now(),
+        'collection_name': collection_name,
+        'item_id': item_id,
+        'item_identifier': item_identifier,
+        'changes': changes
+    }
+    change_logs_collection.insert_one(change_log_entry)

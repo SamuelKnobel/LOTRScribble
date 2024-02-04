@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from bson import ObjectId
@@ -14,6 +16,8 @@ db = client['LOTR_BaseData']
 app = Flask(__name__)
 CORS(app)  # Enable CORS
 Swagger(app)
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 
@@ -37,6 +41,43 @@ def get_units():
     """
     return get_data('UnitData')
 
+@app.route('/ships', methods=['GET'])
+def get_ships():
+    """
+    Get a list of all ships in the specified collection.
+
+    ---
+    parameters:
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection to retrieve data from.
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    return get_data('ShipData')
+
+@app.route('/machines', methods=['GET'])
+def get_machines():
+    """
+    Get a list of all machines in the specified collection.
+
+    ---
+    parameters:
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection to retrieve data from.
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    return get_data('MachineData')
 
 @app.route('/nations', methods=['GET'])
 def get_nations():
@@ -96,6 +137,26 @@ def get_buildings():
         description: Items not found.
     """
     return get_data('BuildingData')
+
+
+@app.route('/rules', methods=['GET'])
+def get_rules():
+    """
+    Get a list of all Rules in the specified collection.
+
+    ---
+    parameters:
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection to retrieve data from.
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    return get_data('RuleData')
 
 
 def get_data(collection_name):
@@ -253,11 +314,54 @@ def get_field(id):
     return get_item_by_id('FieldData', id)
 
 
-# Route to update a specific unit by ID
+# # Route to update a specific unit by ID
+# @app.route('/units/<id>', methods=['PUT'])
+# def update_unit(id):
+#     """
+#     Update information about a specific unit by its ID.
+#
+#     ---
+#     parameters:
+#       - name: id
+#         in: path
+#         type: string
+#         required: true
+#         description: ID of the unit.
+#
+#     requestBody:
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               field_name:
+#                 type: string
+#                 description: The field to be updated.
+#               new_value:
+#                 type: string
+#                 description: The new value for the field.
+#
+#     responses:
+#       200:
+#         description: Unit updated successfully.
+#     """
+#     collection = db['UnitData']
+#     data = request.get_json()
+#     # Ensure that the data is structured as {'$set': {field_name: new_value}}
+#     # update_data = {'$set': {data['field_name']: data['new_value']}}
+#     update_data = json.loads(data['body'])
+#     update_data.pop("_id", None)
+#
+#     filter_ = {'_id': ObjectId(id)}
+#     new_values = {"$set": update_data}
+#     collection.update_one(filter_, new_values)
+#
+#     return dumps({'message': 'Unit updated successfully'})
+
 @app.route('/units/<id>', methods=['PUT'])
 def update_unit(id):
     """
-    Update information about a specific unit by its ID.
+    Update information about a specific Unit by its ID.
 
     ---
     parameters:
@@ -283,19 +387,179 @@ def update_unit(id):
     responses:
       200:
         description: Unit updated successfully.
+      404:
+        description: Update Failed
     """
-    collection = db['UnitData']
+    return update_item_by_id("UnitData", id)
+
+@app.route('/nations/<id>', methods=['PUT'])
+def update_nation(id):
+    """
+    Update information about a specific Nation by its ID.
+
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: ID of the unit.
+
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              field_name:
+                type: string
+                description: The field to be updated.
+              new_value:
+                type: string
+                description: The new value for the field.
+
+    responses:
+      200:
+        description: Nation updated successfully.
+      404:
+        description: Update Failed
+    """
+    return update_item_by_id("NationData", id)
+
+@app.route('/fields/<id>', methods=['PUT'])
+def update_fields(id):
+    """
+    Update information about a specific Field by its ID.
+
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: ID of the unit.
+
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              field_name:
+                type: string
+                description: The field to be updated.
+              new_value:
+                type: string
+                description: The new value for the field.
+
+    responses:
+      200:
+        description: Nation updated successfully.
+      404:
+        description: Update Failed
+    """
+    return update_item_by_id("FieldData", id)
+
+@app.route('/buildings/<id>', methods=['PUT'])
+def update_buildings(id):
+    """
+    Update information about a specific Building by its ID.
+
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: ID of the unit.
+
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              field_name:
+                type: string
+                description: The field to be updated.
+              new_value:
+                type: string
+                description: The new value for the field.
+
+    responses:
+      200:
+        description: Nation updated successfully.
+      404:
+        description: Update Failed
+    """
+    return update_item_by_id("BuildingData", id)
+
+def update_item_by_id(collection_name, item_id):
+    """
+    Update information about a specific item by its ID.
+
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+        description: ID of the unit.
+
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              field_name:
+                type: string
+                description: The field to be updated.
+              new_value:
+                type: string
+                description: The new value for the field.
+
+    responses:
+      200:
+        description: Item updated successfully.
+      404:
+        description: Update Failed
+    """
+    collection = db[collection_name]
     data = request.get_json()
     # Ensure that the data is structured as {'$set': {field_name: new_value}}
-    # update_data = {'$set': {data['field_name']: data['new_value']}}
     update_data = json.loads(data['body'])
     update_data.pop("_id", None)
 
-    filter_ = {'_id': ObjectId(id)}
-    new_values = {"$set": update_data}
-    collection.update_one(filter_, new_values)
+    # Get the existing item data
+    existing_item = collection.find_one({'_id': ObjectId(item_id)})
 
-    return dumps({'message': 'Unit updated successfully'})
+    if existing_item:
+        filter_ = {'_id': ObjectId(item_id)}
+        new_values = {"$set": update_data}
+
+        # Compare existing values with new values to detect changes
+        changes = {}
+        for key, value in existing_item.items():
+            if key in update_data and value != update_data[key]:
+                changes[key] = {'old': value, 'new': update_data[key]}
+        logging.debug(changes)
+        if changes:
+            identifier = "item"
+            # Log changes
+            if existing_item['Identifier']:
+                identifier = existing_item['Identifier']
+            elif existing_item['name']:
+                identifier = existing_item['name']
+
+            # currently logs are not saved, each trigger of this function recreates the ChangeLog Collection
+            Utils.log_changes(db, collection_name, item_id, identifier, changes)
+
+        collection.update_one(filter_, new_values)
+        return dumps({'message': 'Unit updated successfully'})
+
+    else:
+        return jsonify({'error': f'Item: {item_id} or {collection_name.capitalize()} not found'}), 404
 
 @app.after_request
 def after_request(response):
