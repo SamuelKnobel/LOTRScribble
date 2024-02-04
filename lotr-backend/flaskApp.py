@@ -571,7 +571,9 @@ def after_request(response):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # run app in debug mode on port 81
+    app.run(debug=True, port=81, host='0.0.0.0')
+
 
 #### EXample how to Use it from the PowerShell
 # # Set the URL and payload
