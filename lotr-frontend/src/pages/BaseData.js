@@ -33,6 +33,7 @@ class BaseData extends Component {
   fetchData = async (tabName) => {
     const { apiUrls } = this;
     try {
+      console.log(apiUrls[tabName.toLowerCase()])
       const response = await axios.get(apiUrls[tabName.toLowerCase()], {
         headers: {
           'Accept': 'application/json',
@@ -41,6 +42,7 @@ class BaseData extends Component {
       });
 
       this.updateState(tabName, response.data);
+      console.log(response.data)
       this.clearErrors(tabName);
     } catch (error) {
       console.error(`Error fetching ${tabName}:`, error);
@@ -107,19 +109,18 @@ class BaseData extends Component {
       progress: undefined,
     });
   };
-
+ baseURL= 'https://192.168.178.23:81/'
+  //baseURL='https://Samuelknobel.pythonanywhere.com/'
   apiUrls = {
-    nations: 'http://192.168.178.23:81/nations',
-    buildings: 'http://192.168.178.23:81/buildings',
-    units: 'http://192.168.178.23:81/units',
-    fields: 'http://192.168.178.23:81/fields',
-    rules: 'http://192.168.178.23:81/rules',
-
+    nations: [this.baseURL+'nations'],
+    buildings: [this.baseURL+'buildings'],
+    fields: [this.baseURL+'fields'],
+    units: [this.baseURL+'units'],
+    rules: [this.baseURL+'rules'],
   };
 
   render() {
     const { nations, buildings, units, fields,rules, activeTab, errors } = this.state;
-
     return (
       <div>
         <Tabs>
@@ -133,31 +134,31 @@ class BaseData extends Component {
 
            <TabPanel>
             <h2>Nations</h2>
-            <DataTable data={nations} tableName="Nations" fetchData={this.fetchData} />
+            <DataTable data={nations} tableName="Nations" fetchData={this.fetchData} baseURL={this.baseURL}/>
             {errors.Nations && <div>Error: {errors.Nations.message}</div>}
           </TabPanel>
 
           <TabPanel>
             <h2>Buildings</h2>
-            <DataTable data={buildings} tableName="Buildings" fetchData={this.fetchData} />
+            <DataTable data={buildings} tableName="Buildings" fetchData={this.fetchData} baseURL={this.baseURL}/>
             {errors.Buildings && <div>Error: {errors.Buildings.message}</div>}
           </TabPanel>
 
           <TabPanel>
             <h2>Units</h2>
-            <DataTable data={units} tableName="Units" fetchData={this.fetchData} />
+            <DataTable data={units} tableName="Units" fetchData={this.fetchData} baseURL={this.baseURL}/>
             {errors.Units && <div>Error: {errors.Units.message}</div>}
           </TabPanel>
         
           <TabPanel>
             <h2>Fields</h2>
-            <DataTable data={fields} tableName="Fields" fetchData={this.fetchData} />
+            <DataTable data={fields} tableName="Fields" fetchData={this.fetchData} baseURL={this.baseURL}/>
             {errors.Fields && <div>Error: {errors.Fields.message}</div>}
           </TabPanel>
 
           <TabPanel>
             <h2>Rules</h2>
-            <DataTable data={rules} tableName="Rules" fetchData={this.fetchData} />
+            <DataTable data={rules} tableName="Rules" fetchData={this.fetchData} baseURL={this.baseURL}/>
             {errors.Rules && <div>Error: {errors.rules.message}</div>}
           </TabPanel>          
         </Tabs>

@@ -2,15 +2,19 @@ import './DataTable.css';
 import React, { useState } from 'react';
 import { useTable, useFilters, useSortBy, usePagination, useRowSelect } from 'react-table';
 import Config_ColumnName from './configs/Config_ColumnName.json';
+import Enums from './configs/Enums.json';
 import EditPopup from './EditPopup';
 import axios from 'axios';
+
+import {getConfigValue} from './Utils'
 
 const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
   return <input value={filterValue || ''} onChange={(e) => setFilter(e.target.value)} />;
 };
 
-const DataTable = ({ data, tableName, fetchData }) => {
+const DataTable = ({ data, tableName, fetchData, baseURL }) => {
   const tableConfig = Config_ColumnName.tables[tableName];
+  const enumConfig = Enums.Enums;
   const [selectedRow, setSelectedRow] = useState(null);
   
   const columns = React.useMemo(() => {
@@ -22,21 +26,21 @@ const DataTable = ({ data, tableName, fetchData }) => {
 
     return tableConfig.columns.map((key, columnIndex) => {
 
-      const keyName= key
-      let header = key
-      if (!tableConfig.columnProps[key])
-      {
-        key= "Default"
-      }
-      else{
-        header= tableConfig.columnProps[key].Name
-      }
+      let header= getConfigValue(tableConfig,key, "Name", false);
+      let isSearchable =  getConfigValue(tableConfig,key, "searchable", true)
 
-      const isSearchable = tableConfig.columnProps[key].searchable === true ? true : false;
+      let mapValue = (key,value)=>{
+ 
+        if (enumConfig[key])
+        {
+          return enumConfig[key][value]         
+        }
+        else return value
+      }
 
       return {
         Header: header,
-        accessor: keyName,
+        accessor: key,
         Filter: isSearchable ? DefaultColumnFilter : false,
         Cell: ({ row, value }) =>
           typeof value === 'boolean' ? (
@@ -46,7 +50,7 @@ const DataTable = ({ data, tableName, fetchData }) => {
               readOnly={true}
             />
           ) : (
-            <span>{value}</span>
+            <span>{mapValue(key,value)}</span>
           ),
       };
     });
@@ -80,7 +84,7 @@ const DataTable = ({ data, tableName, fetchData }) => {
       console.log(JSON.stringify(editedData))
       try 
       {
-        const response = await axios.get(`http://localhost:5000/${tableName.toLowerCase()}/${editedData._id}`, {
+        const response = await axios.get(`${baseURL}${tableName.toLowerCase()}/${editedData._id}`, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -91,7 +95,7 @@ const DataTable = ({ data, tableName, fetchData }) => {
       console.error(`Error:`, error);
       };
       
-      const response = await axios.put(`http://localhost:5000/${tableName.toLowerCase()}/${editedData._id}`, {
+      const response = await axios.put(`${baseURL}${tableName.toLowerCase()}/${editedData._id}`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -143,8 +147,8 @@ const DataTable = ({ data, tableName, fetchData }) => {
                     <button onClick={() => openEditPopup(row.original)}>Edit</button>
                   </td>
                   {row.cells.map((cell) => (
-                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                  ))}
+                     <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                     ))}
                 </tr>
               </React.Fragment>
             );

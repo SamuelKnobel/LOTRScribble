@@ -2,9 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import './EditPopup.css';
 import Config_ColumnName from './configs/Config_ColumnName.json';
+import Enums from './configs/Enums.json';
+import Tooltip from './Tooltip/Tooltip';
+import {getConfigValue} from './Utils'
 
 const EditPopup = ({tableName, rowData, onSave, onCancel }) => {
     let tableConfig = Config_ColumnName.tables[tableName];
+    const enumConfig = Enums.Enums;
 
   const [editedData, setEditedData] = useState({ ...rowData });
 
@@ -13,7 +17,7 @@ const EditPopup = ({tableName, rowData, onSave, onCancel }) => {
   }, [rowData]);
 
   const handleInputChange = (fieldName, value) => {
-    const typedValue = gettype(fieldName) === 'number' ? parseFloat(value) : value;    
+    const typedValue =  getConfigValue(tableConfig,fieldName , "type", true) === 'number' ? parseFloat(value) : value;    
     console.log("Fieldname: ",fieldName)
     console.log("Value: ",value)    
 
@@ -27,75 +31,24 @@ const EditPopup = ({tableName, rowData, onSave, onCancel }) => {
     onSave(editedData);
   };
 
-  const getName =(fieldName) =>
-  {
-    if (fieldName)
-    {
-      if(tableConfig.columnProps[fieldName]){
-
-        if(tableConfig.columnProps[fieldName].Name)
-        {
-          return tableConfig.columnProps[fieldName].Name
-        }
-      }
-    }
-    return fieldName
-  }
-
-  const getimmutable =(fieldName) =>
-  {
-    if (fieldName)
-    {
-      if(tableConfig.columnProps[fieldName]){
-        if(tableConfig.columnProps[fieldName].immutable)
-        {           
-          return tableConfig.columnProps[fieldName].immutable  
-        }
-      }
-    }
-    return tableConfig.columnProps["Default"].immutable 
-  }  
-
-  const gettype =(fieldName) =>
-  {
-    if (fieldName)
-    {
-      if(tableConfig.columnProps[fieldName]){
-   
-        if(tableConfig.columnProps[fieldName].type)
-        {           
-          return tableConfig.columnProps[fieldName].type  
-        }
-      }
-    }
-    return tableConfig.columnProps["Default"].type  
-  }    
-
-  const getComponentType = (fieldName) =>
-  {
-    if (fieldName)
-    {
-      if(tableConfig.columnProps[fieldName]){
-   
-        if(tableConfig.columnProps[fieldName].componentType)
-        {     
-          return tableConfig.columnProps[fieldName].componentType  
-        }
-      }
-    }
-    return tableConfig.columnProps["Default"].componentType
-   }
-
-  const getCommonAttributes=(fieldname) =>
+  const getCommonAttributes=(fieldName) =>
   {
     const CommonAttributes={
-      type:gettype(fieldname),
-      value:editedData[fieldname],
-      onChange:(e) => handleInputChange(fieldname, e.target.value),
-      disabled:getimmutable(fieldname)  === true ? true : false,
+      type: getConfigValue(tableConfig,fieldName , "type", true),
+      value:editedData[fieldName],
+      onChange:(e) => handleInputChange(fieldName, e.target.value),
+      disabled: getConfigValue(tableConfig, fieldName , "immutable", true) === true ? true : false,
     };
-
     return CommonAttributes;
+  }
+
+  const getToolTipInfo= (key) =>
+  {
+    if (enumConfig[key])
+    {
+      return JSON.stringify(enumConfig[key], undefined, 3)
+    }
+    else return key
   }
 
 
@@ -104,22 +57,24 @@ const EditPopup = ({tableName, rowData, onSave, onCancel }) => {
       <h2>Edit {rowData.Identifier}</h2>
       <div className="key-value-pairs">
         {Object.entries(rowData).map(([key, value]) => (            
-          <div className="key-value-pair" key={key}>
-            <div className="key">{getName(key)}:</div>
-            <div className="value">
-            {typeof value === 'boolean' ? (
+            <div className="key-value-pair" key={key}>            
+            <div className="key">{getConfigValue(tableConfig,key, "Name", false)}:</div>                         
+            <Tooltip text ={getToolTipInfo(key)}>
+              <div className="value">
+                {typeof value === 'boolean' ? (
                 <input
                   type="checkbox"
                   checked={editedData[key]}
                   onChange={(e) => handleInputChange(key, e.target.checked)}
-                  disabled={getimmutable(key) === true ? true : false}
+                  disabled={getConfigValue(tableConfig, key , "immutable", true) === true ? true : false}
                 />
               ) : (
-                getComponentType(key) === "input" ? 
+                getConfigValue(tableConfig, key , "componentType", true) === "input" ? 
                 (<input {...getCommonAttributes(key)} />):
                 (<textarea {...getCommonAttributes(key)} />)
               )}
-            </div>
+            </div>  
+            </Tooltip>                    
           </div>
         ))}
       </div>

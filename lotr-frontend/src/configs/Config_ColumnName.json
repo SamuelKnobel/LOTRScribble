@@ -8,6 +8,7 @@
         "oreOutput",
         "trade",
         "usable",
+        "FieldType",
         "speciales"
       ],
       "columnProps": {
@@ -70,7 +71,6 @@
     "Nations": {
       "columns": [
         "Identifier",
-        "eNation",
         "side",
         "CounterMax",
         "CounterMaxPopDependend",
@@ -133,11 +133,12 @@
     "Buildings": {
       "columns": [
         "Identifier",
-        "eBuilding",
         "next_eBuilding_string",
         "prevoius_eBuilding_string",
         "ConstructionTime",
         "Price",
+        "ebuildingClass",
+        "eBuildingType",
         "BaseIncomeGold",
         "BaseIncomeFood",
         "MinimalPopulation",
@@ -206,6 +207,9 @@
         "eBuildingType": {
           "Name": "Gebäude Type"
         },    
+        "ebuildingClass": {
+          "Name": "Gebäude Klasse"
+        },        
         "name": {
           "Name": "Name",
           "type":"text"
@@ -243,6 +247,8 @@
     "Units": {
       "columns": [
         "Unit_name",
+        "size",        
+        "unitType",
         "Equipment",
         "attack_KK_FK",
         "attack_KK_NK",
@@ -250,10 +256,8 @@
         "defense_KK",
         "defense_RM",
         "defense_S",
-        "size",
         "lifes",
         "NbOfAttacks",
-        "unitType",
         "fernkampfTreffer",
         "nahkampfTreffer",
         "heldentum",
@@ -265,7 +269,7 @@
         "movedistance",
         "rules",
         "name",
-        "nation"
+        "nation_string"
       ],
       "columnProps": {
         "Default": {
@@ -356,7 +360,13 @@
         }   ,
         "movedistance": {
           "Name": "Bew"
-        }  
+        }  ,
+        "unitType": {
+          "Name": "Unit Typ"
+        }    ,
+        "size": {
+          "Name": "Size"
+        }                
       }
     },
     "Rules":
@@ -366,7 +376,7 @@
       "columnProps":{
         "Default": {
           "Name": "Default",
-          "searchable": false,
+          "searchable": true,
           "immutable": false,
           "type": "text",
           "componentType": "textarea"

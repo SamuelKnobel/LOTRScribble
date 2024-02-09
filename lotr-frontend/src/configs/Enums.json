@@ -1,0 +1,73 @@
+{
+  "Enums": {
+    "side": {
+       "0" :"Evil",
+       "1":"Good",
+       "2":"notDefined"
+    },
+    "eNation": {
+      "0":"Nobody",
+      "1":"Angmar",
+      "2":"Gondor",
+      "3": "Harad",
+      "4":"Isengart",
+      "5": "Khazad",
+      "6":"Mordor",
+      "7":"Elben",
+      "8":"Numenor",
+      "9":"Rhun",
+      "10":"Rohan"
+    },
+    "eBuilding": {
+     "0": "None",
+    "1":"Farm",
+    "2":"Village",
+    "3":"Fort",
+    "4":"Castle",
+    "5":"Tower",
+    "6":"Stronghold",
+    "7":"Mine",
+    "8":"City",
+    "9":"Citadel",
+    "10":"FortressMine",
+    "11":"Motte",
+    "12":"UpgradeTower",
+    "13":"Bridge",
+    "14":"BridgeTowers"
+    },
+    "eBuildingType": {
+       "0":"MainBuilding",
+      "1":"UpgradeTower",
+      "2":"Bridge",
+      "3":"BridgeTowers",
+      "4":"Empty"
+    },
+    "ebuildingClass": {
+      "0": "Military",
+      "1":"Civil",
+      "2":"notDefined"
+    },
+    "FieldType": {
+      "0": "None",
+      "1":"shallow",
+      "2":"middle",
+      "3": "deep"
+    },
+    "unitType": {
+     "0":     "NotDefined",
+    "1":"General",
+    "2":"Elite" ,
+    "3":"Miliz",
+    "4":"Maschine" ,
+    "5":"Ship" ,
+    "6":"Unrekrutierbar"
+    },
+    "size": {
+    "0":  "NotDefined",
+    "1":"S",
+    "2":"K",
+    "3":"R",
+    "4": "Rg"
+    }
+  }
+}
