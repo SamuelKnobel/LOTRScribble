@@ -189,7 +189,7 @@ def log_changes(db, collection_name, item_id, item_identifier, changes):
     - changes: A dictionary containing the changes.
     """
 
-    change_logs_collection=recreate_collection(db,db['ChangeLogs'], 'ChangeLogs', True)
+    change_logs_collection=recreate_collection(db,db['ChangeLogs'], 'ChangeLogs', False)
 
     change_log_entry = {
         'timestamp': datetime.now(),
