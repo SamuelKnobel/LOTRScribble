@@ -5,6 +5,7 @@ import Config_ColumnName from './configs/Config_ColumnName.json';
 import Enums from './configs/Enums.json';
 import EditPopup from './EditPopup';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
 
 import {getConfigValue} from './Utils'
 
@@ -12,7 +13,7 @@ const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
   return <input value={filterValue || ''} onChange={(e) => setFilter(e.target.value)} />;
 };
 
-const DataTable = ({ data, tableName, fetchData, baseURL }) => {
+const DataTable = ({ data, tableName, fetchData }) => {
   const tableConfig = Config_ColumnName.tables[tableName];
   const enumConfig = Enums.Enums;
   const [selectedRow, setSelectedRow] = useState(null);
@@ -35,7 +36,7 @@ const DataTable = ({ data, tableName, fetchData, baseURL }) => {
         {
           return enumConfig[key][value]         
         }
-        else return value
+        else return value ===-99? NaN : value
       }
 
       return {
@@ -84,7 +85,7 @@ const DataTable = ({ data, tableName, fetchData, baseURL }) => {
       console.log(JSON.stringify(editedData))
       try 
       {
-        const response = await axios.get(`${baseURL}${tableName.toLowerCase()}/${editedData._id}`, {
+        const response = await axios.get(`${tableName.toLowerCase()}/${editedData._id}`, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -95,17 +96,15 @@ const DataTable = ({ data, tableName, fetchData, baseURL }) => {
       console.error(`Error:`, error);
       };
       
-      const response = await axios.put(`${baseURL}${tableName.toLowerCase()}/${editedData._id}`, {
+      const response = await axios.put(`${tableName.toLowerCase()}/${editedData._id}`, {
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(editedData),
       });
   
-
       // Log the response from the backend (you can handle it as needed)
       console.log('Update successful:', response.data);
-  
       // Close the edit popup
       closeEditPopup();
       // Reload the data from the backend after a successful update
@@ -173,6 +172,7 @@ const DataTable = ({ data, tableName, fetchData, baseURL }) => {
             {selectedRow && (
         <EditPopup tableName={tableName} rowData={selectedRow} onSave={handleSaveEdit} onCancel={closeEditPopup} />
       )}
+     <ToastContainer />
     </div>
   );
 };

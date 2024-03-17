@@ -30,6 +30,7 @@ const EditPopup = ({tableName, rowData, onSave, onCancel }) => {
 
   const handleSave = () => {
     onSave(editedData);
+    //showNotion(editedData.Identifier)    
   };
 
   const getCommonAttributes=(fieldName) =>
