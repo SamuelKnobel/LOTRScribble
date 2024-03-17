@@ -43,7 +43,7 @@ rules_collection = Utils.write_to_db_from_json(pathToRules, rules_collection)
 Utils.link_collections(building_collection, building_collection, 'eBuilding', 'next_eBuilding')
 Utils.link_collections(building_collection, building_collection, 'eBuilding', 'prevoius_eBuilding')
 
-# # linking units to nations
+# # # linking units to nations
 Utils.link_collections(nation_collection, unit_collection, 'eNation', 'nation')
 Utils.link_collections(nation_collection, ship_collection, 'eNation', 'eNation')
 Utils.link_collections(nation_collection, machine_collection, 'eNation', 'eNation')

@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 from pymongo.server_api import ServerApi
 from bson import ObjectId, json_util
 
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def connect_to_mongodb():
@@ -62,7 +63,7 @@ def database_exists(client: MongoClient, database: str) -> bool:
     return database in client.list_database_names()
 
 
-def recreate_collection(database: Database, collection: Collection, collection_name: str, recreate : bool) -> Collection:
+def recreate_collection(database: Database, collection: Collection, collection_name: str, recreate: bool) -> Collection:
     """
     Recreate a MongoDB collection. If the collection exists, drop it and create a new one.
 
@@ -84,7 +85,8 @@ def recreate_collection(database: Database, collection: Collection, collection_n
             collection.drop()
             return database.create_collection(collection_name)
         else:
-            logging.info(f"Database existing, return Database: {collection_name} . To reset database, set recreate to true ")
+            logging.info(f"Database existing, return Database: {collection_name}. "
+                         f"To reset database, set recreate to true ")
             return collection
 
 
@@ -109,7 +111,8 @@ def write_to_db_from_json(path: str, collection: Collection) -> Collection:
     return collection
 
 
-def link_collections(source_collection: Collection, target_collection: Collection, link_field_source: str, link_field_target: str):
+def link_collections(source_collection: Collection, target_collection: Collection, link_field_source: str,
+                     link_field_target: str):
     """
     Update documents in the target collection to set links based on a specific field in the source collection.
 
@@ -148,23 +151,25 @@ def link_collections(source_collection: Collection, target_collection: Collectio
         target_collection.update_one(
             {"name": target_document_name},
             {"$set": {
-                f"{link_field_target}_id": source_document_id,
+                f"{link_field_target}_id": str(source_document_id),
                 f"{link_field_target}_string": source_document_name
             }}
         )
 
         # link_collections(source_collection, target_collection, "eBuilding", "linked_building")
 
+
 def convert_objectid_to_string(data):
     """
     Recursively converts ObjectId fields to string in a dictionary or a list.
-
+    ---
     Parameters:
     - data: Dictionary or list containing MongoDB ObjectId fields.
 
     Returns:
     - Dictionary or list with ObjectId fields converted to strings.
     """
+    logging.debug(data)
     if isinstance(data, list):
         return [convert_objectid_to_string(item) for item in data]
     elif isinstance(data, dict):
@@ -173,6 +178,7 @@ def convert_objectid_to_string(data):
         return str(data)
     else:
         return data
+
 
 # # Example usage
 # units = list(collection.find())
@@ -188,8 +194,7 @@ def log_changes(db, collection_name, item_id, item_identifier, changes):
     - item_id: The ID of the item that was updated.
     - changes: A dictionary containing the changes.
     """
-
-    change_logs_collection=recreate_collection(db,db['ChangeLogs'], 'ChangeLogs', False)
+    change_logs_collection = recreate_collection(db, db['ChangeLogs'], 'ChangeLogs', False)
 
     change_log_entry = {
         'timestamp': datetime.now(),
