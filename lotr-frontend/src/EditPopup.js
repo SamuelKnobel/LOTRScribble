@@ -6,6 +6,7 @@ import Enums from './configs/Enums.json';
 import Tooltip from './Tooltip/Tooltip';
 import {getConfigValue} from './Utils'
 
+
 const EditPopup = ({tableName, rowData, onSave, onCancel }) => {
     let tableConfig = Config_ColumnName.tables[tableName];
     const enumConfig = Enums.Enums;
