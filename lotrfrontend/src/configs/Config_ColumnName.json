@@ -369,6 +369,87 @@
         }                
       }
     },
+    "Ships":    {
+      "columns":[
+        "Maschine_name",        
+        "Equipment",
+        "eNation",
+        "Structurepoints",
+        "Verteidigung",
+        "capacity",
+        "crew",
+        "movedistance",
+        "price",
+        "rammen",
+        "rules",
+        "treffer"
+      ],
+      "columnProps": {
+        "Default": {
+          "Name": "Default",
+          "searchable": false,
+          "immutable": false,
+          "type": "number",
+          "componentType": "input"
+        },
+        "Maschine_name": {
+          "Name": "Ship name",
+          "searchable": true,
+          "type": "text"
+        },
+        "Equipment": {
+          "Name": "Equipment",
+          "searchable": true,
+          "type": "text"
+        },        
+        "eNation": {
+          "Name": "Nation",
+          "searchable": true,
+          "type": "text"
+        }
+      }
+    },
+    "Machines":{
+      "columns":[
+        "Maschine_name",
+        "Equipment",
+        "eNation",
+        "BesatzungsAnzahl",
+        "BesatzungsEinheiten",
+        "ShootingDistance",
+        "Structurepoints",
+        "angriff",
+        "defense",
+        "movedistance",
+        "price",
+        "rules"
+      ],
+      "columnProps": {
+        "Default": {
+          "Name": "Default",
+          "searchable": false,
+          "immutable": false,
+          "type": "number",
+          "componentType": "input"
+        },
+        "Maschine_name": {
+          "Name": "Maschine name",
+          "searchable": true,
+          "type": "text"
+        },
+        "Equipment": {
+          "Name": "Equipment",
+          "searchable": true,
+          "type": "text"
+        },        
+        "eNation": {
+          "Name": "Nation",
+          "searchable": true,
+          "type": "text"
+        }
+      }
+    },
+
     "Rules":
     {
       "columns":["name",

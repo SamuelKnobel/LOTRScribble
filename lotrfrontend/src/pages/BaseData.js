@@ -13,6 +13,8 @@ class BaseData extends Component {
     this.state = {
       activeTab: 'Nations',
       units: [],
+      ships: [],
+      machines: [],
       nations: [],
       buildings: [],
       fields: [],
@@ -20,7 +22,11 @@ class BaseData extends Component {
       errors: {
         Nations: null,
         Buildings: null,
+        Fields: null,
         Units: null,
+        Ships: null,
+        Machines: null,
+
         Rules: null,
       },
     };
@@ -72,6 +78,12 @@ class BaseData extends Component {
       case 'units':
         this.setState({ units: data });
         break;
+      case 'ships':
+          this.setState({ ships: data });
+          break;
+      case 'machines':
+          this.setState({ machines: data });
+            break;                  
       case 'buildings':
         this.setState({ buildings: data });
         break;
@@ -119,11 +131,13 @@ class BaseData extends Component {
     buildings: ['buildings'],
     fields: ['fields'],
     units: ['units'],
+    ships: ['ships'],
+    machines: ['machines'],
     rules: ['rules'],
   }; // the web -path defined in "Proxy" in Package.json is set before the name
 
   render() {
-    const { nations, buildings, units, fields,rules, activeTab, errors } = this.state;
+    const { nations, buildings, units,ships,machines, fields,rules, activeTab, errors } = this.state;
     return (
       <div>
         <Tabs>
@@ -131,6 +145,8 @@ class BaseData extends Component {
             <Tab onClick={() => this.handleTabClick('Nations')}>Nations</Tab>
             <Tab onClick={() => this.handleTabClick('Buildings')}>Buildings</Tab>
             <Tab onClick={() => this.handleTabClick('Units')}>Units</Tab>
+            <Tab onClick={() => this.handleTabClick('Ships')}>Ships</Tab>
+            <Tab onClick={() => this.handleTabClick('Machines')}>Machines</Tab>
             <Tab onClick={() => this.handleTabClick('Fields')}>Fields</Tab>
             <Tab onClick={() => this.handleTabClick('Rules')}>Rules</Tab>
           </TabList>
@@ -152,7 +168,19 @@ class BaseData extends Component {
             <DataTable data={units} tableName="Units" fetchData={this.fetchData} />
             {errors.Units && <div>Error: {errors.Units.message}</div>}
           </TabPanel>
-        
+
+          <TabPanel>
+            <h2>Ships</h2>
+            <DataTable data={ships} tableName="Ships" fetchData={this.fetchData} />
+            {errors.Ships && <div>Error: {errors.Ships.message}</div>}
+          </TabPanel>
+
+          <TabPanel>
+            <h2>Machines</h2>
+            <DataTable data={machines} tableName="Machines" fetchData={this.fetchData} />
+            {errors.Machines && <div>Error: {errors.Machines.message}</div>}
+          </TabPanel>          
+
           <TabPanel>
             <h2>Fields</h2>
             <DataTable data={fields} tableName="Fields" fetchData={this.fetchData} />
