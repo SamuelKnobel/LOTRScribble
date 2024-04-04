@@ -22,14 +22,15 @@ pathToMachineData = cwd + '/Data_Binary/BasicMaschineData.basic.json'
 pathToShipData = cwd + '/Data_Binary/BasicShipData.basic.json'
 pathToRules = cwd + '/Data_Binary/Rules.basic.json'
 
+recreate = False
 
-nation_collection = Utils.recreate_collection(db, db.NationData, 'NationData', True)
-building_collection = Utils.recreate_collection(db, db.BuildingData, 'BuildingData', True)
-field_collection = Utils.recreate_collection(db, db.FieldData, 'FieldData', True)
-unit_collection = Utils.recreate_collection(db, db.UnitData, 'UnitData', True)
-machine_collection = Utils.recreate_collection(db, db.MachineData, 'MachineData', True)
-ship_collection = Utils.recreate_collection(db, db.ShipData, 'ShipData', True)
-rules_collection = Utils.recreate_collection(db, db.RuleData, 'RuleData', True)
+nation_collection = Utils.recreate_collection(db, db.NationData, 'NationData', recreate)
+building_collection = Utils.recreate_collection(db, db.BuildingData, 'BuildingData', recreate)
+field_collection = Utils.recreate_collection(db, db.FieldData, 'FieldData', recreate)
+unit_collection = Utils.recreate_collection(db, db.UnitData, 'UnitData', recreate)
+machine_collection = Utils.recreate_collection(db, db.MachineData, 'MachineData', recreate)
+ship_collection = Utils.recreate_collection(db, db.ShipData, 'ShipData', recreate)
+rules_collection = Utils.recreate_collection(db, db.RuleData, 'RuleData', recreate)
 
 nation_collection = Utils.write_to_db_from_json(pathToNationData, nation_collection)
 building_collection = Utils.write_to_db_from_json(pathToBuildingData, building_collection)

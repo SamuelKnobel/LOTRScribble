@@ -42,6 +42,9 @@ def APIHOME():
 def index():
     return redirect(url_for("APIHOME"))
 
+@app.on_event("shutdown")
+def shutdown_db_client():
+    client.close()
 
 @app.route('/units', methods=['GET'])
 def get_units():
@@ -137,6 +140,18 @@ def get_rules():
      """
     return get_data('RuleData')
 
+@app.route('/changelog', methods=['GET'])
+def get_changelog():
+    """
+     Get a list of all changes that were made.
+     ---
+     responses:
+       200:
+         description: List of changes.
+       404:
+         description: no changes found.
+     """
+    return get_data('ChangeLogs')
 
 def get_data(collection_name):
     """

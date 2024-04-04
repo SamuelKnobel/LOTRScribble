@@ -106,8 +106,10 @@ def write_to_db_from_json(path: str, collection: Collection) -> Collection:
 
     # Insert the nation data into the Nation collection
     for _name, data in _data.items():
-        # Use update_one with upsert=True to insert or update the document in the Nation collection
+        data['Version'] = "1.0"
+        # Use update_one with upsert=True to insert or update the document in the collection
         collection.update_one({"name": _name}, {"$set": data}, upsert=True)
+    logging.info(f"Write data ({path}) to: {collection.name}")
     return collection
 
 
@@ -156,6 +158,7 @@ def link_collections(source_collection: Collection, target_collection: Collectio
             }}
         )
 
+    logging.info(f"Link data from {source_collection.name} to {target_collection.name}")
         # link_collections(source_collection, target_collection, "eBuilding", "linked_building")
 
 
