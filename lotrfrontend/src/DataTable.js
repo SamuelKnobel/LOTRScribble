@@ -6,8 +6,8 @@ import Enums from './configs/Enums.json';
 import EditPopup from './EditPopup';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
-
 import {getConfigValue} from './Utils'
+import BackendPath from './configs/Config_Path.json';
 
 const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
   return <input value={filterValue || ''} onChange={(e) => setFilter(e.target.value)} />;
@@ -85,7 +85,7 @@ const DataTable = ({ data, tableName, fetchData }) => {
       console.log(JSON.stringify(editedData))
       try 
       {
-        const response = await axios.get(`${tableName.toLowerCase()}/${editedData._id}`, {
+        const response = await axios.get(`${BackendPath.BackEnd}${tableName.toLowerCase()}/${editedData._id}`, {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ const DataTable = ({ data, tableName, fetchData }) => {
       console.error(`Error:`, error);
       };
       
-      const response = await axios.put(`${tableName.toLowerCase()}/${editedData._id}`, {
+      const response = await axios.put(`${BackendPath.BackEnd}${tableName.toLowerCase()}/${editedData._id}`, {
         headers: {
           'Content-Type': 'application/json',
         },

@@ -1,0 +1,49 @@
+{
+  "Equipment": "keine Bewaffung",
+  "Identifier": "Floss_Harad",
+  "Maschine_name": "Floss",
+  "Structurepoints": 10,
+  "Verteidigung": 16,
+  "_id": "66007743d0374bdb0407a437",
+  "_rules": "",
+  "capacity": 8,
+  "crew": 2,
+  "eNation": 3,
+  "eNation_id": "66007713d0374bdb040739ec",
+  "eNation_string": "Harad",
+  "movedistance": "15",
+  "name": "Floss_Harad",
+  "price": 30,
+  "rammen": 6,
+  "rules": [
+    ""
+  ],
+  "size": 0,
+  "treffer": "W3",
+  "unitType": 5
+}
+
+{
+  "BesatzungsAnzahl": 3,
+  "BesatzungsEinheiten": "Minas Tirith",
+  "Equipment": "ohne",
+  "Identifier": "Speerschleuder Schiff_ohne_Gondor",
+  "Maschine_name": "Speerschleuder Schiff",
+  "ShootingDistance": 120,
+  "Size": 1,
+  "Structurepoints": 3,
+  "_id": "6600773dd0374bdb04079802",
+  "_rules": "Artillerietabelle Speerschleuder",
+  "angriff": 12,
+  "defense": 21,
+  "eNation": 2,
+  "eNation_id": "66007713d0374bdb040739e2",
+  "eNation_string": "Gondor",
+  "movedistance": "8",
+  "name": "Speerschleuder Schiff_ohne_Gondor",
+  "price": 100,
+  "rules": [
+    "Artillerietabelle Speerschleuder"
+  ],
+  "unitType": 4
+}

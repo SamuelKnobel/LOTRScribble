@@ -3,20 +3,17 @@
 // App.js
 import React, { useState, useEffect } from 'react';
 
-import axios from 'axios';
-import DataTable from './DataTable';
-
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
-
-import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BaseData from './pages/BaseData';
 
+import { clarity } from 'react-microsoft-clarity';
 
 
 function App () {
+
+  clarity.init('lqa7df2dhh');
 
   return (
 <BaseData/>  );

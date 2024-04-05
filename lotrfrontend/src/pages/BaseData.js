@@ -5,10 +5,13 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import BackendPath from '../configs/Config_Path.json';
 
 class BaseData extends Component {
   constructor(props) {
     super(props);
+
+
 
     this.state = {
       activeTab: 'Nations',
@@ -37,10 +40,13 @@ class BaseData extends Component {
   }
 
   fetchData = async (tabName) => {
+        // const BackEnd= "https://192.168.178.23:81/"
+        const BackEnd= BackendPath.BackEnd;
     const { apiUrls } = this;
+    console.log(BackEnd +apiUrls[tabName.toLowerCase()])
     try {
       console.log(apiUrls[tabName.toLowerCase()])
-      const response = await axios.get(apiUrls[tabName.toLowerCase()], { // the web -path defined in "Proxy" in Package.json is set before the name
+      const response = await axios.get(BackEnd +apiUrls[tabName.toLowerCase()], { 
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -48,6 +54,7 @@ class BaseData extends Component {
       });
 
       this.updateState(tabName, response.data);
+
       console.log(response.data)
       this.clearErrors(tabName);
     } catch (error) {
