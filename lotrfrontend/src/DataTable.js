@@ -36,8 +36,26 @@ const DataTable = ({ data, tableName, fetchData }) => {
         {
           return enumConfig[key][value]         
         }
-        else return value ===-99? NaN : value
+        else if (value ===-99)
+        {
+          return NaN
+        } 
+        else 
+        {
+          if (key === "fernkampfTreffer")
+          {
+            if (value === 0)
+            {
+              return NaN
+            }
+            else {return value}          
+          } 
+          else {return value}      
+          
+        }
       }
+      
+      console.log(key)
 
       return {
         Header: header,
@@ -49,6 +67,7 @@ const DataTable = ({ data, tableName, fetchData }) => {
               type="checkbox"
               checked={value}
               readOnly={true}
+              disabled={true}
             />
           ) : (
             <span>{mapValue(key,value)}</span>
@@ -69,7 +88,7 @@ const DataTable = ({ data, tableName, fetchData }) => {
     nextPage,
     canPreviousPage,
     canNextPage,
-  } = useTable({ columns, data, initialState: { pageIndex: 0, pageSize: 10 } }, useFilters, useSortBy, usePagination, useRowSelect);
+  } = useTable({ columns, data, initialState: { pageIndex: 0, pageSize: 15 } }, useFilters, useSortBy, usePagination, useRowSelect);
 
   const openEditPopup = (row) => {
     setSelectedRow(row);

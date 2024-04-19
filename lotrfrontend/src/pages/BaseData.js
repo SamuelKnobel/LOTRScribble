@@ -146,8 +146,9 @@ class BaseData extends Component {
   render() {
     const { nations, buildings, units,ships,machines, fields,rules, activeTab, errors } = this.state;
     return (
-      <div>
+      <div>         
         <Tabs>
+        <h1>Lord of the Rings - Data Overview</h1>
           <TabList>
             <Tab onClick={() => this.handleTabClick('Nations')}>Nations</Tab>
             <Tab onClick={() => this.handleTabClick('Buildings')}>Buildings</Tab>
@@ -159,47 +160,41 @@ class BaseData extends Component {
           </TabList>
 
            <TabPanel>
-            <h2>Nations</h2>
             <DataTable data={nations} tableName="Nations" fetchData={this.fetchData}/>
             {errors.Nations && <div>Error: {errors.Nations.message}</div>}
           </TabPanel>
 
           <TabPanel>
-            <h2>Buildings</h2>
             <DataTable data={buildings} tableName="Buildings" fetchData={this.fetchData} />
             {errors.Buildings && <div>Error: {errors.Buildings.message}</div>}
           </TabPanel>
 
           <TabPanel>
-            <h2>Units</h2>
             <DataTable data={units} tableName="Units" fetchData={this.fetchData} />
             {errors.Units && <div>Error: {errors.Units.message}</div>}
           </TabPanel>
 
           <TabPanel>
-            <h2>Ships</h2>
             <DataTable data={ships} tableName="Ships" fetchData={this.fetchData} />
             {errors.Ships && <div>Error: {errors.Ships.message}</div>}
           </TabPanel>
 
           <TabPanel>
-            <h2>Machines</h2>
             <DataTable data={machines} tableName="Machines" fetchData={this.fetchData} />
             {errors.Machines && <div>Error: {errors.Machines.message}</div>}
           </TabPanel>          
 
           <TabPanel>
-            <h2>Fields</h2>
             <DataTable data={fields} tableName="Fields" fetchData={this.fetchData} />
             {errors.Fields && <div>Error: {errors.Fields.message}</div>}
           </TabPanel>
 
           <TabPanel>
-            <h2>Rules</h2>
             <DataTable data={rules} tableName="Rules" fetchData={this.fetchData}/>
             {errors.Rules && <div>Error: {errors.rules.message}</div>}
           </TabPanel>          
         </Tabs>
+        
         <ToastContainer />
       </div>
     );

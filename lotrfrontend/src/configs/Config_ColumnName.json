@@ -86,7 +86,7 @@
           "immutable": false,
           "type": "number",
           "componentType": "input"
-        },
+        },         
         "BasicFood": {
           "Name": "Basic Food"
         },         
@@ -97,7 +97,7 @@
           "Name": "Max Pop"
         },                    
         "Identifier": {
-          "Name": "Identifier",
+          "Name": "Nati on Name",
           "searchable": true,
           "type":"text"
         },
@@ -118,10 +118,10 @@
           "type": "text"
         },
         "reductionCivil": {
-          "Name": "Baukosten Reduktion (Zivil-Gebäude)"
+          "Name": "Building costs discounts (Civil)"
         },         
         "reductionMilitary": {
-          "Name": "Baukosten Reduktion(Militär-Gebäude)"
+          "Name": "Building costs discounts (Military)"
         },    
            "side": {
           "Name": "Side",
@@ -250,6 +250,7 @@
         "size",        
         "unitType",
         "Equipment",
+        "nation_string",
         "attack_KK_FK",
         "attack_KK_NK",
         "attack_S",
@@ -267,9 +268,7 @@
         "price",
         "people",
         "movedistance",
-        "rules",
-        "name",
-        "nation_string"
+        "rules"
       ],
       "columnProps": {
         "Default": {
@@ -280,10 +279,10 @@
           "componentType": "input"
         },
         "Unit_name": {
-          "Name": "Unit name",
+          "Name": "Name",
           "searchable": true,
           "type": "text"
-        },
+        },       
         "Equipment": {
           "Name": "Equipment",
           "searchable": true,
@@ -305,11 +304,20 @@
           "Name": "Attack S"
         },
         "defense_KK": {
-          "Name": "Defense KK"
+          "Name": "Def KK"
         },
         "defense_RM": {
-          "Name": "Defense RM"
+          "Name": "Def RM"
         },
+        "fernkampfTreffer": {
+          "Name": "FK"
+        },
+        "nahkampfTreffer": {
+          "Name": "NK"
+        },        
+        "NbOfAttacks": {
+          "Name": "Nb of Attacks"
+        },  
         "heldentum": {
           "Name": "H"
         },
@@ -320,8 +328,14 @@
           "Name": "S"
         },
         "defense_S": {
-          "Name": "Defense S"
+          "Name": "Def S"
         },
+        "lifes": {
+          "Name": "Lifes"
+        },
+        "mut": {
+          "Name": "Courage"
+        },           
         "name": {
           "Name": "Name",
           "type":"text"
@@ -335,12 +349,12 @@
           "type": "text"
         } ,
         "_rules": {
-          "Name": "Regeln",
+          "Name": "Rules",
           "type": "text",
           "componentType": "textarea"
         } ,
         "rules": {
-          "Name": "Regeln",
+          "Name": "Rules",
           "type": "text",
           "immutable": true
         } ,        
@@ -355,7 +369,7 @@
           "type": "text"
         }    ,
         "people": {
-          "Name": "Volk",
+          "Name": "Peoples",
           "type": "text"
         }   ,
         "movedistance": {

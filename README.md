@@ -16,4 +16,3 @@ alternaltively the eject command could be removed so that it doesnt deletes the 
 For the Final Proof of Concept the Flask app is hosted on https://www.pythonanywhere.com and accessed via https://Samuelknobel.pythonanywhere.com/apidocs. Any changes have to be uploaded there as well. 
 
 The final app is hosed on GIT : https://samuelknobel.github.io/LOTRwebEditor.github.io/ <-- to update this the web app has to build and deployed again.
-
