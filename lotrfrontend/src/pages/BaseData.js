@@ -16,18 +16,9 @@ const BaseData = () => {
   const [buildings, setBuildings] = useState([]);
   const [fields, setFields] = useState([]);
   const [rules, setRules] = useState([]);
-  const [errors, setErrors] = useState({
-    Nations: null,
-    Buildings: null,
-    Fields: null,
-    Units: null,
-    Ships: null,
-    Machines: null,
-    Rules: null,
-  });
 
   const fetchData = async (tabName) => {
-    // const BackEnd= "https://192.168.178.23:81/"    
+    // const BackEnd= "https://192.168.17823:81/"    
     const BackEnd = BackendPath.BackEnd;
     const apiUrls = {
       nations: ['nations'],
@@ -48,11 +39,8 @@ const BaseData = () => {
       });
 
       updateState(tabName, response.data);
-      clearErrors(tabName);
     } catch (error) {
       console.error(`Error fetching ${tabName}:`, error);
-      updateErrors(tabName, error);
-
       if (tabName === getCurrentTabName()) {
         showFetchErrorPopup(tabName);
       }
@@ -65,7 +53,6 @@ const BaseData = () => {
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
-    fetchData(tabName);
   };
 
   const updateState = (tabName, data) => {
@@ -94,20 +81,6 @@ const BaseData = () => {
       default:
         break;
     }
-  };
-
-  const updateErrors = (tabName, error) => {
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [tabName]: error,
-    }));
-  };
-
-  const clearErrors = (tabName) => {
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [tabName]: null,
-    }));
   };
 
   const showFetchErrorPopup = (tabName) => {
@@ -142,37 +115,30 @@ const BaseData = () => {
 
         <TabPanel>
           <DataTable data={nations} tableName="Nations" fetchData={fetchData} />
-          {errors.Nations && <div>Error: {errors.Nations.message}</div>}
         </TabPanel>
 
         <TabPanel>
           <DataTable data={buildings} tableName="Buildings" fetchData={fetchData} />
-          {errors.Buildings && <div>Error: {errors.Buildings.message}</div>}
         </TabPanel>
 
         <TabPanel>
           <DataTable data={units} tableName="Units" fetchData={fetchData} />
-          {errors.Units && <div>Error: {errors.Units.message}</div>}
         </TabPanel>
 
         <TabPanel>
           <DataTable data={ships} tableName="Ships" fetchData={fetchData} />
-          {errors.Ships && <div>Error: {errors.Ships.message}</div>}
         </TabPanel>
 
         <TabPanel>
           <DataTable data={machines} tableName="Machines" fetchData={fetchData} />
-          {errors.Machines && <div>Error: {errors.Machines.message}</div>}
         </TabPanel>
 
         <TabPanel>
           <DataTable data={fields} tableName="Fields" fetchData={fetchData} />
-          {errors.Fields && <div>Error: {errors.Fields.message}</div>}
         </TabPanel>
 
         <TabPanel>
           <DataTable data={rules} tableName="Rules" fetchData={fetchData} />
-          {errors.Rules && <div>Error: {errors.rules.message}</div>}
         </TabPanel>
       </Tabs>
 

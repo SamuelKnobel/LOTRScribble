@@ -53,7 +53,8 @@ const DataTable = ({ data, tableName, fetchData }) => {
           else {return value}                
         }
       }
-            return {
+      
+      return {
         Header: header,
         accessor: key,
         Filter: isSearchable ? DefaultColumnFilter : false,
