@@ -50,14 +50,10 @@ const DataTable = ({ data, tableName, fetchData }) => {
             }
             else {return value}          
           } 
-          else {return value}      
-          
+          else {return value}                
         }
       }
-      
-      console.log(key)
-
-      return {
+            return {
         Header: header,
         accessor: key,
         Filter: isSearchable ? DefaultColumnFilter : false,
