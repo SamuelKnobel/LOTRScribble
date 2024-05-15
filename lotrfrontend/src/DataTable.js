@@ -4,16 +4,14 @@ import { useTable, useFilters, useSortBy, usePagination, useRowSelect } from 're
 import Config_ColumnName from './configs/Config_ColumnName.json';
 import Enums from './configs/Enums.json';
 import EditPopup from './EditPopup';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
-import {getConfigValue} from './Utils'
-import BackendPath from './configs/Config_Path.json';
+import { ToastContainer } from 'react-toastify';
+import { getConfigValue} from './Utils'
 
 const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
   return <input value={filterValue || ''} onChange={(e) => setFilter(e.target.value)} />;
 };
 
-const DataTable = ({ rawdata, tableName, fetchData }) => {
+const DataTable = ({ rawdata, tableName ,refetchData}) => {
   const [data, setData] = useState([])
   const tableConfig = Config_ColumnName.tables[tableName];
   const enumConfig = Enums.Enums;
@@ -26,16 +24,14 @@ const DataTable = ({ rawdata, tableName, fetchData }) => {
     else
       {setData(rawdata.data);}
 
-  }, [rawdata.isSuccess]);
-
+  }, [rawdata.isSuccess,rawdata.isPending,rawdata.length]);
 
 
   const columns = React.useMemo(() => {
+    // console.log("call UseMemo")
     if (data.length === 0 | (rawdata.length===0 )) {
       return [];
     }
-
-    const keys = Object.keys(data[0]);
 
     return tableConfig.columns.map((key, columnIndex) => {
 
@@ -65,7 +61,6 @@ const DataTable = ({ rawdata, tableName, fetchData }) => {
           else {return value}                
         }
       }
-      
       return {
         Header: header,
         accessor: key,
@@ -83,7 +78,8 @@ const DataTable = ({ rawdata, tableName, fetchData }) => {
           ),
       };
     });
-  }, [data, tableConfig]);
+
+  }, [data, tableConfig, enumConfig,rawdata.length]);
 
   const {
     getTableProps,
@@ -106,44 +102,6 @@ const DataTable = ({ rawdata, tableName, fetchData }) => {
   const closeEditPopup = () => {
     setSelectedRow(null);
   };  
-
-  const handleSaveEdit = async (editedData) => {
-    try {
-      // Make a PUT request to the backend API with the edited data
-      console.log(JSON.stringify(editedData))
-      try 
-      {
-        const response = await axios.get(`${BackendPath.BackEnd}${tableName.toLowerCase()}/${editedData._id}`, {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-        });
-      }
-    catch (error) {
-      console.error(`Error:`, error);
-      };
-      
-      const response = await axios.put(`${BackendPath.BackEnd}${tableName.toLowerCase()}/${editedData._id}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editedData),
-      });
-  
-      // Log the response from the backend (you can handle it as needed)
-      console.log('Update successful:', response.data);
-      // Close the edit popup
-      closeEditPopup();
-      // Reload the data from the backend after a successful update
-      await fetchData(tableName.toLowerCase()); // Assuming fetchData is a function to fetch data (you can adapt it based on your actual implementation)
-
-    } catch (error) {
-      // Handle errors from the backend
-      console.error('Error updating data:', error.message);
-      // You can provide feedback to the user here (e.g., show an error message)
-    }
-  };
 
   return (
     <>
@@ -198,7 +156,8 @@ const DataTable = ({ rawdata, tableName, fetchData }) => {
       </div>
         {/* Edit Popup */}
             {selectedRow && (
-        <EditPopup tableName={tableName} rowData={selectedRow} onSave={handleSaveEdit} onCancel={closeEditPopup} />
+        // <EditPopup tableName={tableName} rowData={selectedRow} onSave={handleSaveEdit} onCancel={closeEditPopup} />
+        <EditPopup tableName={tableName} rowData={selectedRow} onCancel={closeEditPopup} refetchData={refetchData}/>
       )}
      <ToastContainer />
     </>

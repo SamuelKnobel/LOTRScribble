@@ -1,6 +1,6 @@
 import axios from 'axios';
 import BackendPath from './configs/Config_Path.json';
-import { useQuery ,useQueries } from '@tanstack/react-query'
+import { useQuery , useMutation} from '@tanstack/react-query'
 
 
 export const getConfigValue=(tableConfig,fieldName, property, returnDefault) => {
@@ -35,17 +35,45 @@ async function fetchData (query)
 
 export function GameData(tabName)
 {
+  // console.log("LoadGameData")
   let temp = tabName.toLowerCase()
   return useQuery({
     queryKey: [tabName],
     queryFn: () => fetchData(temp)})
 }
+
 export function DataChanges()
 {
   return useQuery({
     queryKey: ['changelog'],
     queryFn: () => fetchData('changelog')})
 }
+
+export function updateData({tableName,editedData})
+{
+  const dataToUpdate = editedData
+  const header = { 'Content-Type': 'application/json'}
+  const URL = `${BackendPath.BackEnd}${tableName.toLowerCase()}/${dataToUpdate._id}`
+  const response =  axios.put(URL, {
+    headers: header,
+    body: JSON.stringify(dataToUpdate),
+  });
+  console.log(response)
+  return response;
+}
+
+
+export function DataUpdater(onSucess)
+{
+  return useMutation({
+    mutationFn: (tableName, dataToUpdate)=>{
+      return updateData(tableName, dataToUpdate)      
+    },
+    onSuccess: onSucess
+  })
+}
+
+
 
 
 

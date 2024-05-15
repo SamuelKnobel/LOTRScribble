@@ -4,12 +4,11 @@ import './EditPopup.css';
 import Config_ColumnName from './configs/Config_ColumnName.json';
 import Enums from './configs/Enums.json';
 import Tooltip from './Tooltip/Tooltip';
-import {getConfigValue} from './Utils'
+import {getConfigValue,DataUpdater} from './Utils'
 
-
-const EditPopup = ({tableName, rowData, onSave, onCancel }) => {
-    let tableConfig = Config_ColumnName.tables[tableName];
-    const enumConfig = Enums.Enums;
+const EditPopup = ({tableName, rowData, onCancel, refetchData }) => {
+  let tableConfig = Config_ColumnName.tables[tableName];
+  const enumConfig = Enums.Enums;
 
   const [editedData, setEditedData] = useState({ ...rowData });
 
@@ -28,10 +27,7 @@ const EditPopup = ({tableName, rowData, onSave, onCancel }) => {
     }));
   };
 
-  const handleSave = () => {
-    onSave(editedData);
-    //showNotion(editedData.Identifier)    
-  };
+  const mutation= DataUpdater(refetchData); 
 
   const getCommonAttributes=(fieldName) =>
   {
@@ -84,7 +80,14 @@ const EditPopup = ({tableName, rowData, onSave, onCancel }) => {
         <button className="cancel-button" onClick={onCancel}>
           Cancel
         </button>
-        <button className="save-button" onClick={handleSave}>
+        <button className="save-button" onClick={
+          ()=>{
+            mutation.mutate({tableName,editedData}) ;
+            onCancel()
+          }
+         
+
+        }>
           Save
         </button>        
       </div>

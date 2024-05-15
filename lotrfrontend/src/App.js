@@ -1,7 +1,4 @@
-// src/App.js
-
-// App.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import 'react-tabs/style/react-tabs.css';
 
@@ -31,8 +28,7 @@ function App () {
 
   return (
     <>
-        <QueryClientProvider client={client}>
-
+      <QueryClientProvider client={client}>
       <NavBar/>  
         <div className='router-container'>
           <Routes>

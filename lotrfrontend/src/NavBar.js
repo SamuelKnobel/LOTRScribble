@@ -5,6 +5,7 @@ export default function NavBar()
     return<nav className="nav">
         <Link to="/LOTRwebEditor.github.io/" className="site-title">LOTR</Link>
         <ul>
+            <CustomLink to="/LOTRwebEditor.github.io/">Data Overview</CustomLink>
             <CustomLink to="/LOTRwebEditor.github.io/changelog">Change Log</CustomLink>
             <CustomLink to="/LOTRwebEditor.github.io/gamestate">Game State</CustomLink>
             <CustomLink to="/LOTRwebEditor.github.io/about">About</CustomLink>    

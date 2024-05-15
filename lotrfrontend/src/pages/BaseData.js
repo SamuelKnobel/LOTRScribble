@@ -5,6 +5,8 @@ import 'react-tabs/style/react-tabs.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GameData } from '../Utils';
+import { useQueryClient} from '@tanstack/react-query'
+
 
 const BaseData = () => {
   const [activeTab, setActiveTab] = useState('Nations');
@@ -60,24 +62,34 @@ const BaseData = () => {
     });
   };
 
+  let currentTabData = GameData(activeTab)
+  
+  const queryClient = useQueryClient()
 
-  const currentTabData =GameData(activeTab)
+  function ReloadData()
+  {
+    queryClient.resetQueries(activeTab.toLowerCase, { exact: true })
+    console.log("reload Data")
+    currentTabData = GameData(activeTab)    
+  }
 
   useEffect(() => {
+    // console.log("call use Effect")
     if(currentTabData.isError)
       {
         console.error(`Error fetching ${activeTab}:`, currentTabData.error);
         showFetchErrorPopup(activeTab);
       }
     else
+    {
       updateState(activeTab,currentTabData)
+    }
   }, [currentTabData.isSuccess, activeTab]);
 
-  console.log(nations)
   return (
-    <div>
+    <div>      
       <Tabs>
-        <h1 style = {{paddingLeft: 10 +'px'}}>Lord of the Rings - Data Overview</h1>
+        <h1 style = {{paddingLeft: 10 +'px'}}>Lord of the Rings - Data Overview</h1> 
         <TabList>
           <Tab onClick={() => handleTabClick('Nations')}>Nations</Tab>
           <Tab onClick={() => handleTabClick('Buildings')}>Buildings</Tab>
@@ -89,31 +101,31 @@ const BaseData = () => {
         </TabList>
 
         <TabPanel>
-          <DataTable rawdata={nations} tableName="Nations"  />
+          <DataTable rawdata={nations} tableName="Nations" refetchData={ReloadData}  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable rawdata={buildings} tableName="Buildings"  />
+          <DataTable rawdata={buildings} tableName="Buildings" refetchData={ReloadData}  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable rawdata={units} tableName="Units"  />
+          <DataTable rawdata={units} tableName="Units"  refetchData={ReloadData}  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable rawdata={ships} tableName="Ships"  />
+          <DataTable rawdata={ships} tableName="Ships" refetchData={ReloadData}  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable rawdata={machines} tableName="Machines"  />
+          <DataTable rawdata={machines} tableName="Machines" refetchData={ReloadData}  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable rawdata={fields} tableName="Fields"/>
+          <DataTable rawdata={fields} tableName="Fields" refetchData={ReloadData}  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable rawdata={rules} tableName="Rules"  />
+          <DataTable rawdata={rules} tableName="Rules"  refetchData={ReloadData}  />
         </TabPanel>
       </Tabs>
 
