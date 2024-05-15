@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import DataTable from '../DataTable';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import BackendPath from '../configs/Config_Path.json';
+import { GameData } from '../Utils';
 
 const BaseData = () => {
   const [activeTab, setActiveTab] = useState('Nations');
@@ -16,40 +15,6 @@ const BaseData = () => {
   const [buildings, setBuildings] = useState([]);
   const [fields, setFields] = useState([]);
   const [rules, setRules] = useState([]);
-
-  const fetchData = async (tabName) => {
-    // const BackEnd= "https://192.168.17823:81/"    
-    const BackEnd = BackendPath.BackEnd;
-    const apiUrls = {
-      nations: ['nations'],
-      buildings: ['buildings'],
-      fields: ['fields'],
-      units: ['units'],
-      ships: ['ships'],
-      machines: ['machines'],
-      rules: ['rules'],
-    };
-
-    try {
-      const response = await axios.get(BackEnd + apiUrls[tabName.toLowerCase()], {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-
-      updateState(tabName, response.data);
-    } catch (error) {
-      console.error(`Error fetching ${tabName}:`, error);
-      if (tabName === getCurrentTabName()) {
-        showFetchErrorPopup(tabName);
-      }
-    }
-  };
-
-  const getCurrentTabName = () => {
-    return activeTab;
-  };
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
@@ -95,14 +60,24 @@ const BaseData = () => {
     });
   };
 
-  useEffect(() => {
-    fetchData(activeTab);
-  }, [activeTab]);
 
+  const currentTabData =GameData(activeTab)
+
+  useEffect(() => {
+    if(currentTabData.isError)
+      {
+        console.error(`Error fetching ${activeTab}:`, currentTabData.error);
+        showFetchErrorPopup(activeTab);
+      }
+    else
+      updateState(activeTab,currentTabData)
+  }, [currentTabData.isSuccess, activeTab]);
+
+  console.log(nations)
   return (
     <div>
       <Tabs>
-        <h1>Lord of the Rings - Data Overview</h1>
+        <h1 style = {{paddingLeft: 10 +'px'}}>Lord of the Rings - Data Overview</h1>
         <TabList>
           <Tab onClick={() => handleTabClick('Nations')}>Nations</Tab>
           <Tab onClick={() => handleTabClick('Buildings')}>Buildings</Tab>
@@ -114,31 +89,31 @@ const BaseData = () => {
         </TabList>
 
         <TabPanel>
-          <DataTable data={nations} tableName="Nations" fetchData={fetchData} />
+          <DataTable rawdata={nations} tableName="Nations"  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable data={buildings} tableName="Buildings" fetchData={fetchData} />
+          <DataTable rawdata={buildings} tableName="Buildings"  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable data={units} tableName="Units" fetchData={fetchData} />
+          <DataTable rawdata={units} tableName="Units"  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable data={ships} tableName="Ships" fetchData={fetchData} />
+          <DataTable rawdata={ships} tableName="Ships"  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable data={machines} tableName="Machines" fetchData={fetchData} />
+          <DataTable rawdata={machines} tableName="Machines"  />
         </TabPanel>
 
         <TabPanel>
-          <DataTable data={fields} tableName="Fields" fetchData={fetchData} />
+          <DataTable rawdata={fields} tableName="Fields"/>
         </TabPanel>
 
         <TabPanel>
-          <DataTable data={rules} tableName="Rules" fetchData={fetchData} />
+          <DataTable rawdata={rules} tableName="Rules"  />
         </TabPanel>
       </Tabs>
 

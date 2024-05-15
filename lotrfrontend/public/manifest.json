@@ -1,6 +1,6 @@
 {
-  "short_name": "LOTR Web GUI",
-  "name": "Create React App Sample",
+  "short_name": "LOTR Gamedata Web GUI",
+  "name": "GUI for Lord of the Rings - Tabletop Gamedata",
   "icons": [
     {
       "src": "logo.jpeg",

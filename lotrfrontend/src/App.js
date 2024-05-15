@@ -15,13 +15,24 @@ import {Routes, Route} from  "react-router-dom"
 import ChangeLog from './pages/ChangeLog';
 import GameState from './pages/GameState';
 import About from './pages/About';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
+import {ReactQueryDevtools} from "@tanstack/react-query-devtools"
 
 function App () {
   clarity.init('lqa7df2dhh');
 
+  const client = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: true,
+      },
+    },    
+  });
 
   return (
     <>
+        <QueryClientProvider client={client}>
+
       <NavBar/>  
         <div className='router-container'>
           <Routes>
@@ -32,8 +43,9 @@ function App () {
 
           </Routes>
         </div>
+        <ReactQueryDevtools/>
+        </QueryClientProvider>
 
-  
     </>
    );
 };

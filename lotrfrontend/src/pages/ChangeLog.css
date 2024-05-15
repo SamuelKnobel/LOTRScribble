@@ -1,0 +1,64 @@
+.changeField_box {
+
+  position: relative;
+
+    /* 
+    background-color: #e4e3e3; 
+    border-bottom: 1px solid #ccc */
+    width: 60%;
+    padding: 10px; 
+    margin: 0.4rem; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    list-style: none;
+
+
+}
+
+.changeField_box:hover {
+    /* background-color: #f16161    ; */
+    background-color: #b8b4b4    ;
+
+}
+
+
+  
+  /* Style for list items */
+  /* .changeField_box li {
+    border-bottom: 1px solid #ccc; /* Add a bottom border 
+  } */
+  
+  /* Remove border from last item */
+  /* .changeField_box li:last-child {
+    border-bottom: none;
+  } */
+
+  .changeField_content{
+    position: relative;
+    text-align:left;
+    margin-top: 10px;
+    left:0;
+    top:0;    
+    font-size: large;
+  }
+  .changeField_content p {
+    margin: 5px 0;
+  }
+
+  .changeField_date{
+   position: absolute;
+   right:0;
+   top:0;
+   text-align:right;
+   padding: 10px;
+   /* width: 80%; */    
+  }  
+  .changeField_content ul {
+    margin: 0;
+  }
+  .changeField_content ul li {
+  }
+
+
+  

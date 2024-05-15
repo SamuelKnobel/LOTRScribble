@@ -1,5 +1,5 @@
 import './DataTable.css';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTable, useFilters, useSortBy, usePagination, useRowSelect } from 'react-table';
 import Config_ColumnName from './configs/Config_ColumnName.json';
 import Enums from './configs/Enums.json';
@@ -13,13 +13,25 @@ const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
   return <input value={filterValue || ''} onChange={(e) => setFilter(e.target.value)} />;
 };
 
-const DataTable = ({ data, tableName, fetchData }) => {
+const DataTable = ({ rawdata, tableName, fetchData }) => {
+  const [data, setData] = useState([])
   const tableConfig = Config_ColumnName.tables[tableName];
   const enumConfig = Enums.Enums;
   const [selectedRow, setSelectedRow] = useState(null);
   
+  useEffect(() => {
+    if ((rawdata.isPending) | (rawdata.length===0 ))  { 
+      setData([])
+    }
+    else
+      {setData(rawdata.data);}
+
+  }, [rawdata.isSuccess]);
+
+
+
   const columns = React.useMemo(() => {
-    if (data.length === 0) {
+    if (data.length === 0 | (rawdata.length===0 )) {
       return [];
     }
 
@@ -134,15 +146,15 @@ const DataTable = ({ data, tableName, fetchData }) => {
   };
 
   return (
-    <div>
+    <>
       <table {...getTableProps()} className="react-table">
       <thead>
         {headerGroups.map((headerGroup) => (
           <React.Fragment key={headerGroup.id}>
             <tr {...headerGroup.getHeaderGroupProps()}>
               <th></th> {/* Empty cell to align with Edit button */}
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())} className="column-style">
+              {headerGroup.headers.map((column, index) => (
+                <th key={index} {...column.getHeaderProps(column.getSortByToggleProps())} className="column-style">
                   {column.render('Header')}
                   <span>{column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}</span>
                   <div>{column.canFilter ? column.render('Filter') : null}</div>
@@ -152,23 +164,23 @@ const DataTable = ({ data, tableName, fetchData }) => {
           </React.Fragment>
         ))}
       </thead>
-        <tbody {...getTableBodyProps()}>
-          {page.map((row, rowIndex) => {
-            prepareRow(row);
-            return (
-              <React.Fragment key={rowIndex}>
-                <tr {...row.getRowProps()}>
-                <td>
-                    <button onClick={() => openEditPopup(row.original)}>Edit</button>
-                  </td>
-                  {row.cells.map((cell) => (
-                     <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                     ))}
-                </tr>
-              </React.Fragment>
-            );
-          })}
-        </tbody>
+      <tbody {...getTableBodyProps()}>
+        {page.map((row, rowIndex) => {
+          prepareRow(row);
+          return (
+            <React.Fragment key={rowIndex}>
+              <tr {...row.getRowProps()}>
+              <td>
+                  <button onClick={() => openEditPopup(row.original)}>Edit</button>
+                </td>
+                {row.cells.map((cell, index) => (
+                    <td key={index} {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    ))}
+              </tr>
+            </React.Fragment>
+          );
+        })}
+      </tbody>
       </table>
       <div>
         <button onClick={() => previousPage()} disabled={!canPreviousPage}>
@@ -189,7 +201,7 @@ const DataTable = ({ data, tableName, fetchData }) => {
         <EditPopup tableName={tableName} rowData={selectedRow} onSave={handleSaveEdit} onCancel={closeEditPopup} />
       )}
      <ToastContainer />
-    </div>
+    </>
   );
 };
 
