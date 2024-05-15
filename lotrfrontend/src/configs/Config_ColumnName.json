@@ -97,7 +97,7 @@
           "Name": "Max Pop"
         },                    
         "Identifier": {
-          "Name": "Nati on Name",
+          "Name": "Nation Name",
           "searchable": true,
           "type":"text"
         },
