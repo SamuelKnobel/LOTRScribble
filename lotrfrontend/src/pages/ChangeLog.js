@@ -121,6 +121,11 @@ const DataTable = ({ data }) => {
       {
         Header: 'Date of Change',
         accessor: 'timestamp',
+        sortType: (rowA, rowB, columnId) => {
+          const dateA = new Date(rowA.values[columnId]);
+          const dateB = new Date(rowB.values[columnId]);
+          return dateA.getTime() - dateB.getTime();
+        },        
       },
     ],
     []

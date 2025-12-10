@@ -32,10 +32,10 @@ function App () {
       <NavBar/>  
         <div className='router-container'>
           <Routes>
-            <Route path= "/LOTRwebEditor.github.io/" element = {<BaseData/> }/>
-            <Route path= "/LOTRwebEditor.github.io/changelog/" element = {<ChangeLog/> }/>
-            <Route path= "/LOTRwebEditor.github.io/gamestate/" element = {<GameState/> }/>
-            <Route path= "/LOTRwebEditor.github.io/about/" element = {<About/> }/>                        
+            <Route path= "/LOTRScribble/" element = {<BaseData/> }/>
+            <Route path= "/LOTRScribble/changelog/" element = {<ChangeLog/> }/>
+            <Route path= "/LOTRScribble/gamestate/" element = {<GameState/> }/>
+            <Route path= "/LOTRScribble/about/" element = {<About/> }/>                        
 
           </Routes>
         </div>

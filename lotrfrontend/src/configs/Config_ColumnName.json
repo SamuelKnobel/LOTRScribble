@@ -91,10 +91,10 @@
           "Name": "Basic Food"
         },         
         "CounterMax": {
-          "Name": "Max Count"
+          "Name": "Turns per Population"
         },   
         "maxPopulation": {
-          "Name": "Max Pop"
+          "Name": "Base Cap Population"
         },                    
         "Identifier": {
           "Name": "Nation Name",
@@ -111,7 +111,7 @@
           "searchable": false
         },
         "CounterMaxPopDependend": {
-          "Name": "Max Pop"
+          "Name": "Slow Growth"
         },
         "name": {
           "Name": "Name",
