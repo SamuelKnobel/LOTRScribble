@@ -1,11 +1,13 @@
 import logging
 from flask import Flask, request, jsonify, redirect, url_for
 from flask_cors import CORS
-from bson import ObjectId
+from pymongo import MongoClient
+from bson.objectid import ObjectId
 from flasgger import Swagger
 import json
 import sys
 import Utils
+import atexit
 
 from logging.config import dictConfig
 
@@ -26,7 +28,9 @@ dictConfig({
 })
 # Connect to MongoDB
 client = Utils.connect_to_mongodb()
-db = client['LOTR_BaseData']
+db_BaseData = client['LOTR_BaseData']
+db_GameData = client['LOTR_GameData']
+
 
 # Create Flask app
 app = Flask(__name__)
@@ -35,16 +39,17 @@ Swagger(app)
 
 @app.route('/apidocs/')
 def APIHOME():
-    return
+    return " LOTR Backend API Documentation Home. Navigate to /apidocs/index.html for Swagger UI."
 
 
 @app.route('/')
 def index():
     return redirect(url_for("APIHOME"))
 
-@app.on_event("shutdown")
+@atexit.register
 def shutdown_db_client():
     client.close()
+    print("MongoDB client closed on exit.")
 
 @app.route('/units', methods=['GET'])
 def get_units():
@@ -57,7 +62,7 @@ def get_units():
       404:
         description: Items not found.
     """
-    data = get_data('UnitData')
+    data = get_baseData('UnitData')
     return data
 
 @app.route('/ships', methods=['GET'])
@@ -71,7 +76,7 @@ def get_ships():
       404:
         description: Items not found.
     """
-    return get_data('ShipData')
+    return get_baseData('ShipData')
 
 @app.route('/machines', methods=['GET'])
 def get_machines():
@@ -84,7 +89,7 @@ def get_machines():
       404:
         description: Items not found.
     """
-    return get_data('MachineData')
+    return get_baseData('MachineData')
 
 @app.route('/nations', methods=['GET'])
 def get_nations():
@@ -97,7 +102,7 @@ def get_nations():
       404:
         description: Items not found.
     """
-    return get_data('NationData')
+    return get_baseData('NationData')
 
 @app.route('/fields', methods=['GET'])
 def get_fields():
@@ -110,7 +115,7 @@ def get_fields():
       404:
         description: Items not found.
     """
-    return get_data('FieldData')
+    return get_baseData('FieldData')
 
 
 @app.route('/buildings', methods=['GET'])
@@ -124,7 +129,7 @@ def get_buildings():
       404:
         description: Items not found.
     """
-    return get_data('BuildingData')
+    return get_baseData('BuildingData')
 
 
 @app.route('/rules', methods=['GET'])
@@ -138,7 +143,7 @@ def get_rules():
        404:
          description: Items not found.
      """
-    return get_data('RuleData')
+    return get_baseData('RuleData')
 
 @app.route('/changelog', methods=['GET'])
 def get_changelog():
@@ -151,9 +156,9 @@ def get_changelog():
        404:
          description: no changes found.
      """
-    return get_data('ChangeLogs')
+    return get_baseData('ChangeLogs')
 
-def get_data(collection_name):
+def get_baseData(collection_name):
     """
     Get a list of all items in the specified collection.
     ---
@@ -169,12 +174,140 @@ def get_data(collection_name):
         description: Items not found.
     """
     logging.info(f'Collection Name: {collection_name}')
-    collection = db[collection_name]
+    collection = db_BaseData[collection_name]
     items = list(collection.find())
     logging.info(f'Items in Collection: {items}')
     items_clean = Utils.convert_objectid_to_string(items)
 
     return jsonify(items_clean)
+
+def get_gameData(data_name: str):
+    """
+    Get a list of all items in the specified collection.
+    ---
+    parameters:
+      - name: collection_name
+        in: path
+        type: string
+        description: The name of the collection to retrieve data from.
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    logging.info(f'Collection Name: {"StartData"}')
+    collection = db_GameData["StartData"]
+    items = list(collection.find())
+    for item in items:
+        if item["name"] == data_name:
+            logging.info(f'Found Data: {item}')
+            item["_id"] = Utils.convert_objectid_to_string(item["_id"])
+            return item
+    return jsonify({'error': f'Data: {data_name} not found'}), 404
+
+@app.route('/StartData/<data_name>', methods=['GET'])
+def get_startdata(data_name):
+    """
+    Get specified StartData Data.
+
+    - FertSeason: Fertitily Modifier Per Season
+
+    - Trade: Money per Trade Value
+
+    - Food_UnitType: BaseFood per Unit Type
+
+    - Varia: e.g. StartGold
+
+    - FoodSize: returns a Tuple -> Food = (BasicFood + Unit-Typ Faktor + Unit-Size Faktor1)* Unit-Size Faktor2
+
+    ---
+    parameters:
+      - name: data_name
+        in: path
+        type: string
+        description: The name of the data to retrieve.
+    responses:
+      200: 
+        description: JSON data.
+      404: 
+        description: Data not found.
+    """
+
+    return get_gameData(data_name)
+
+@app.route('/StartData/<data_name>', methods=['PUT'])
+def update_startdata(data_name):
+    """
+    Update a specific key in a StartData document.
+    Expects JSON body: { "key": "some_key", "value": new_value }
+    ---
+    parameters:
+      - name: data_name
+        in: path
+        type: string
+        description: The name of the StartData document to update.
+    responses:
+      200:
+        description: Update successful.
+      400:
+        description: Bad request (e.g., key does not exist or type mismatch).
+      404:
+        description: Data container not found.
+    """
+    logging.info(f'Attempting to update StartData: {data_name}')
+    
+    # 1. Get the collection
+    collection = db_GameData["StartData"]
+    
+    # 2. Find the document
+    item = collection.find_one({"name": data_name})
+    
+    if not item:
+        return jsonify({'error': f'Data container "{data_name}" not found'}), 404
+
+    # 3. Parse Request Body
+    data = request.get_json()
+    if not data or 'key' not in data or 'value' not in data:
+        return jsonify({'error': 'Request body must contain "key" and "value"'}), 400
+
+    target_key = str(data['key']) # Ensure key is string (matches your Trade.json format "0", "1")
+    new_value = data['value']
+    
+    # 4. Validate: Does Key Exist? (No new keys allowed)
+    if target_key not in item:
+        return jsonify({'error': f'Key "{target_key}" does not exist in "{data_name}". Creating new keys is forbidden.'}), 400
+
+    # 5. Validate: Data Type Consistency
+    current_value = item[target_key]
+    
+    # Special handling for Numbers (Allow Int to update Float, but cast it)
+    if isinstance(current_value, float) and isinstance(new_value, (int, float)):
+        new_value = float(new_value)
+    # Check if types match (excluding the number exception above)
+    elif type(current_value) != type(new_value):
+        return jsonify({
+            'error': f'Type Mismatch. Key "{target_key}" expects {type(current_value).__name__}, but got {type(new_value).__name__}'
+        }), 400
+
+    # 6. Perform the Update
+    try:
+        # Use $set to update only the specific key
+        collection.update_one(
+            {"_id": item["_id"]},
+            {"$set": {target_key: new_value}}
+        )
+        logging.info(f'Updated {data_name} -> {target_key} to {new_value}')
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Updated {target_key} to {new_value}',
+            'newValue': new_value
+        }), 200
+        
+    except Exception as e:
+        logging.error(f"Database update failed: {e}")
+        return jsonify({'error': 'Internal Database Error'}), 500
 
 
 def get_item_by_id(collection_name, item_id):
@@ -199,7 +332,7 @@ def get_item_by_id(collection_name, item_id):
     """
     print(collection_name)
 
-    collection = db[collection_name]
+    collection = db_BaseData[collection_name]
     item = collection.find_one({'_id': ObjectId(item_id)})
 
     if item:
@@ -473,7 +606,7 @@ def update_item_by_id(collection_name, item_id):
     update_data.pop("_id", None)
 
     # Get the existing item data
-    collection = db[collection_name]
+    collection = db_BaseData[collection_name]
     existing_item = collection.find_one({'_id': ObjectId(item_id)})
 
     if existing_item:
@@ -495,13 +628,18 @@ def update_item_by_id(collection_name, item_id):
                 identifier = existing_item['name']
 
             # currently logs are not saved, each trigger of this function recreates the ChangeLog Collection
-            Utils.log_changes(db, collection_name, item_id, identifier, changes)
+            Utils.log_changes(db_BaseData, collection_name, item_id, identifier, changes)
 
         collection.update_one(filter_, new_values)
         return jsonify({'message': 'Unit updated successfully'})
 
     else:
         return jsonify({'error': f'Item: {item_id} or {collection_name.capitalize()} not found'}), 404
+
+
+
+
+
 
 @app.after_request
 def after_request(response):

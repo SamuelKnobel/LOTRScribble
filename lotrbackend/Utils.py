@@ -8,7 +8,8 @@ from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
 from pymongo.server_api import ServerApi
-from bson import ObjectId, json_util
+from bson import json_util
+from bson.objectid import ObjectId
 
 # logging.basicConfig(level=logging.DEBUG)
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -22,7 +23,9 @@ def connect_to_mongodb():
     mongo_cluster = os.getenv('MONGO_CLUSTER_NAME')
 
     # uri = f"mongodb+srv://User0:Admin1@cluster0.ela823u.mongodb.net/?retryWrites=true&w=majority"
+    # uri = "mongodb+srv://User0:<db_password>@cluster0.ela823u.mongodb.net/?appName=Cluster0"
     uri = f"mongodb+srv://{mongo_username}:{mongo_password}@{mongo_cluster}.mongodb.net/?retryWrites=true&w=majority"
+
     # Create a new client and connect to the server
     client = MongoClient(uri, server_api=ServerApi('1'))
 
