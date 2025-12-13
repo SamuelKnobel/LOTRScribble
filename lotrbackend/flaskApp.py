@@ -8,8 +8,9 @@ import json
 import sys
 import Utils
 import atexit
-
+import os
 from logging.config import dictConfig
+from dotenv import load_dotenv
 
 dictConfig({
     'version': 1,
@@ -197,7 +198,7 @@ def get_gameData(data_name: str):
         description: Items not found.
     """
     logging.info(f'Collection Name: {"StartData"}')
-    collection = db_GameData["StartData"]
+    collection = db_BaseData["StartData"]
     items = list(collection.find())
     for item in items:
         if item["name"] == data_name:
@@ -244,7 +245,7 @@ def update_startdata(data_name):
     logging.info(f'Attempting to update StartData: {data_name}')
     
     # 1. Get the collection
-    collection = db_GameData["StartData"]
+    collection = db_BaseData["StartData"]
     
     # 2. Find the document
     item = collection.find_one({"name": data_name})
@@ -310,7 +311,7 @@ def update_startdata(data_name):
             # Using data_name (e.g. "Trade") as the identifier
             Utils.log_changes(
                 db=db_BaseData,
-                collection_name="ChangeLogs",
+                collection_name="StartData",
                 item_id=str(item["_id"]), 
                 item_identifier=data_name, 
                 changes=changes
@@ -665,10 +666,6 @@ def update_item_by_id(collection_name, item_id):
         return jsonify({'error': f'Item: {item_id} or {collection_name.capitalize()} not found'}), 404
 
 
-
-
-
-
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -678,10 +675,17 @@ def after_request(response):
 
 
 
-if __name__ == '__main__':
-    logging.info("Test")
-    # run app in debug mode on port 81
-    app.run(debug=True, port=81, host='0.0.0.0', ssl_context='adhoc')
+# if __name__ == '__main__':
+#     logging.info("Test")
+#     # run app in debug mode on port 81
+#     app.run(debug=True, port=81, host='0.0.0.0', ssl_context='adhoc')
+
+
+if __name__ == "__main__":
+    load_dotenv()
+    port = os.getenv('PORT',5000)
+    app.run(host="0.0.0.0", port=port)
+
 
 
 # load page using https://192.168.178.23:81/apidocs/
