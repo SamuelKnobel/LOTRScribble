@@ -14,7 +14,6 @@ import GameState from './pages/GameState';
 import About from './pages/About';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools"
-
 function App () {
   clarity.init('lqa7df2dhh');
 
@@ -32,10 +31,10 @@ function App () {
       <NavBar/>  
         <div className='router-container'>
           <Routes>
-            <Route path= "/LOTRScribble/" element = {<BaseData/> }/>
-            <Route path= "/LOTRScribble/changelog/" element = {<ChangeLog/> }/>
-            <Route path= "/LOTRScribble/gamestate/" element = {<GameState/> }/>
-            <Route path= "/LOTRScribble/about/" element = {<About/> }/>                        
+            <Route path= "/" element = {<BaseData/> }/>
+            <Route path= "/changelog/" element = {<ChangeLog/> }/>
+            <Route path= "/gamestate/" element = {<GameState/> }/>
+            <Route path= "/about/" element = {<About/> }/>                        
 
           </Routes>
         </div>

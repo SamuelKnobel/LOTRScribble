@@ -1,6 +1,6 @@
 {
   "name": "lotr-frontend",
-  "homepage": "https://samuelknobel.github.io/LOTRScribble",
+  "homepage": "https://samuelknobel.github.io/LOTRScribble/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
