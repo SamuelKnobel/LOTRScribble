@@ -239,21 +239,7 @@ def get_startdata(data_name):
 @app.route('/StartData/<data_name>', methods=['PUT'])
 def update_startdata(data_name):
     """
-    Update a specific key in a StartData document.
-    Expects JSON body: { "key": "some_key", "value": new_value }
-    ---
-    parameters:
-      - name: data_name
-        in: path
-        type: string
-        description: The name of the StartData document to update.
-    responses:
-      200:
-        description: Update successful.
-      400:
-        description: Bad request (e.g., key does not exist or type mismatch).
-      404:
-        description: Data container not found.
+    Update a specific key in a StartData document and log the changes.
     """
     logging.info(f'Attempting to update StartData: {data_name}')
     
@@ -271,10 +257,10 @@ def update_startdata(data_name):
     if not data or 'key' not in data or 'value' not in data:
         return jsonify({'error': 'Request body must contain "key" and "value"'}), 400
 
-    target_key = str(data['key']) # Ensure key is string (matches your Trade.json format "0", "1")
+    target_key = str(data['key']) 
     new_value = data['value']
     
-    # 4. Validate: Does Key Exist? (No new keys allowed)
+    # 4. Validate: Does Key Exist?
     if target_key not in item:
         return jsonify({'error': f'Key "{target_key}" does not exist in "{data_name}". Creating new keys is forbidden.'}), 400
 
@@ -284,15 +270,58 @@ def update_startdata(data_name):
     # Special handling for Numbers (Allow Int to update Float, but cast it)
     if isinstance(current_value, float) and isinstance(new_value, (int, float)):
         new_value = float(new_value)
-    # Check if types match (excluding the number exception above)
+    # Check if types match
     elif type(current_value) != type(new_value):
         return jsonify({
             'error': f'Type Mismatch. Key "{target_key}" expects {type(current_value).__name__}, but got {type(new_value).__name__}'
         }), 400
 
+# --- LOGGING CHANGES START ---
+    # Only log if the value actually changed
+    if current_value != new_value:
+        
+        # Helper to stringify complex objects for logging
+        def format_for_log(val):
+            # If it's a simple primitive, keep it as is
+            if isinstance(val, (int, float, str, bool)):
+                return val
+            # If it's none, return None
+            if val is None:
+                return None
+            # Otherwise (dict, list, tuple, etc.), dump to JSON string
+            try:
+                import json
+                return json.dumps(val)
+            except:
+                return str(val)
+
+        # Apply formatting
+        log_old = format_for_log(current_value)
+        log_new = format_for_log(new_value)
+
+        changes = {
+            target_key: {
+                'old': log_old, 
+                'new': log_new
+            }
+        }
+        
+        try:
+            # Using data_name (e.g. "Trade") as the identifier
+            Utils.log_changes(
+                db=db_BaseData,
+                collection_name="ChangeLogs",
+                item_id=str(item["_id"]), 
+                item_identifier=data_name, 
+                changes=changes
+            )
+            logging.info(f"Logged changes for {data_name}: {changes}")
+        except Exception as log_error:
+            logging.error(f"Failed to log changes: {log_error}")
+    # --- LOGGING CHANGES END ---
+
     # 6. Perform the Update
     try:
-        # Use $set to update only the specific key
         collection.update_one(
             {"_id": item["_id"]},
             {"$set": {target_key: new_value}}
@@ -308,7 +337,6 @@ def update_startdata(data_name):
     except Exception as e:
         logging.error(f"Database update failed: {e}")
         return jsonify({'error': 'Internal Database Error'}), 500
-
 
 def get_item_by_id(collection_name, item_id):
     """
