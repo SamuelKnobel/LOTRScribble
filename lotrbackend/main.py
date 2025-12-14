@@ -22,6 +22,10 @@ pathToMachineData = cwd + '/Data_Binary/BasicMaschineData.basic.json'
 pathToShipData = cwd + '/Data_Binary/BasicShipData.basic.json'
 pathToRules = cwd + '/Data_Binary/Rules.basic.json'
 
+pathToStartFields = cwd + '/Data_Binary/StartFields.basic.json'
+pathToStartBuildings = cwd + '/Data_Binary/StartBuildings.basic.json'
+pathToStartNations = cwd + '/Data_Binary/StartNations.basic.json'
+
 recreate = False
 
 nation_collection = Utils.recreate_collection(db, db.NationData, 'NationData', recreate)
@@ -31,6 +35,9 @@ unit_collection = Utils.recreate_collection(db, db.UnitData, 'UnitData', recreat
 machine_collection = Utils.recreate_collection(db, db.MachineData, 'MachineData', recreate)
 ship_collection = Utils.recreate_collection(db, db.ShipData, 'ShipData', recreate)
 rules_collection = Utils.recreate_collection(db, db.RuleData, 'RuleData', recreate)
+startFields_collection = Utils.recreate_collection(db, db.StartFields, 'StartFields', recreate)
+startBuildings_collection = Utils.recreate_collection(db, db.StartBuildings, 'StartBuildings', recreate)
+startNations_collection = Utils.recreate_collection(db, db.StartNations, 'StartNations', recreate)
 
 nation_collection = Utils.write_to_db_from_json(pathToNationData, nation_collection)
 building_collection = Utils.write_to_db_from_json(pathToBuildingData, building_collection)
@@ -38,7 +45,10 @@ field_collection = Utils.write_to_db_from_json(pathToFieldData, field_collection
 unit_collection = Utils.write_to_db_from_json(pathToUnitData, unit_collection)
 machine_collection = Utils.write_to_db_from_json(pathToMachineData, machine_collection)
 ship_collection = Utils.write_to_db_from_json(pathToShipData, ship_collection)
-rules_collection = Utils.write_to_db_from_json(pathToRules, rules_collection)
+
+startFields_collection = Utils.write_to_db_from_json(pathToStartFields, startFields_collection)
+startBuildings_collection = Utils.write_to_db_from_json(pathToStartBuildings, startBuildings_collection)
+startNations_collection = Utils.write_to_db_from_json(pathToStartNations, startNations_collection)
 
 # linking buildings
 Utils.link_collections(building_collection, building_collection, 'eBuilding', 'next_eBuilding')
