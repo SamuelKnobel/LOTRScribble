@@ -177,7 +177,9 @@ def get_baseData(collection_name):
     logging.info(f'Collection Name: {collection_name}')
     collection = db_BaseData[collection_name]
     items = list(collection.find())
-    logging.info(f'Items in Collection: {items}')
+    logging.debug(f'Nb of Items in Collection: {len(items)}')
+    logging.debug(f'Items in Collection: {items}')
+
     items_clean = Utils.convert_objectid_to_string(items)
 
     return jsonify(items_clean)
@@ -268,9 +270,10 @@ def update_startdata(data_name):
     # 5. Validate: Data Type Consistency
     current_value = item[target_key]
     
-    # Special handling for Numbers (Allow Int to update Float, but cast it)
-    if isinstance(current_value, float) and isinstance(new_value, (int, float)):
-        new_value = float(new_value)
+    if isinstance(current_value, (int, float)) and isinstance(new_value, (int, float)):
+        # If both are numbers, we allow the update regardless of specific type.
+        # This allows a DB 'int' (1) to be overwritten by a 'float' (0.5), correcting the type in the DB.
+        pass        
     # Check if types match
     elif type(current_value) != type(new_value):
         return jsonify({
