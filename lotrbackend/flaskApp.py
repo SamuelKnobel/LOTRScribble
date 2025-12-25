@@ -121,6 +121,11 @@ def get_changelog():
 def get_startdata_constant(data_name):
     return get_start_data_generic("Constants", doc_name=data_name)
 
+@app.route('/startdata/constants/<data_name>', methods=['PUT'])
+@swag_template('docs/gameStartData_put.yml')
+def update_startdata_constant(data_name):
+    return update_start_data_generic("Constants", doc_name=data_name)
+
 
 @app.route('/startdata/startfields', methods=['GET'])
 @swag_template('docs/generic_get.yml', name='StartFields', tag='StartData') 
@@ -137,74 +142,7 @@ def get_startdata_nations():
 def get_startdata_buildings():
     return get_start_data_generic("StartBuildings")
 
-@app.route('/startdata/constants/<data_name>', methods=['PUT'])
-@swag_template('docs/gameStartData_put.yml')
-def update_startdata(data_name):
-    logging.info(f'Attempting to update Constants: {data_name}')
-    
-    # --- 1. SETUP & PARSING ---
-    collection = db_BaseData["Constants"]
-    item = collection.find_one({"name": data_name})
-    
-    if not item:
-        return jsonify({'error': f'Data container "{data_name}" not found'}), 404
 
-    data = request.get_json()
-    if not data or 'key' not in data or 'value' not in data:
-        return jsonify({'error': 'Request body must contain "key" and "value"'}), 400
-
-    target_key = str(data['key']) 
-    new_value = data['value']
-
-    # --- 2. VALIDATION (Delegated to Utils) ---
-    # Check if key exists
-    if target_key not in item:
-        return jsonify({'error': f'Key "{target_key}" does not exist in "{data_name}".'}), 400
-
-    current_value = item[target_key]
-
-    # Check type compatibility
-    is_valid, error_msg = Utils.validate_type_compatibility(current_value, new_value)
-    if not is_valid:
-        return jsonify({'error': error_msg}), 400
-
-    # --- 3. LOGGING CHANGES ---
-    if current_value != new_value:
-        changes = {
-            target_key: {
-                'old': Utils.format_for_log(current_value), 
-                'new': Utils.format_for_log(new_value)
-            }
-        }
-        try:
-            Utils.log_changes(
-                db=db_BaseData,
-                collection_name="Constants",
-                item_id=str(item["_id"]), 
-                item_identifier=data_name, 
-                changes=changes
-            )
-            logging.info(f"Logged changes for {data_name}: {changes}")
-        except Exception as log_error:
-            logging.error(f"Failed to log changes: {log_error}")
-
-    # --- 4. EXECUTE UPDATE ---
-    try:
-        collection.update_one(
-            {"_id": item["_id"]},
-            {"$set": {target_key: new_value}}
-        )
-        logging.info(f'Updated {data_name} -> {target_key} to {new_value}')
-        
-        return jsonify({
-            'success': True, 
-            'message': f'Updated {target_key} to {new_value}',
-            'newValue': new_value
-        }), 200
-        
-    except Exception as e:
-        logging.error(f"Database update failed: {e}")
-        return jsonify({'error': 'Internal Database Error'}), 500
 
 def get_item_by_id(collection_name, item_id):
     """
@@ -354,6 +292,94 @@ def get_start_data_generic(collection_name: str, doc_name:Optional[str] = None):
         logging.info(f'Retrieved {len(items)} items from {collection_name}')
         clean_items = Utils.convert_objectid_to_string(items)
         return jsonify(clean_items), 200
+
+def update_start_data_generic(collection_name, doc_name):
+    """
+    Generic logic to update a single field in a named StartData document.
+    
+    Performs the following steps:
+    1. Validates existence of the document and target field.
+    2. Enforces type safety (using Utils).
+    3. Logs changes to the ChangeLogs collection (using Utils).
+    4. Updates the MongoDB document.
+
+    Args:
+        collection_name (str): The name of the MongoDB collection (e.g., 'Constants').
+        doc_name (str): The 'name' identifier of the document to update (e.g., 'FertSeason').
+
+    Returns:
+        tuple: (flask.Response, int) - JSON response and HTTP status code.
+    """
+    logging.info(f'Update Request | Collection: {collection_name} | Document: {doc_name}')
+    
+    # --- 1. SETUP & FIND ---
+    collection = db_BaseData[collection_name]
+    item = collection.find_one({"name": doc_name})
+    
+    if not item:
+        return jsonify({'error': f'Document "{doc_name}" not found in {collection_name}'}), 404
+
+    # --- 2. PARSE REQUEST ---
+    data = request.get_json()
+    if not data or 'key' not in data or 'value' not in data:
+        return jsonify({'error': 'Request body must contain "key" and "value"'}), 400
+
+    target_key = str(data['key']) 
+    new_value = data['value']
+
+    # --- 3. VALIDATION ---
+    # Security: Prevent creating new keys (Schema enforcement)
+    if target_key not in item:
+        return jsonify({'error': f'Key "{target_key}" does not exist in "{doc_name}". Creating new keys is forbidden.'}), 400
+
+    # Type Safety: Check if new value matches old value type (allowing Int <-> Float)
+    current_value = item[target_key]
+    is_valid, error_msg = Utils.validate_type_compatibility(current_value, new_value)
+    if not is_valid:
+        return jsonify({'error': error_msg}), 400
+
+    # --- 4. LOGGING ---
+    if current_value != new_value:
+        changes = {
+            target_key: {
+                'old': Utils.format_for_log(current_value), 
+                'new': Utils.format_for_log(new_value)
+            }
+        }
+        try:
+            # Use identifier if available, fallback to doc_name
+            identifier = item.get('Identifier', doc_name)
+            
+            Utils.log_changes(
+                db=db_BaseData,
+                collection_name=collection_name,
+                item_id=str(item["_id"]), 
+                item_identifier=identifier, 
+                changes=changes
+            )
+            logging.info(f"Change Logged: {changes}")
+        except Exception as log_error:
+            logging.error(f"Failed to log changes: {log_error}")
+
+    # --- 5. UPDATE EXECUTION ---
+    try:
+        collection.update_one(
+            {"_id": item["_id"]},
+            {"$set": {target_key: new_value}}
+        )
+        logging.info(f'Success: Updated {doc_name}.{target_key} to {new_value}')
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Updated {target_key}',
+            'newValue': new_value
+        }), 200
+        
+    except Exception as e:
+        logging.error(f"Database update failed: {e}")
+        return jsonify({'error': 'Internal Database Error'}), 500
+
+
 
 # @app.after_request
 # def after_request(response):
