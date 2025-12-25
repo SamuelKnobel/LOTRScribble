@@ -4,6 +4,7 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from flasgger import Swagger
+from flasgger import swag_from
 import json
 import sys
 import Utils
@@ -11,6 +12,7 @@ import atexit
 import os
 from logging.config import dictConfig
 from dotenv import load_dotenv
+from decorators import swag_template
 
 dictConfig({
     'version': 1,
@@ -52,198 +54,120 @@ def shutdown_db_client():
     client.close()
     print("MongoDB client closed on exit.")
 
+#-------------------- UNITS --------------------#
 @app.route('/units', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='Units')
 def get_units():
-    """
-    Get a list of all units.
-    ---
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
-    data = get_baseData('UnitData')
-    return data
+    return get_baseData('UnitData')
 
+@app.route('/units/<id>', methods=['GET'])
+@swag_template('docs/generic_get_id.yml', name='Unit', tag='Units')
+def get_unit(id):
+    return get_item_by_id('UnitData', id)
+
+@app.route('/units/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name='Unit', tag='Units')
+def update_unit(id):
+    return update_item_by_id("UnitData", id)
+
+
+#-------------------- SHIPS --------------------#
 @app.route('/ships', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='Ships')
 def get_ships():
-    """
-    Get a list of all ships.
-    ---
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
     return get_baseData('ShipData')
 
+@app.route('/ships/<id>', methods=['GET'])
+@swag_template('docs/generic_get_id.yml', name='Ship', tag='Ships')
+def get_ship(id):
+    return get_item_by_id('ShipData', id)
+
+
+#-------------------- MACHINES --------------------#
 @app.route('/machines', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='Machines')
 def get_machines():
-    """
-    Get a list of all machines.
-    ---
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
     return get_baseData('MachineData')
 
+@app.route('/machines/<id>', methods=['GET'])
+@swag_template('docs/generic_get_id.yml', name='Machine', tag='Machines')
+def get_machine(id):
+    return get_item_by_id('MachineData', id)
+
+
+#-------------------- NATIONS --------------------#
 @app.route('/nations', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='Nations')
 def get_nations():
-    """
-    Get a list of all nations.
-    ---
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
     return get_baseData('NationData')
 
+@app.route('/nations/<id>', methods=['GET'])
+@swag_template('docs/generic_get_id.yml', name='Nation', tag='Nations')
+def get_nation(id):
+    return get_item_by_id('NationData', id)
+
+@app.route('/nations/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name='Nation', tag='Nations')
+def update_nation(id):
+    return update_item_by_id("NationData", id)
+
+
+#-------------------- FIELDS --------------------#
 @app.route('/fields', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='Fields')
 def get_fields():
-    """
-    Get a list of all fields.
-    ---
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
     return get_baseData('FieldData')
 
+@app.route('/fields/<id>', methods=['GET'])
+@swag_template('docs/generic_get_id.yml', name='Field', tag='Fields')
+def get_field(id):
+    return get_item_by_id('FieldData', id)
 
+@app.route('/fields/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name='Field', tag='Fields')
+def update_fields(id):
+    return update_item_by_id("FieldData", id)
+
+
+#-------------------- BUILDINGS --------------------#
 @app.route('/buildings', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='Buildings')
 def get_buildings():
-    """
-    Get a list of all buildings.
-    ---
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
     return get_baseData('BuildingData')
 
+@app.route('/buildings/<id>', methods=['GET'])
+@swag_template('docs/generic_get_id.yml', name='Building', tag='Buildings')
+def get_building(id):
+    return get_item_by_id('BuildingData', id)
 
+@app.route('/buildings/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name='Building', tag='Buildings')
+def update_buildings(id):
+    return update_item_by_id("BuildingData", id)
+
+
+#-------------------- RULES --------------------#
 @app.route('/rules', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='Rules')
 def get_rules():
-    """
-     Get a list of all rules.
-     ---
-     responses:
-       200:
-         description: List of items.
-       404:
-         description: Items not found.
-     """
     return get_baseData('RuleData')
 
+
+#-------------------- CHANGE LOGS --------------------#
 @app.route('/changelog', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='ChangeLogs')
 def get_changelog():
-    """
-     Get a list of all changes that were made.
-     ---
-     responses:
-       200:
-         description: List of changes.
-       404:
-         description: no changes found.
-     """
     return get_baseData('ChangeLogs')
 
-def get_baseData(collection_name):
-    """
-    Get a list of all items in the specified collection.
-    ---
-    parameters:
-      - name: collection_name
-        in: path
-        type: string
-        description: The name of the collection to retrieve data from.
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
-    logging.info(f'Collection Name: {collection_name}')
-    collection = db_BaseData[collection_name]
-    items = list(collection.find())
-    logging.debug(f'Nb of Items in Collection: {len(items)}')
-    logging.debug(f'Items in Collection: {items}')
-
-    items_clean = Utils.convert_objectid_to_string(items)
-
-    return jsonify(items_clean)
-
-def get_gameData(data_name: str):
-    """
-    Get a list of all items in the specified collection.
-    ---
-    parameters:
-      - name: collection_name
-        in: path
-        type: string
-        description: The name of the collection to retrieve data from.
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
-    logging.info(f'Collection Name: {"StartData"}')
-    collection = db_BaseData["StartData"]
-    items = list(collection.find())
-    for item in items:
-        if item["name"] == data_name:
-            logging.info(f'Found Data: {item}')
-            item["_id"] = Utils.convert_objectid_to_string(item["_id"])
-            return item
-    return jsonify({'error': f'Data: {data_name} not found'}), 404
-
+#-------------------- START DATA --------------------#
 @app.route('/StartData/<data_name>', methods=['GET'])
+@swag_template('docs/startdata_get.yml')
 def get_startdata(data_name):
-    """
-    Get specified StartData Data.
-
-    - FertSeason: Fertitily Modifier Per Season
-
-    - Trade: Money per Trade Value
-
-    - Food_UnitType: BaseFood per Unit Type
-
-    - Varia: e.g. StartGold
-
-    - FoodSize: returns a Tuple -> Food = (BasicFood + Unit-Typ Faktor + Unit-Size Faktor1)* Unit-Size Faktor2
-
-    ---
-    parameters:
-      - name: data_name
-        in: path
-        type: string
-        description: The name of the data to retrieve.
-    responses:
-      200: 
-        description: JSON data.
-      404: 
-        description: Data not found.
-    """
-
     return get_gameData(data_name)
 
 @app.route('/StartData/<data_name>', methods=['PUT'])
+@swag_template('docs/startdata_put.yml')
 def update_startdata(data_name):
-    """
-    Update a specific key in a StartData document and log the changes.
-    """
     logging.info(f'Attempting to update StartData: {data_name}')
     
     # 1. Get the collection
@@ -344,26 +268,19 @@ def update_startdata(data_name):
 
 def get_item_by_id(collection_name, item_id):
     """
-    Get information about a specific item by its ID from the specified collection.
-    ---
-    parameters:
-      - name: collection_name
-        in: path
-        type: string
-        description: The name of the collection.
-      - name: item_id
-        in: path
-        type: string
-        required: true
-        description: ID of the item.
-    responses:
-      200:
-        description: Information about the item.
-      404:
-        description: Item not found.
-    """
-    print(collection_name)
+      Helper function to retrieve a specific item by its ID from the database.
 
+      Args:
+          collection_name (str): The name of the MongoDB collection to query.
+          item_id (str): The unique MongoDB ID (ObjectId) string of the item.
+
+      Returns:
+          tuple: A tuple containing:
+              - flask.Response: A JSON response with the item data or an error message.
+              - int: The HTTP status code (200 for success, 404 for not found).
+
+                  print(collection_name)
+    """
     collection = db_BaseData[collection_name]
     item = collection.find_one({'_id': ObjectId(item_id)})
 
@@ -374,259 +291,76 @@ def get_item_by_id(collection_name, item_id):
         return jsonify({'error': f'{collection_name.capitalize()} not found'}), 404
 
 
-@app.route('/units/<id>', methods=['GET'])
-def get_unit(id):
+
+
+
+def get_baseData(collection_name):
     """
-     Get information about a specific unit by its ID.
-     ---
-     parameters:
-       - name: id
-         in: path
-         type: string
-         required: true
-         description: ID of the unit.
-
-     responses:
-       200:
-         description: Information about the item.
-       404:
-         description: Item not found.
-     """
-    return get_item_by_id('UnitData', id)
-
-
-@app.route('/nations/<id>', methods=['GET'])
-def get_nation(id):
-    """
-     Get information about a specific nation by its ID.
-     ---
-     parameters:
-       - name: id
-         in: path
-         type: string
-         required: true
-         description: ID of the nation.
-
-     responses:
-       200:
-         description: Information about the item.
-       404:
-         description: Item not found.
-     """
-    return get_item_by_id('NationData', id)
-
-
-@app.route('/buildings/<id>', methods=['GET'])
-def get_building(id):
-    """
-     Get information about a specific building by its ID.
-     ---
-     parameters:
-       - name: id
-         in: path
-         type: string
-         required: true
-         description: ID of the building.
-
-     responses:
-       200:
-         description: Information about the item.
-       404:
-         description: Item not found.
-     """
-    return get_item_by_id('BuildingData', id)
-
-
-@app.route('/fields/<id>', methods=['GET'])
-def get_field(id):
-    """
-     Get information about a specific field by its ID.
-     ---
-     parameters:
-       - name: id
-         in: path
-         type: string
-         required: true
-         description: ID of the field.
-
-     responses:
-       200:
-         description: Information about the item.
-       404:
-         description: Item not found.
-     """
-    return get_item_by_id('FieldData', id)
-
-@app.route('/units/<id>', methods=['PUT'])
-def update_unit(id):
-    """
-    Update information about a specific Unit by its ID.
+    Get a list of all items in the specified collection.
     ---
     parameters:
-      - name: id
+      - name: collection_name
         in: path
         type: string
-        required: true
-        description: ID of the unit.
-
-    requestBody:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              field_name:
-                type: string
-                description: The field to be updated.
-              new_value:
-                type: string
-                description: The new value for the field.
-
+        description: The name of the collection to retrieve data from.
     responses:
       200:
-        description: Unit updated successfully.
+        description: List of items.
       404:
-        description: Update Failed
+        description: Items not found.
     """
-    return update_item_by_id("UnitData", id)
+    logging.info(f'Collection Name: {collection_name}')
+    collection = db_BaseData[collection_name]
+    items = list(collection.find())
+    logging.debug(f'Nb of Items in Collection: {len(items)}')
+    logging.debug(f'Items in Collection: {items}')
 
-@app.route('/nations/<id>', methods=['PUT'])
-def update_nation(id):
+    items_clean = Utils.convert_objectid_to_string(items)
+
+    return jsonify(items_clean)
+
+def get_gameData(data_name: str):
     """
-    Update information about a specific Nation by its ID.
+    Get a list of all items in the specified collection.
     ---
     parameters:
-      - name: id
+      - name: collection_name
         in: path
         type: string
-        required: true
-        description: ID of the unit.
-
-    requestBody:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              field_name:
-                type: string
-                description: The field to be updated.
-              new_value:
-                type: string
-                description: The new value for the field.
-
+        description: The name of the collection to retrieve data from.
     responses:
       200:
-        description: Nation updated successfully.
+        description: List of items.
       404:
-        description: Update Failed
+        description: Items not found.
     """
-    return update_item_by_id("NationData", id)
+    logging.info(f'Collection Name: {"StartData"}')
+    collection = db_BaseData["StartData"]
+    items = list(collection.find())
+    for item in items:
+        if item["name"] == data_name:
+            logging.info(f'Found Data: {item}')
+            item["_id"] = Utils.convert_objectid_to_string(item["_id"])
+            return item
+    return jsonify({'error': f'Data: {data_name} not found'}), 404
 
-
-@app.route('/fields/<id>', methods=['PUT'])
-def update_fields(id):
-    """
-    Update information about a specific Field by its ID.
-    ---
-    parameters:
-      - name: id
-        in: path
-        type: string
-        required: true
-        description: ID of the unit.
-
-    requestBody:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              field_name:
-                type: string
-                description: The field to be updated.
-              new_value:
-                type: string
-                description: The new value for the field.
-
-    responses:
-      200:
-        description: Field updated successfully.
-      404:
-        description: Update Failed
-    """
-    return update_item_by_id("FieldData", id)
-
-
-@app.route('/buildings/<id>', methods=['PUT'])
-def update_buildings(id):
-    """
-     Update information about a specific Building by its ID.
-     ---
-     parameters:
-       - name: id
-         in: path
-         type: string
-         required: true
-         description: ID of the Building.
-
-     requestBody:
-       content:
-         application/json:
-           schema:
-             type: object
-             properties:
-               field_name:
-                 type: string
-                 description: The field to be updated.
-               new_value:
-                 type: string
-                 description: The new value for the field.
-
-     responses:
-       200:
-         description: Building updated successfully.
-       404:
-         description: Update Failed
-     """
-    return update_item_by_id("BuildingData", id)
 
 
 def update_item_by_id(collection_name, item_id):
     """
-    Update information about a specific item by its ID. Used as PUT request.
+    Helper function to handle the update logic for a specific item in a collection.
 
-    parameters:
-      - collection_name: id
-        in: path
-        type: string
-        required: true
-        description: Collection name to look for.
-      - item_id: id
-        in: path
-        type: string
-        required: true
-        description: ID of the element.
+    It extracts the update data from the request, detects changes for logging, 
+    updates the MongoDB document, and returns a standard Flask JSON response.
 
+    Args:
+        collection_name (str): The name of the MongoDB collection (e.g., 'UnitData').
+        item_id (str): The unique MongoDB ID (ObjectId) string of the item to update.
 
-    requestBody:
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              field_name:
-                type: string
-                description: The field to be updated.
-              new_value:
-                type: string
-                description: The new value for the field.
-
-    responses:
-      200:
-        description: Item updated successfully.
-      404:
-        description: Update Failed
+    Returns:
+        tuple: A tuple containing:
+            - flask.Response: A JSON response with a success message or error.
+            - int: The HTTP status code (200 for success, 404 for not found).
     """
 
     # Returns the result from the PUT request<-- new data that should be written

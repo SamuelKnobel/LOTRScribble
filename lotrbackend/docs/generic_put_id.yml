@@ -1,0 +1,25 @@
+summary: Update a specific {{ name }}
+description: Update fields of a {{ name }} by its ID.
+tags:
+  - {{ tag }}
+parameters:
+  - name: id
+    in: path
+    type: string
+    required: true
+    description: The unique MongoDB ID of the {{ name }}.
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          body:
+            type: string
+            description: "JSON string containing the update data (e.g. '{\"field\": \"value\"}')"
+            example: '{\"Identifier\": \"New Name\"}'
+responses:
+  200:
+    description: {{ name }} updated successfully
+  404:
+    description: {{ name }} not found

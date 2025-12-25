@@ -1,0 +1,39 @@
+summary: Update Game Start Configuration
+description: >
+  Updates a specific setting within a configuration dataset. 
+  Automatically logs the change in the ChangeLogs collection.
+tags:
+  - StartData
+parameters:
+  - name: data_name
+    in: path
+    type: string
+    required: true
+    description: The configuration set to update.
+    enum: [FertSeason, Trade, Food_UnitType, Varia, FoodSize]
+requestBody:
+  description: The key to update and its new value.
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - key
+          - value
+        properties:
+          key:
+            type: string
+            description: The specific dictionary key to target (e.g., "Summer", "1").
+            example: "Summer"
+          value:
+            type: object
+            description: The new value (String, Number, or Object).
+            example: 2.5
+responses:
+  200:
+    description: Update successful
+  400:
+    description: Validation error (Type mismatch or missing key)
+  404:
+    description: Data container not found

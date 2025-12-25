@@ -1,0 +1,28 @@
+summary: Retrieve Game Start Configuration
+description: >
+  Fetches specific configuration datasets used for initializing the game state.
+  
+  **Available Datasets:**
+  * `FertSeason`: Fertility Modifier per Season
+  * `Trade`: Money per Trade Value
+  * `Food_UnitType`: Base Food consumption per Unit Type
+  * `Varia`: General settings (e.g., Start Gold)
+  * `FoodSize`: Complex food calculation factors
+tags:
+  - StartData
+parameters:
+  - name: data_name
+    in: path
+    type: string
+    required: true
+    description: The specific configuration set to retrieve.
+    enum: [FertSeason, Trade, Food_UnitType, Varia, FoodSize] # Creates a Dropdown in Swagger!
+responses:
+  200:
+    description: Configuration data retrieved successfully
+    schema:
+      type: object
+      description: Key-value pairs matching the requested configuration type.
+      example: {"Spring": 0.5, "Summer": 1.0}
+  404:
+    description: Configuration dataset not found

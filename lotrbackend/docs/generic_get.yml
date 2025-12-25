@@ -1,0 +1,13 @@
+summary: Get a list of {{ name }}
+description: Retrieve all {{ name }} from the database.
+tags:
+  - {{ name }}
+responses:
+  200:
+    description: A list of {{ name }} objects
+    schema:
+      type: List
+      items:
+        type: object
+  404:
+    description: No {{ name }} found
