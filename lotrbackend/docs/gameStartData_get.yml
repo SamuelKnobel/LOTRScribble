@@ -1,4 +1,4 @@
-summary: Retrieve Game Start Configuration
+summary: Retrieve Game Constants Configuration
 description: |
   Fetches specific configuration datasets used for initializing the game state.
   

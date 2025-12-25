@@ -12,6 +12,7 @@ import os
 from logging.config import dictConfig
 from dotenv import load_dotenv
 from decorators import swag_template
+from typing import Optional
 
 dictConfig({
     'version': 1,
@@ -106,7 +107,6 @@ def get_rule(id):
 # def update_rules(id):
 #     return update_item_by_id("RuleData", id)
 
-
 #-------------------- CHANGE LOGS --------------------#
 @app.route('/changelog', methods=['GET'])
 @swag_template('docs/changelog_get.yml')
@@ -114,18 +114,61 @@ def get_changelog():
     return get_baseData('ChangeLogs')
 
 #-------------------- START DATA --------------------#
-@app.route('/StartData/<data_name>', methods=['GET'])
-@swag_template('docs/startdata_get.yml')
+@app.route('/StartData/Constants/<data_name>', methods=['GET'])
+@swag_template('docs/gameStartData_get.yml')
 def get_startdata(data_name):
-    return get_gameData(data_name)
+    return get_StartData("Constants", data_name)
 
-@app.route('/StartData/<data_name>', methods=['PUT'])
-@swag_template('docs/startdata_put.yml')
+
+@app.route('/StartData/StartFields', methods=['GET'])
+# @swag_template('docs/gameStartData_get.yml')
+def get_startdata_fields():
+    """
+    Get a list of all ships.
+    ---
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """    
+    return get_StartData("StartFields")
+
+@app.route('/StartData/StartNations', methods=['GET'])
+# @swag_template('docs/gameStartData_get.yml')
+def get_startdata_nations():
+    """
+    Get a list of all ships.
+    ---
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """    
+    return get_StartData("StartNations")
+
+@app.route('/StartData/StartBuildings', methods=['GET'])
+# @swag_template('docs/gameStartData_get.yml')
+def get_startdata_buildings():
+    """
+    Get a list of all ships.
+    ---
+    responses:
+      200:
+        description: List of items.
+      404:
+        description: Items not found.
+    """
+    return get_StartData("StartBuildings")
+
+@app.route('/StartData/Constants/<data_name>', methods=['PUT'])
+@swag_template('docs/gameStartData_put.yml')
 def update_startdata(data_name):
-    logging.info(f'Attempting to update StartData: {data_name}')
+    logging.info(f'Attempting to update Constants: {data_name}')
     
     # --- 1. SETUP & PARSING ---
-    collection = db_BaseData["StartData"]
+    collection = db_BaseData["Constants"]
     item = collection.find_one({"name": data_name})
     
     if not item:
@@ -161,7 +204,7 @@ def update_startdata(data_name):
         try:
             Utils.log_changes(
                 db=db_BaseData,
-                collection_name="StartData",
+                collection_name="Constants",
                 item_id=str(item["_id"]), 
                 item_identifier=data_name, 
                 changes=changes
@@ -213,9 +256,6 @@ def get_item_by_id(collection_name, item_id):
         return jsonify({'error': f'{collection_name.capitalize()} not found'}), 404
 
 
-
-
-
 def get_baseData(collection_name):
     """
     Get a list of all items in the specified collection.
@@ -241,7 +281,7 @@ def get_baseData(collection_name):
 
     return jsonify(items_clean)
 
-def get_gameData(data_name: str):
+def get_StartData(collection_name: str, data_name: Optional[str] = None):
     """
     Get a list of all items in the specified collection.
     ---
@@ -256,17 +296,18 @@ def get_gameData(data_name: str):
       404:
         description: Items not found.
     """
-    logging.info(f'Collection Name: {"StartData"}')
-    collection = db_BaseData["StartData"]
-    items = list(collection.find())
-    for item in items:
-        if item["name"] == data_name:
-            logging.info(f'Found Data: {item}')
-            item["_id"] = Utils.convert_objectid_to_string(item["_id"])
-            return item
+    logging.info(f'Collection Name: {collection_name}, Data Name: {data_name}')
+    if data_name is None:
+        return get_baseData(collection_name)
+    else:    
+      collection = db_BaseData[collection_name]
+      items = list(collection.find())
+      for item in items:
+          if item["name"] == data_name:
+              logging.info(f'Found Data: {item}')
+              item["_id"] = Utils.convert_objectid_to_string(item["_id"])
+              return item
     return jsonify({'error': f'Data: {data_name} not found'}), 404
-
-
 
 def update_item_by_id(collection_name, item_id):
     """
@@ -324,6 +365,48 @@ def update_item_by_id(collection_name, item_id):
     else:
         return jsonify({'error': f'Item: {item_id} or {collection_name.capitalize()} not found'}), 404
 
+
+def get_start_data_generic(collection_name: str, doc_name:Optional[str] = None):
+    """
+    Retrieves StartData configurations from the database.
+    
+    This generic function handles two retrieval modes:
+    1. **Collection Mode** (doc_name=None): Returns a list of ALL documents in the collection.
+       Useful for collections like 'StartFields' or 'StartNations'.
+    2. **Single Item Mode** (doc_name set): Returns a SINGLE document where the 'name' field matches.
+       Useful for the 'Constants' collection (e.g., retrieving 'FertSeason').
+
+    Args:
+        collection_name (str): The name of the MongoDB collection (e.g., 'Constants', 'StartFields').
+        doc_name (str, optional): The specific 'name' identifier to find. Defaults to None.
+
+    Returns:
+        tuple: A tuple containing:
+            - flask.Response: JSON data (List of items OR Single item) or error message.
+            - int: HTTP Status Code (200 for success, 404 for not found).
+    """
+    logging.info(f'Fetching StartData | Collection: {collection_name} | Target: {doc_name if doc_name else "ALL"}')
+    collection = db_BaseData[collection_name]
+
+    if doc_name:
+        # OPTIMIZATION: Query MongoDB directly for the specific name 
+        # instead of loading the whole list into memory.
+        item = collection.find_one({"name": doc_name})
+        
+        if item:
+            logging.info(f'Found Data: {doc_name}')
+            clean_item = Utils.convert_objectid_to_string(item)
+            return jsonify(clean_item), 200
+        else:
+            logging.warning(f'Data "{doc_name}" not found in {collection_name}')
+            return jsonify({'error': f'Data "{doc_name}" not found'}), 404
+            
+    else:
+        # Return the full list of documents
+        items = list(collection.find())
+        logging.info(f'Retrieved {len(items)} items from {collection_name}')
+        clean_items = Utils.convert_objectid_to_string(items)
+        return jsonify(clean_items), 200
 
 # @app.after_request
 # def after_request(response):

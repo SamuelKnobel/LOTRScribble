@@ -1,4 +1,4 @@
-summary: Update Game Start Configuration
+summary: Update Game Constant Configuration
 description: >
   Updates a specific setting within a configuration dataset. 
   Automatically logs the change in the ChangeLogs collection.
