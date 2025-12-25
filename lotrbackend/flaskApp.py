@@ -74,7 +74,7 @@ def register_entity_routes(app, url_slug, collection_name, display_name, tag_nam
     
     # --- 1. GET ALL (List) ---
     @app.route(f'/{url_slug}', methods=['GET'], endpoint=f'get_{url_slug}')
-    @swag_template('docs/generic_get.yml', name=display_name)
+    @swag_template('docs/generic_get.yml', name=display_name, tag=tag_name)
     def get_all():
         return get_baseData(collection_name)
 
@@ -92,7 +92,7 @@ def register_entity_routes(app, url_slug, collection_name, display_name, tag_nam
 
 #-------------------- RULES --------------------# 
 @app.route('/rules', methods=['GET'])
-@swag_template('docs/generic_get.yml', name='Rules')
+@swag_template('docs/generic_get.yml', name='Rules', tag='Rules')
 def get_rules():
     return get_baseData('RuleData')
 
@@ -107,60 +107,35 @@ def get_rule(id):
 # def update_rules(id):
 #     return update_item_by_id("RuleData", id)
 
+
 #-------------------- CHANGE LOGS --------------------#
 @app.route('/changelog', methods=['GET'])
 @swag_template('docs/changelog_get.yml')
 def get_changelog():
     return get_baseData('ChangeLogs')
 
+
 #-------------------- START DATA --------------------#
 @app.route('/StartData/Constants/<data_name>', methods=['GET'])
-@swag_template('docs/gameStartData_get.yml')
-def get_startdata(data_name):
-    return get_StartData("Constants", data_name)
+@swag_template('docs/gameStartData_get.yml') 
+def get_startdata_constant(data_name):
+    return get_start_data_generic("Constants", doc_name=data_name)
 
 
 @app.route('/StartData/StartFields', methods=['GET'])
-# @swag_template('docs/gameStartData_get.yml')
+@swag_template('docs/generic_get.yml', name='StartFields', tag='StartData') 
 def get_startdata_fields():
-    """
-    Get a list of all ships.
-    ---
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """    
-    return get_StartData("StartFields")
+    return get_start_data_generic("StartFields")
 
 @app.route('/StartData/StartNations', methods=['GET'])
-# @swag_template('docs/gameStartData_get.yml')
+@swag_template('docs/generic_get.yml', name='StartNations', tag='StartData')
 def get_startdata_nations():
-    """
-    Get a list of all ships.
-    ---
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """    
-    return get_StartData("StartNations")
+    return get_start_data_generic("StartNations")
 
 @app.route('/StartData/StartBuildings', methods=['GET'])
-# @swag_template('docs/gameStartData_get.yml')
+@swag_template('docs/generic_get.yml', name='StartBuildings', tag='StartData')
 def get_startdata_buildings():
-    """
-    Get a list of all ships.
-    ---
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
-    return get_StartData("StartBuildings")
+    return get_start_data_generic("StartBuildings")
 
 @app.route('/StartData/Constants/<data_name>', methods=['PUT'])
 @swag_template('docs/gameStartData_put.yml')
@@ -280,34 +255,6 @@ def get_baseData(collection_name):
     items_clean = Utils.convert_objectid_to_string(items)
 
     return jsonify(items_clean)
-
-def get_StartData(collection_name: str, data_name: Optional[str] = None):
-    """
-    Get a list of all items in the specified collection.
-    ---
-    parameters:
-      - name: collection_name
-        in: path
-        type: string
-        description: The name of the collection to retrieve data from.
-    responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
-    """
-    logging.info(f'Collection Name: {collection_name}, Data Name: {data_name}')
-    if data_name is None:
-        return get_baseData(collection_name)
-    else:    
-      collection = db_BaseData[collection_name]
-      items = list(collection.find())
-      for item in items:
-          if item["name"] == data_name:
-              logging.info(f'Found Data: {item}')
-              item["_id"] = Utils.convert_objectid_to_string(item["_id"])
-              return item
-    return jsonify({'error': f'Data: {data_name} not found'}), 404
 
 def update_item_by_id(collection_name, item_id):
     """

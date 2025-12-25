@@ -1,7 +1,7 @@
 summary: Get a list of {{ name }}
 description: Retrieve all {{ name }} from the database.
 tags:
-  - {{ name }}
+  - {{ tag }}
 responses:
   200:
     description: A list of {{ name }} objects
