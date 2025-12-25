@@ -82,6 +82,10 @@ def get_ships():
 def get_ship(id):
     return get_item_by_id('ShipData', id)
 
+@app.route('/ships/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name='Ship', tag='Ships')
+def update_ship(id):
+    return update_item_by_id("ShipData", id)
 
 #-------------------- MACHINES --------------------#
 @app.route('/machines', methods=['GET'])
@@ -94,6 +98,10 @@ def get_machines():
 def get_machine(id):
     return get_item_by_id('MachineData', id)
 
+@app.route('/machines/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name='Machine', tag='Machines')
+def update_machine(id):
+    return update_item_by_id("MachineData", id)
 
 #-------------------- NATIONS --------------------#
 @app.route('/nations', methods=['GET'])
