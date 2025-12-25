@@ -560,7 +560,8 @@
                "componentType":"textarea"
             },
             "name":{
-               "Name":"Regel"
+               "Name":"Regel",
+               "immutable":true
             },
             "_id":{
                "Name":"MongoDB_ID",
