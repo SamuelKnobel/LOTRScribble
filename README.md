@@ -13,6 +13,6 @@ Another problem of the process was that when building and deploying the app beca
 this means the way to go is to have the frontend separated and always clone it newly from the main location
 alternaltively the eject command could be removed so that it doesnt deletes the src folder
 
-For the Final Proof of Concept the Flask app is hosted on https://www.pythonanywhere.com and accessed via https://Samuelknobel.pythonanywhere.com/apidocs. Any changes have to be uploaded there as well. 
+For the Final Proof of Concept the Flask app is hosted on [https://www.pythonanywhere.com](https://dashboard.render.com/) and accessed via [https://Samuelknobel.pythonanywhere.com/apidocs](https://lotrscribble.onrender.com/apidocs/#/). The page is automatically updated if there is a push on master.
 
-The final app is hosed on GIT : https://samuelknobel.github.io/LOTRwebEditor.github.io/ <-- to update this the web app has to build and deployed again.
+The final app is hosed on GIT : [https://samuelknobel.github.io/LOTRwebEditor.github.io/](https://samuelknobel.github.io/LOTRScribble/) <-- to update this the web app has to build and deployed again. (npm run deploy)
