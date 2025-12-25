@@ -17,7 +17,7 @@ const EditPopup = ({tableName, rowData, onCancel, refetchData }) => {
   }, [rowData]);
 
   const handleInputChange = (fieldName, value) => {
-    const typedValue =  getConfigValue(tableConfig,fieldName , "type", true) === 'number' ? parseFloat(value) : value;    
+    const typedValue =  getConfigValue(tableConfig, fieldName , "type", true) === 'number' ? parseFloat(value) : value;    
     console.log("Fieldname: ",fieldName)
     console.log("Value: ",value)    
 

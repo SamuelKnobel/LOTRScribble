@@ -1,496 +1,576 @@
 {
-  "tables": {
-    "Fields": {
-      "columns": [
-        "FieldName",
-        "Identifier",
-        "fertility",
-        "oreOutput",
-        "trade",
-        "usable",
-        "FieldType",
-        "speciales"
-      ],
-      "columnProps": {
-        "Default": {
-          "Name": "Default",
-          "searchable": false,
-          "immutable": false,
-          "type": "number",
-          "componentType": "input"
-        },
-        "FieldName": {
-          "Name": "Field Name",
-          "searchable": true,
-          "type": "text"
-        },     
-        "FieldNbName": {
-          "Name": "Field Name Nummer",
-          "type": "text"
-        },
-        "FieldType": {
-          "Name": "Field Type"
-        },                   
-        "Identifier": {
-          "Name": "Identifier",
-          "immutable": true,
-          "searchable": true,
-          "type": "text"
-        },
-        "_id": {
-          "Name": "MongoDB_ID",
-          "immutable": true,
-          "type": "text"
-        },        
-        "fertility": {
-          "Name": "Fruchtbarkeit"
-        },
-        "name": {
-          "Name": "Name",
-          "type": "text"
-        },         
-        "oreOutput": {
-          "Name": "Erz"
-        },      
-        "speciales": {
-          "Name": "Specials",
-          "immutable": true,
-          "type": "text"
-        }   ,     
-        "trade": {
-          "Name": "Handel"
-        },             
-        "usable": {
-          "Name": "usable",
-          "immutable": true,
-          "type": "text"
-        }
-
+   "tables":{
+      "Fields":{
+         "columns":[
+            "FieldName",
+            "Identifier",
+            "fertility",
+            "oreOutput",
+            "trade",
+            "usable",
+            "FieldType",
+            "speciales"
+         ],
+         "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":false,
+               "immutable":false,
+               "type":"number",
+               "componentType":"input"
+            },
+            "FieldName":{
+               "Name":"Field Name",
+               "searchable":true,
+               "type":"text"
+            },
+            "FieldNbName":{
+               "Name":"Field Name Nummer",
+               "type":"text"
+            },
+            "FieldType":{
+               "Name":"Field Type"
+            },
+            "Identifier":{
+               "Name":"Identifier",
+               "immutable":true,
+               "searchable":true,
+               "type":"text"
+            },
+            "_id":{
+               "Name":"MongoDB_ID",
+               "immutable":true,
+               "type":"text"
+            },
+            "fertility":{
+               "Name":"Fruchtbarkeit"
+            },
+            "name":{
+               "Name":"Name",
+               "type":"text"
+            },
+            "oreOutput":{
+               "Name":"Erz"
+            },
+            "speciales":{
+               "Name":"Specials",
+               "immutable":true,
+               "type":"text"
+            },
+            "trade":{
+               "Name":"Handel"
+            },
+            "usable":{
+               "Name":"usable",
+               "immutable":true,
+               "type":"text"
+            }
+         }
+      },
+      "Nations":{
+         "columns":[
+            "Identifier",
+            "side",
+            "CounterMax",
+            "CounterMaxPopDependend",
+            "maxPopulation",
+            "reductionMilitary",
+            "reductionCivil",
+            "BasicFood"
+         ],
+         "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":false,
+               "immutable":false,
+               "type":"number",
+               "componentType":"input"
+            },
+            "BasicFood":{
+               "Name":"Basic Food"
+            },
+            "CounterMax":{
+               "Name":"Turns per Population"
+            },
+            "maxPopulation":{
+               "Name":"Base Cap Population"
+            },
+            "Identifier":{
+               "Name":"Nation Name",
+               "searchable":true,
+               "type":"text"
+            },
+            "_id":{
+               "Name":"MongoDB_ID",
+               "immutable":true,
+               "type":"text"
+            },
+            "eNation":{
+               "Name":"Nation ID",
+               "searchable":false
+            },
+            "CounterMaxPopDependend":{
+               "Name":"Slow Growth"
+            },
+            "name":{
+               "Name":"Name",
+               "type":"text"
+            },
+            "reductionCivil":{
+               "Name":"Building costs discounts (Civil)"
+            },
+            "reductionMilitary":{
+               "Name":"Building costs discounts (Military)"
+            },
+            "side":{
+               "Name":"Side",
+               "immutable":true
+            }
+         }
+      },
+      "Buildings":{
+         "columns":[
+            "Identifier",
+            "next_eBuilding_string",
+            "prevoius_eBuilding_string",
+            "ConstructionTime",
+            "Price",
+            "ebuildingClass",
+            "eBuildingType",
+            "BaseIncomeGold",
+            "BaseIncomeFood",
+            "MinimalPopulation",
+            "BasePopulation",
+            "upgradable"
+         ],
+         "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":false,
+               "immutable":false,
+               "type":"number",
+               "componentType":"input"
+            },
+            "BaseIncomeFood":{
+               "Name":"Food Income"
+            },
+            "BaseIncomeGold":{
+               "Name":"Gold Income"
+            },
+            "BasePopulation":{
+               "Name":"Base Pop"
+            },
+            "ConstructionTime":{
+               "Name":"Construction Time"
+            },
+            "FoodPerFertility":{
+               "Name":"Food Per Fertility"
+            },
+            "FoodPerPopulation":{
+               "Name":"Food Per Population"
+            },
+            "GoldPerFertility":{
+               "Name":"Gold Per Fertility"
+            },
+            "GoldPerPopulation":{
+               "Name":"Gold Per Population"
+            },
+            "Identifier":{
+               "Name":"Identifier",
+               "immutable":true,
+               "searchable":true,
+               "type":"text"
+            },
+            "MinimalPopulation":{
+               "Name":"Min Pop"
+            },
+            "Price":{
+               "Name":"Baukosten"
+            },
+            "_id":{
+               "Name":"MongoDB_ID",
+               "immutable":true,
+               "type":"text"
+            },
+            "constructable":{
+               "Name":"Kann gebaut werded"
+            },
+            "destructable":{
+               "Name":"Kann abgerissen werden"
+            },
+            "eBuilding":{
+               "Name":"Building ID",
+               "immutable":true
+            },
+            "eBuildingType":{
+               "Name":"Gebäude Type"
+            },
+            "ebuildingClass":{
+               "Name":"Gebäude Klasse"
+            },
+            "name":{
+               "Name":"Name",
+               "type":"text"
+            },
+            "next_eBuilding":{
+               "Name":"Next Building ID",
+               "immutable":true
+            },
+            "next_eBuilding_id":{
+               "Name":"next eBuilding Mongo id",
+               "immutable":true,
+               "type":"text"
+            },
+            "next_eBuilding_string":{
+               "Name":"Next Building",
+               "type":"text",
+               "immutable":true
+            },
+            "prevoius_eBuilding":{
+               "Name":"prevoius eBuilding ID",
+               "immutable":true
+            },
+            "prevoius_eBuilding_id":{
+               "Name":"prevoius eBuilding Mongo id",
+               "type":"text",
+               "immutable":true
+            },
+            "prevoius_eBuilding_string":{
+               "Name":"Previous Building",
+               "type":"text",
+               "immutable":true
+            }
+         }
+      },
+      "Units":{
+         "columns":[
+            "Unit_name",
+            "size",
+            "unitType",
+            "Equipment",
+            "nation_string",
+            "attack_KK_FK",
+            "attack_KK_NK",
+            "attack_S",
+            "defense_KK",
+            "defense_RM",
+            "defense_S",
+            "lifes",
+            "NbOfAttacks",
+            "fernkampfTreffer",
+            "nahkampfTreffer",
+            "heldentum",
+            "willenskraft",
+            "Schicksal",
+            "mut",
+            "price",
+            "people",
+            "movedistance",
+            "_rules"
+         ],
+         "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":false,
+               "immutable":false,
+               "type":"number",
+               "componentType":"input"
+            },
+            "Unit_name":{
+               "Name":"Name",
+               "searchable":true,
+               "type":"text"
+            },
+            "Equipment":{
+               "Name":"Equipment",
+               "searchable":true,
+               "type":"text"
+            },
+            "Identifier":{
+               "Name":"Identifier",
+               "immutable":true,
+               "type":"text",
+               "componentType":"textarea"
+            },
+            "name":{
+               "Name":"Name",
+               "type":"text"
+            },
+            "attack_KK_FK":{
+               "Name":"Attack KK FK"
+            },
+            "attack_KK_NK":{
+               "Name":"Attack KK NK"
+            },
+            "attack_S":{
+               "Name":"Attack S"
+            },
+            "defense_KK":{
+               "Name":"Def KK"
+            },
+            "defense_RM":{
+               "Name":"Def RM"
+            },
+            "fernkampfTreffer":{
+               "Name":"FK"
+            },
+            "nahkampfTreffer":{
+               "Name":"NK"
+            },
+            "NbOfAttacks":{
+               "Name":"Nb of Attacks"
+            },
+            "heldentum":{
+               "Name":"H"
+            },
+            "willenskraft":{
+               "Name":"W"
+            },
+            "Schicksal":{
+               "Name":"S"
+            },
+            "defense_S":{
+               "Name":"Def S"
+            },
+            "lifes":{
+               "Name":"Lifes"
+            },
+            "mut":{
+               "Name":"Courage"
+            },
+            "price":{
+               "Name":"Price"
+            },
+            "_id":{
+               "Name":"MongoDB_ID",
+               "immutable":true,
+               "type":"text"
+            },
+            "rules":{
+               "Name":"Rules",
+               "type":"text",
+               "componentType":"textarea"
+            },
+            "_rules":{
+               "Name":"Rules",
+               "type":"text",
+               "componentType":"textarea"
+            },
+            "nation_id":{
+               "Name":"Nation mongo ID",
+               "immutable":true,
+               "type":"text"
+            },
+            "nation_string":{
+               "Name":"Nation",
+               "immutable":true,
+               "type":"text"
+            },
+            "people":{
+               "Name":"Peoples",
+               "type":"text"
+            },
+            "movedistance":{
+               "Name":"Bew"
+            },
+            "unitType":{
+               "Name":"Unit Typ"
+            },
+            "size":{
+               "Name":"Size"
+            }
+         }
+      },
+      "Ships":{
+         "columns":[
+            "Maschine_name",
+            "Equipment",
+            "eNation",
+            "Structurepoints",
+            "Verteidigung",
+            "capacity",
+            "crew",
+            "movedistance",
+            "price",
+            "rammen",
+            "rules",
+            "treffer"
+         ],
+         "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":false,
+               "immutable":false,
+               "type":"number",
+               "componentType":"input"
+            },
+            "Maschine_name":{
+               "Name":"Ship name",
+               "searchable":true,
+               "type":"text"
+            },
+            "name":{
+               "Name":"Name",
+               "searchable":true,
+               "type":"text"
+            },            
+            "Identifier":{
+               "Name":"Identifier",
+               "immutable":true,
+               "type":"text",
+               "componentType":"textarea"
+            },
+            "_id":{
+               "Name":"MongoDB_ID",
+               "immutable":true,
+               "type":"text",
+               "componentType":"input"
+            },
+            "Equipment":{
+               "Name":"Equipment",
+               "searchable":true,
+               "type":"text"
+            },
+            "eNation_id":{
+               "Name":"Nation mongo ID",
+               "searchable":true,
+               "type":"text"
+            },
+            "eNation":{
+               "Name":"Nation",
+               "searchable":true,
+               "type":"text"
+            },
+            "eNation_string":{
+               "Name":"Nation",
+               "searchable":true,
+               "type":"text"
+            },            
+            "movedistance":{
+               "Name":"Move Distance",
+               "type":"text"
+            },
+            "treffer":{
+               "Name":"Treffer",
+               "type":"text"
+            },
+            "rules":{
+               "Name":"Rules",
+               "type":"text",
+               "componentType":"textarea"
+            },
+            "_rules":{
+               "Name":"Rules",
+               "type":"text",
+               "componentType":"textarea"
+            }
+         }
+      },
+      "Machines":{
+         "columns":[
+            "Maschine_name",
+            "Equipment",
+            "eNation",
+            "BesatzungsAnzahl",
+            "BesatzungsEinheiten",
+            "ShootingDistance",
+            "Structurepoints",
+            "angriff",
+            "defense",
+            "movedistance",
+            "price",
+            "_rules"
+         ],
+         "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":false,
+               "immutable":false,
+               "type":"number",
+               "componentType":"input"
+            },
+            "Identifier":{
+               "Name":"Identifier",
+               "immutable":true,
+               "type":"text",
+               "componentType":"textarea"
+            },
+            "name":{
+               "Name":"Name",
+               "immutable":true,
+               "type":"text"
+            },            
+            "BesatzungsEinheiten":{
+               "Name":"Besatzungs Einheiten",
+               "type":"text"
+            },
+            "Maschine_name":{
+               "Name":"Maschine name",
+               "searchable":true,
+               "type":"text"
+            },            
+            "_id":{
+               "Name":"MongoDB_ID",
+               "immutable":true,
+               "componentType":"input",
+               "type":"text"
+            },
+            "Equipment":{
+               "Name":"Equipment",
+               "searchable":true,
+               "type":"text"
+            },
+            "eNation":{
+               "Name":"Nation",
+               "searchable":true,
+               "type":"text"
+            },
+            "eNation_id":{
+               "Name":"Nation mongo ID",
+               "type":"text"
+            },            
+            "eNation_string":{
+               "Name":"Nation",
+               "searchable":true,
+               "type":"text"
+            },         
+            "_rules":{
+               "Name":"Rules",
+               "type":"text",
+               "componentType":"textarea"
+            },
+            "rules":{
+               "Name":"Rules",
+               "type":"text",
+               "componentType":"textarea"
+            }
+         }
+      },
+      "Rules":{
+         "columns":[
+            "name",
+            "Description"
+         ],
+         "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":true,
+               "immutable":false,
+               "type":"text",
+               "componentType":"textarea"
+            },
+            "name":{
+               "Name":"Regel"
+            },
+            "_id":{
+               "Name":"MongoDB_ID",
+               "immutable":true,
+               "componentType":"input"
+            },
+            "Description":{
+               "Name":"Beschreibung"
+            }
+         }
       }
-    },
-    "Nations": {
-      "columns": [
-        "Identifier",
-        "side",
-        "CounterMax",
-        "CounterMaxPopDependend",
-        "maxPopulation",
-        "reductionMilitary",
-        "reductionCivil",
-        "BasicFood"
-      ],
-      "columnProps": {
-        "Default": {
-          "Name": "Default",
-          "searchable": false,
-          "immutable": false,
-          "type": "number",
-          "componentType": "input"
-        },         
-        "BasicFood": {
-          "Name": "Basic Food"
-        },         
-        "CounterMax": {
-          "Name": "Turns per Population"
-        },   
-        "maxPopulation": {
-          "Name": "Base Cap Population"
-        },                    
-        "Identifier": {
-          "Name": "Nation Name",
-          "searchable": true,
-          "type":"text"
-        },
-        "_id": {
-          "Name": "MongoDB_ID",
-          "immutable": true,
-          "type": "text"
-        },         
-        "eNation": {
-          "Name": "Nation ID",
-          "searchable": false
-        },
-        "CounterMaxPopDependend": {
-          "Name": "Slow Growth"
-        },
-        "name": {
-          "Name": "Name",
-          "type": "text"
-        },
-        "reductionCivil": {
-          "Name": "Building costs discounts (Civil)"
-        },         
-        "reductionMilitary": {
-          "Name": "Building costs discounts (Military)"
-        },    
-           "side": {
-          "Name": "Side",
-          "immutable": true
-        }
-
-      }
-    },
-    "Buildings": {
-      "columns": [
-        "Identifier",
-        "next_eBuilding_string",
-        "prevoius_eBuilding_string",
-        "ConstructionTime",
-        "Price",
-        "ebuildingClass",
-        "eBuildingType",
-        "BaseIncomeGold",
-        "BaseIncomeFood",
-        "MinimalPopulation",
-        "BasePopulation",
-        "upgradable"
-      ],
-      "columnProps": {
-        "Default": {
-          "Name": "Default",
-          "searchable": false,
-          "immutable": false,
-          "type": "number",
-          "componentType": "input"
-        },
-        "BaseIncomeFood": {
-          "Name": "Food Income"
-        },        
-        "BaseIncomeGold": {
-          "Name": "Gold Income"
-        },
-        "BasePopulation": {
-          "Name": "Base Pop"
-        },
-        "ConstructionTime": {
-          "Name": "Construction Time"
-        },           
-        "FoodPerFertility": {
-          "Name": "Food Per Fertility"
-        },       
-        "FoodPerPopulation": {
-          "Name": "Food Per Population"
-        },  
-        "GoldPerFertility": {
-          "Name": "Gold Per Fertility"
-        },  
-        "GoldPerPopulation": {
-          "Name": "Gold Per Population"
-        },                  
-        "Identifier": {
-          "Name": "Identifier",
-          "immutable": true,
-          "searchable": true,
-          "type":"text"
-        },
-        "MinimalPopulation": {
-          "Name": "Min Pop"
-        },  
-        "Price": {
-          "Name": "Baukosten"
-        },  
-        "_id": {
-          "Name": "MongoDB_ID",
-          "immutable": true,
-          "type": "text"
-        },        
-        "constructable": {
-          "Name": "Kann gebaut werded"
-        },
-        "destructable": {
-          "Name": "Kann abgerissen werden"
-        },     
-        "eBuilding": {
-          "Name": "Building ID",
-          "immutable": true
-        },
-        "eBuildingType": {
-          "Name": "Gebäude Type"
-        },    
-        "ebuildingClass": {
-          "Name": "Gebäude Klasse"
-        },        
-        "name": {
-          "Name": "Name",
-          "type":"text"
-        },          
-        "next_eBuilding": {
-          "Name": "Next Building ID", 
-          "immutable": true
-        },    
-        "next_eBuilding_id": {
-          "Name": "next eBuilding Mongo id",
-          "immutable": true,
-          "type":"text"
-        },                
-        "next_eBuilding_string": {
-          "Name": "Next Building",
-          "type": "text",
-          "immutable": true    
-        },
-        "prevoius_eBuilding": {
-          "Name": "prevoius eBuilding ID", 
-          "immutable": true
-        },      
-        "prevoius_eBuilding_id": {
-          "Name": "prevoius eBuilding Mongo id",
-          "type": "text",
-          "immutable": true    
-        },               
-        "prevoius_eBuilding_string": {
-          "Name": "Previous Building",
-          "type": "text",
-          "immutable": true
-        }
-      }
-    },
-    "Units": {
-      "columns": [
-        "Unit_name",
-        "size",        
-        "unitType",
-        "Equipment",
-        "nation_string",
-        "attack_KK_FK",
-        "attack_KK_NK",
-        "attack_S",
-        "defense_KK",
-        "defense_RM",
-        "defense_S",
-        "lifes",
-        "NbOfAttacks",
-        "fernkampfTreffer",
-        "nahkampfTreffer",
-        "heldentum",
-        "willenskraft",
-        "Schicksal",
-        "mut",
-        "price",
-        "people",
-        "movedistance",
-        "rules"
-      ],
-      "columnProps": {
-        "Default": {
-          "Name": "Default",
-          "searchable": false,
-          "immutable": false,
-          "type": "number",
-          "componentType": "input"
-        },
-        "Unit_name": {
-          "Name": "Name",
-          "searchable": true,
-          "type": "text"
-        },       
-        "Equipment": {
-          "Name": "Equipment",
-          "searchable": true,
-          "type": "text"
-        },
-        "Identifier": {
-          "Name": "Identifier",
-          "immutable": true,
-          "type": "text",
-          "componentType": "textarea"
-        },
-        "attack_KK_FK": {
-          "Name": "Attack KK FK"
-        },
-        "attack_KK_NK": {
-          "Name": "Attack KK NK"
-        },
-        "attack_S": {
-          "Name": "Attack S"
-        },
-        "defense_KK": {
-          "Name": "Def KK"
-        },
-        "defense_RM": {
-          "Name": "Def RM"
-        },
-        "fernkampfTreffer": {
-          "Name": "FK"
-        },
-        "nahkampfTreffer": {
-          "Name": "NK"
-        },        
-        "NbOfAttacks": {
-          "Name": "Nb of Attacks"
-        },  
-        "heldentum": {
-          "Name": "H"
-        },
-        "willenskraft": {
-          "Name": "W"
-        },
-        "Schicksal": {
-          "Name": "S"
-        },
-        "defense_S": {
-          "Name": "Def S"
-        },
-        "lifes": {
-          "Name": "Lifes"
-        },
-        "mut": {
-          "Name": "Courage"
-        },           
-        "name": {
-          "Name": "Name",
-          "type":"text"
-        },  
-        "price": {
-          "Name": "Price"
-        },  
-        "_id": {
-          "Name": "MongoDB_ID",
-          "immutable": true,
-          "type": "text"
-        } ,
-        "_rules": {
-          "Name": "Rules",
-          "type": "text",
-          "componentType": "textarea"
-        } ,
-        "rules": {
-          "Name": "Rules",
-          "type": "text",
-          "immutable": true
-        } ,        
-        "nation_id": {
-          "Name": "Nation mongo ID",
-          "immutable": true,
-          "type": "text"
-        } ,
-        "nation_string": {
-          "Name": "Nation",
-          "immutable": true,
-          "type": "text"
-        }    ,
-        "people": {
-          "Name": "Peoples",
-          "type": "text"
-        }   ,
-        "movedistance": {
-          "Name": "Bew"
-        }  ,
-        "unitType": {
-          "Name": "Unit Typ"
-        }    ,
-        "size": {
-          "Name": "Size"
-        }                
-      }
-    },
-    "Ships":    {
-      "columns":[
-        "Maschine_name",        
-        "Equipment",
-        "eNation",
-        "Structurepoints",
-        "Verteidigung",
-        "capacity",
-        "crew",
-        "movedistance",
-        "price",
-        "rammen",
-        "rules",
-        "treffer"
-      ],
-      "columnProps": {
-        "Default": {
-          "Name": "Default",
-          "searchable": false,
-          "immutable": false,
-          "type": "number",
-          "componentType": "input"
-        },
-        "Maschine_name": {
-          "Name": "Ship name",
-          "searchable": true,
-          "type": "text"
-        },
-        "Equipment": {
-          "Name": "Equipment",
-          "searchable": true,
-          "type": "text"
-        },        
-        "eNation": {
-          "Name": "Nation",
-          "searchable": true,
-          "type": "text"
-        }
-      }
-    },
-    "Machines":{
-      "columns":[
-        "Maschine_name",
-        "Equipment",
-        "eNation",
-        "BesatzungsAnzahl",
-        "BesatzungsEinheiten",
-        "ShootingDistance",
-        "Structurepoints",
-        "angriff",
-        "defense",
-        "movedistance",
-        "price",
-        "rules"
-      ],
-      "columnProps": {
-        "Default": {
-          "Name": "Default",
-          "searchable": false,
-          "immutable": false,
-          "type": "number",
-          "componentType": "input"
-        },
-        "Maschine_name": {
-          "Name": "Maschine name",
-          "searchable": true,
-          "type": "text"
-        },
-        "Equipment": {
-          "Name": "Equipment",
-          "searchable": true,
-          "type": "text"
-        },        
-        "eNation": {
-          "Name": "Nation",
-          "searchable": true,
-          "type": "text"
-        }
-      }
-    },
-
-    "Rules":
-    {
-      "columns":["name",
-      "Description"],
-      "columnProps":{
-        "Default": {
-          "Name": "Default",
-          "searchable": true,
-          "immutable": false,
-          "type": "text",
-          "componentType": "textarea"
-        },
-        "name": {
-          "Name": "Regel"
-        },  
-        "_id": {
-          "Name": "MongoDB_ID",
-          "immutable": true,
-          "componentType": "input"
-        },          
-        "Description": {
-          "Name": "Beschreibung"
-        }
-      }
-    }
-  }
+   }
 }
-
-
-
