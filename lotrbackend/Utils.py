@@ -84,7 +84,7 @@ def recreate_collection(database: Database, collection: Collection, collection_n
         return database.create_collection(collection_name)
     else:
         if recreate:
-            logging.info(f"Drop and Recreate Database: {collection_name}")
+            logging.warning(f"Drop and Recreate Database: {collection_name}")
             collection.drop()
             return database.create_collection(collection_name)
         else:
@@ -200,7 +200,7 @@ def log_changes(db, collection_name, item_id, item_identifier, changes):
     - item_id: The ID of the item that was updated.
     - changes: A dictionary containing the changes.
     """
-    change_logs_collection = recreate_collection(db, db['ChangeLogs'], 'ChangeLogs', False)
+    # change_logs_collection = recreate_collection(db, db['ChangeLogs'], 'ChangeLogs', False)
 
     change_log_entry = {
         'timestamp': datetime.now(),
@@ -209,4 +209,39 @@ def log_changes(db, collection_name, item_id, item_identifier, changes):
         'item_identifier': item_identifier,
         'changes': changes
     }
-    change_logs_collection.insert_one(change_log_entry)
+    db['ChangeLogs'].insert_one(change_log_entry)
+
+
+# Helper to stringify complex objects for logging
+def format_for_log(val):
+    # If it's a simple primitive, keep it as is
+    if isinstance(val, (int, float, str, bool)):
+        return val
+    # If it's none, return None
+    if val is None:
+        return None
+    # Otherwise (dict, list, tuple, etc.), dump to JSON string
+    try:
+        import json
+        return json.dumps(val)
+    except:
+        return str(val)
+
+def validate_type_compatibility(current_value, new_value):
+    """
+    Validates if new_value can overwrite current_value.
+    Allows int <-> float interchangeability.
+    
+    Returns:
+        tuple: (bool is_valid, str error_message)
+    """
+    # 1. Allow Number to Number (Int <-> Float) updates
+    if isinstance(current_value, (int, float)) and isinstance(new_value, (int, float)):
+        return True, ""
+    
+    # 2. Strict type check for everything else (Strings, Lists, Dicts)
+    if type(current_value) != type(new_value):
+        msg = f'Type Mismatch. Expects {type(current_value).__name__}, got {type(new_value).__name__}'
+        return False, msg
+        
+    return True, ""

@@ -1,13 +1,13 @@
 summary: Retrieve Game Start Configuration
-description: >
+description: |
   Fetches specific configuration datasets used for initializing the game state.
   
   **Available Datasets:**
-  * `FertSeason`: Fertility Modifier per Season
-  * `Trade`: Money per Trade Value
-  * `Food_UnitType`: Base Food consumption per Unit Type
-  * `Varia`: General settings (e.g., Start Gold)
-  * `FoodSize`: Complex food calculation factors
+  - `FertSeason`: Fertility Modifier per Season
+  - `Trade`: Money per Trade Value
+  - `Food_UnitType`: Base Food consumption per Unit Type
+  - `Varia`: General settings (e.g., Start Gold)
+  - `FoodSize`: Complex food calculation factors
 tags:
   - StartData
 parameters:
