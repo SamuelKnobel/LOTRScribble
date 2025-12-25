@@ -160,10 +160,20 @@ def update_buildings(id):
 def get_rules():
     return get_baseData('RuleData')
 
+@app.route('/rules/<id>', methods=['GET'])
+@swag_template('docs/generic_get_id.yml', name='Rule', tag='Rules')
+def get_rule(id):
+    return get_item_by_id('RuleData', id)
+
+@app.route('/rules/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name='Rule', tag='Rules')
+def update_rules(id):
+    return update_item_by_id("RuleData", id)
+
 
 #-------------------- CHANGE LOGS --------------------#
 @app.route('/changelog', methods=['GET'])
-@swag_template('docs/generic_get.yml', name='ChangeLogs')
+@swag_template('docs/changelog_get.yml')
 def get_changelog():
     return get_baseData('ChangeLogs')
 

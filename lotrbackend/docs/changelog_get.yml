@@ -1,0 +1,21 @@
+summary: Get System Change Logs
+description: Retrieve a history of all modification events (PUT operations) recorded by the system.
+tags:
+  - System Info
+responses:
+  200:
+    description: List of change logs
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          timestamp:
+            type: string
+            description: When the change happened
+          item_identifier:
+            type: string
+            description: What was changed (e.g., "Summer")
+          changes:
+            type: object
+            description: The diff showing old vs new values
