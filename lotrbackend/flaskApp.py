@@ -116,28 +116,28 @@ def get_changelog():
 
 
 #-------------------- START DATA --------------------#
-@app.route('/StartData/Constants/<data_name>', methods=['GET'])
+@app.route('/startdata/constants/<data_name>', methods=['GET'])
 @swag_template('docs/gameStartData_get.yml') 
 def get_startdata_constant(data_name):
     return get_start_data_generic("Constants", doc_name=data_name)
 
 
-@app.route('/StartData/StartFields', methods=['GET'])
+@app.route('/startdata/startfields', methods=['GET'])
 @swag_template('docs/generic_get.yml', name='StartFields', tag='StartData') 
 def get_startdata_fields():
     return get_start_data_generic("StartFields")
 
-@app.route('/StartData/StartNations', methods=['GET'])
+@app.route('/startdata/startnations', methods=['GET'])
 @swag_template('docs/generic_get.yml', name='StartNations', tag='StartData')
 def get_startdata_nations():
     return get_start_data_generic("StartNations")
 
-@app.route('/StartData/StartBuildings', methods=['GET'])
+@app.route('/startdata/startbuildings', methods=['GET'])
 @swag_template('docs/generic_get.yml', name='StartBuildings', tag='StartData')
 def get_startdata_buildings():
     return get_start_data_generic("StartBuildings")
 
-@app.route('/StartData/Constants/<data_name>', methods=['PUT'])
+@app.route('/startdata/constants/<data_name>', methods=['PUT'])
 @swag_template('docs/gameStartData_put.yml')
 def update_startdata(data_name):
     logging.info(f'Attempting to update Constants: {data_name}')
