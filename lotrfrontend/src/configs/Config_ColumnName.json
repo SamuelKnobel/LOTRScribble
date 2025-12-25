@@ -1,5 +1,49 @@
 {
    "tables":{
+      "StartFields": {
+        "columns":[
+          "name",
+          "FieldName",
+          "b_Bridge",
+          "b_BridgeUpgradeTowers",
+          "b_BuildingUpgradeTower",
+          "eMainBuilding",
+          "eNation"
+        ],
+          "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":false,
+               "immutable":false,
+               "type":"number",
+               "componentType":"input"
+            },
+            "name":{
+               "Name":"name",
+               "immutable":true,
+               "searchable":true,
+               "type":"text"
+            },
+            "FieldName":{
+               "Name":"Field Name",
+               "immutable":true,
+               "searchable":true,
+               "type":"text"
+            },
+            "eMainBuilding":{
+               "Name":"Building",
+               "immutable":true,
+               "searchable":true,
+               "type":"number"
+            }   ,
+            "eNation":{
+               "Name":"Nation",
+               "immutable":true,
+               "searchable":true,
+               "type":"string"
+            }   
+          }        
+      },
       "Fields":{
          "columns":[
             "FieldName",
@@ -67,6 +111,21 @@
             }
          }
       },
+
+      "StartNations":{
+        "columns":[
+          "b_GoldCollected",
+          "actualMoney" ],
+          "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":false,
+               "immutable":false,
+               "type":"number",
+               "componentType":"input"
+            }
+          }          
+      },
       "Nations":{
          "columns":[
             "Identifier",
@@ -127,6 +186,40 @@
                "immutable":true
             }
          }
+      },
+      "StartBuildings":{
+        "columns":[
+          "Identifier",
+          "BuildingPositionName",
+          "b_Ruine",
+          "eBuilding"
+        ],
+          "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":false,
+               "immutable":false,
+               "componentType":"input"
+            },
+            "Identifier":{
+               "Name":"Identifier",
+               "immutable":true,
+               "searchable":true,
+               "type":"text"
+            },
+            "BuildingPositionName":{
+               "Name":"Position",
+               "immutable":true,
+               "searchable":true,
+               "type":"number"
+            },
+            "eBuilding":{
+               "Name":"Building",
+               "immutable":true,
+               "searchable":true,
+               "type":"text"
+            }           
+          }
       },
       "Buildings":{
          "columns":[

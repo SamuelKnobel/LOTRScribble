@@ -13,6 +13,7 @@ const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
 
 const DataTable = ({ rawdata, tableName ,refetchData}) => {
   const [data, setData] = useState([])
+  console.log("tableName:",tableName)
   const tableConfig = Config_ColumnName.tables[tableName];
   const enumConfig = Enums.Enums;
   const [selectedRow, setSelectedRow] = useState(null);

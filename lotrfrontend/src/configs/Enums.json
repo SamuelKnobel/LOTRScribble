@@ -35,6 +35,23 @@
     "13":"Bridge",
     "14":"BridgeTowers"
     },
+    "eMainBuilding": {
+     "0": "None",
+    "1":"Farm",
+    "2":"Village",
+    "3":"Fort",
+    "4":"Castle",
+    "5":"Tower",
+    "6":"Stronghold",
+    "7":"Mine",
+    "8":"City",
+    "9":"Citadel",
+    "10":"FortressMine",
+    "11":"Motte",
+    "12":"UpgradeTower",
+    "13":"Bridge",
+    "14":"BridgeTowers"
+    },    
     "eBuildingType": {
        "0":"MainBuilding",
       "1":"UpgradeTower",
