@@ -3,14 +3,38 @@ import BackendPath from './configs/Config_Path.json';
 import { useQuery , useMutation} from '@tanstack/react-query'
 
 
-export const getConfigValue=(tableConfig,fieldName, property, returnDefault) => {
-
+export const getConfigValue = (tableConfig, fieldName, property, returnDefault) => {
+    // 1. Check if the field exists in the specific table config
     if (fieldName && tableConfig.columnProps[fieldName]) {
-      const columnConfig = tableConfig.columnProps[fieldName];
-      return columnConfig.hasOwnProperty(property) ? columnConfig[property] : (returnDefault ? tableConfig.columnProps["Default"][property] : fieldName);
+        const columnConfig = tableConfig.columnProps[fieldName];
+        
+        // A. If the specific property is defined (e.g., "Name": "My Unit"), return it
+        if (columnConfig.hasOwnProperty(property)) {
+            return columnConfig[property];
+        }
+
+        // B. If not defined, and we are asked to return defaults
+        if (returnDefault) {
+            // SPECIAL CASE: For "Name", we prefer the fieldName over the text "Default"
+            if (property === "Name") {
+                return fieldName;
+            }
+            // For everything else (type, componentType), return the Default config
+            return tableConfig.columnProps["Default"][property];
+        } else {
+            // If returnDefault is false, fallback to fieldName
+            return fieldName;
+        }
     }
-    return returnDefault ? tableConfig.columnProps["Default"][property] : fieldName;
-  };
+
+    // 2. Edge Case: Field not in config at all. 
+    if (returnDefault) {
+        if (property === "Name") return fieldName;
+        return tableConfig.columnProps["Default"][property];
+    }
+    
+    return fieldName;
+};
 
 async function fetchData (query)
 {

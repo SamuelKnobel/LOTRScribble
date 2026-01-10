@@ -145,12 +145,31 @@ const columns = React.useMemo(() => {
         {headerGroups.map((headerGroup) => (
           <React.Fragment key={headerGroup.id}>
             <tr {...headerGroup.getHeaderGroupProps()}>
-              <th></th> {/* Empty cell to align with Edit button */}
+              <th></th> {/* Empty cell for Edit button */}
+              
               {headerGroup.headers.map((column, index) => (
-                <th key={index} {...column.getHeaderProps(column.getSortByToggleProps())} className="column-style">
-                  {column.render('Header')}
-                  <span>{column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}</span>
-                  <div>{column.canFilter ? column.render('Filter') : null}</div>
+                <th 
+                  key={index} 
+                  {...column.getHeaderProps(column.getSortByToggleProps())} 
+                  className="column-style"
+                >
+                  {/* WRAPPER: Forces vertical layout (Title Top, Search Bottom) */}
+                  <div className="header-content-wrapper">
+                    
+                    {/* TOP: Title */}
+                    <div className="header-top">
+                      {column.render('Header')}
+                      <span className="sort-icon">
+                        {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+                      </span>
+                    </div>
+
+                    {/* BOTTOM: Search (Only if filterable) */}
+                    <div className="header-bottom">
+                      {column.canFilter ? column.render('Filter') : null}
+                    </div>
+
+                  </div>
                 </th>
               ))}
             </tr>

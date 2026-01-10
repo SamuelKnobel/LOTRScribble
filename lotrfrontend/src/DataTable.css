@@ -1,34 +1,37 @@
+/* DataTable.css */
+
+/* --- 0. Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap');
 
 /* --- 1. Main Table Container --- */
 .react-table {
   width: 100%;
-  border-collapse: separate; /* Required for border-radius to work */
+  border-collapse: separate; /* Required for sticky headers + borders */
   border-spacing: 0;
   margin-top: 20px;
   
-  /* Modern Fantasy: Parchment Background */
+  /* Theme Colors */
   background-color: #fcfbf7; 
-  /* Warm dark border */
   border: 1px solid #dcd6cc; 
-  /* Soft shadow */
   box-shadow: 0 4px 12px rgba(60, 50, 40, 0.15);
-  border-radius: 8px;
-  overflow: hidden;
   
-  /* Body Font: Smaller and readable */
+  /* REMOVED overflow: hidden to fix Sticky Headers */
+  border-radius: 8px;
+  
+  /* Typography */
   font-family: 'Lato', sans-serif;
   font-size: 0.9rem; 
 }
 
-/* --- 2. Headers and Cells --- */
+/* --- 2. Headers and Cells (Global) --- */
 .react-table th, 
 .react-table td {
-  padding: 8px 12px; /* Slightly reduced padding for compactness */
-  text-align: center; /* Center alignment looks better for data */
+  padding: 8px 12px;
+  text-align: center;
   vertical-align: middle;
   border-right: 1px solid #eee8dc;
   border-bottom: 1px solid #eee8dc;
-  color: #2c241b; /* Softer black (Ink color) */
+  color: #2c241b; 
 }
 
 .react-table th:last-child,
@@ -36,161 +39,131 @@
   border-right: none;
 }
 
-/* --- 3. Header Styling --- */
+/* --- 3. Sticky Header Logic --- */
 .react-table th {
-  /* Modern Fantasy: Header Font */
-  font-family: 'Cinzel', serif;
-  font-weight: 700;
-  font-size: 0.95rem; /* Slightly smaller header */
-  letter-spacing: 0.5px;
-  color: #4a3b32; /* Dark Brown */
-  
-  /* Sticky Logic */
   position: sticky;
   top: 0;
-  background-color: #eae5d9; /* Darker parchment for header */
-  z-index: 10;
+  background-color: #eae5d9; /* Opaque background is crucial */
+  z-index: 100; /* High z-index to stay above content */
   border-bottom: 2px solid #c9c0b1;
-  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Shadow for depth */
+  vertical-align: top; /* Ensures title starts at top */
 }
 
-/* --- 4. Animation & Interaction --- */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+/* --- 4. Manual Rounded Corners (Since we removed overflow:hidden) --- */
+.react-table thead tr:first-child th:first-child {
+  border-top-left-radius: 8px;
+}
+.react-table thead tr:first-child th:last-child {
+  border-top-right-radius: 8px;
+}
+.react-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+.react-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
 }
 
-.react-table tbody tr {
-  animation: fadeIn 0.3s ease-in-out;
+/* --- 5. Split Header Content --- */
+/* Wrapper to force vertical stacking */
+.header-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  gap: 8px; /* Force Gap between Title and Search */
 }
 
-.react-table tbody tr:hover {
-  background-color: #f0eadd; /* Warm highlight on hover */
-  transition: background-color 0.1s ease;
+/* Top: Title & Sort */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 24px;
+  
+  /* Font */
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #4a3b32;
 }
 
-/* --- 5. The "Magic" Edit Button --- */
-.react-table td button {
-  background-color: #5c4b3f; /* Leather Brown */
+.sort-icon {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+/* Bottom: Search Bar */
+.header-bottom {
+  width: 100%;
+}
+
+/* Input Styling */
+.header-bottom input {
+  width: 100%;
+  padding: 6px 4px;
+  border: 1px solid #d0c8be;
+  border-radius: 4px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.7);
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.header-bottom input:focus {
+  outline: none;
+  border-color: #8c7360;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(140, 115, 96, 0.15);
+}
+
+/* Placeholder styling to make it look cleaner */
+.header-bottom input::placeholder {
+  color: #999;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* --- 6. Buttons & Animation (Preserved) --- */
+.react-table td button,
+.pagination button {
+  background-color: #5c4b3f; 
   color: #fff;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
-  
-  /* Make it a small circle/square */
-  width: 28px;
-  height: 28px;
-  border-radius: 4px; /* Slight rounding (set to 50% for a perfect circle) */
-  padding: 0;
-  
-  /* HIDE the text "Edit" */
-  font-size: 0; 
-  
-  /* Center the icon */
+  border-radius: 4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: 0; 
+  width: 28px;
+  height: 28px;
 }
 
-/* Inject the Pencil Icon automatically */
-.react-table td button::before {
-  content: "✎";  /* Unicode Pencil Character */
-  font-size: 16px; /* Visible icon size */
-  font-family: sans-serif; /* Ensure the symbol renders cleanly */
-}
+.react-table td button::before { content: "✎"; font-size: 16px; font-family: sans-serif; }
+.pagination button:first-of-type::before { content: "◄"; font-size: 14px; }
+.pagination button:last-of-type::before { content: "►"; font-size: 14px; }
 
-.react-table td button:hover {
-  background-color: #8c7360; /* Lighter brown on hover */
-  transform: scale(1.1); /* Slight grow effect */
-}
-
-/* --- 6. Input & Search Containers (Preserved) --- */
-.search-container {
-  margin-bottom: 10px;
-}
-
-.input-container {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.input-container input {
-  margin-right: 10px;
-}
-
-.column-style {
-  width: fit-content;
-}
-
-.column-style input {
-  width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  
-  /* Optional: Style the search inputs to match the theme */
-  border: 1px solid #dcd6cc;
-  border-radius: 4px;
-  padding: 4px;
-  font-family: 'Lato', sans-serif;
-  background-color: #fff;
-}
-
-/* --- 7. Pagination Styling --- */
 .pagination {
   margin-top: 15px;
   display: flex;
-  align-items: center;
-  justify-content: center; /* Centers the pagination controls */
-  gap: 15px; /* Space between buttons and text */
-  font-family: 'Cinzel', serif; /* Match header font */
+  justify-content: center;
+  gap: 15px;
+  font-family: 'Cinzel', serif;
   color: #4a3b32;
   font-weight: bold;
 }
 
-.pagination button {
-  background-color: #5c4b3f; /* Same Leather Brown */
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  
-  /* Compact Square/Circle shape */
-  width: 32px;
-  height: 32px;
-  border-radius: 4px;
-  padding: 0;
-  
-  /* HIDE the text "Previous Page" / "Next Page" */
-  font-size: 0;
-  
-  /* Center the icon */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-
-/* Hover Effect */
-.pagination button:hover:not(:disabled) {
-  background-color: #8c7360;
-  transform: scale(1.1);
+.react-table tbody tr {
+  animation: fadeIn 0.3s ease-in-out;
 }
-
-/* Disabled State (faded out) */
-.pagination button:disabled {
-  background-color: #ccc; /* Grey out disabled buttons */
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-/* Inject Left Arrow for the First Button */
-.pagination button:first-of-type::before {
-  content: "◄"; 
-  font-size: 14px; /* Visible icon size */
-}
-
-/* Inject Right Arrow for the Last Button */
-.pagination button:last-of-type::before {
-  content: "►"; 
-  font-size: 14px;
+.react-table tbody tr:hover {
+  background-color: #f0eadd;
 }

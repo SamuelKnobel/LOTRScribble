@@ -62,7 +62,7 @@
                "immutable":false,
                "type":"number",
                "componentType":"input"
-            },
+            },            
             "FieldName":{
                "Name":"Field Name",
                "searchable":true,
@@ -158,7 +158,7 @@
                "Name":"Nation Name",
                "searchable":true,
                "type":"text"
-            },
+            },            
             "_id":{
                "Name":"MongoDB_ID",
                "immutable":true,
@@ -439,13 +439,19 @@
             "_rules":{
                "Name":"Regeln",
                "type":"text",
-               "componentType":"textarea"
+               "componentType":"textarea",
+                "searchable":true
             },
             "nation_id":{
                "Name":"Nation mongo ID",
                "immutable":true,
                "type":"text"
             },
+            "nation":{
+               "Name":"Nation",
+               "immutable":true,
+               "type":"text"
+            },            
             "nation_string":{
                "Name":"Nation",
                "immutable":true,
@@ -460,7 +466,7 @@
                "Name":"Bew"
             },
             "unitType":{
-               "Name":"Unit Typ",
+               "Name":"Typ",
                "searchable":true
             },
             "size":{
@@ -568,8 +574,11 @@
                "type":"text"
             },
             "Structurepoints":{
-               "Name":"Strukturpunkte"
-            },         
+               "Name":"Struktur-Punkte"
+            },
+            "Verteidigung":{
+               "Name":"Verteidigung"
+            },
             "treffer":{
                "Name":"Treffer",
                "type":"text"
@@ -594,8 +603,9 @@
             "_rules":{
                "Name":"Regeln",
                "type":"text",
-               "componentType":"textarea"
-            }
+               "componentType":"textarea",
+                "searchable":true
+            }         
          }
       },
       "Machines":{
@@ -631,7 +641,7 @@
                "Name":"Name",
                "immutable":true,
                "type":"text"
-            },            
+            },   
             "BesatzungsEinheiten":{
                "Name":"Besatzungs Einheiten",
                "type":"text"
@@ -646,7 +656,7 @@
                "type":"text"
             },
             "Structurepoints":{
-               "Name":"Strukturpunkte"
+               "Name":"Struktur-Punkte"
             },                       
             "_id":{
                "Name":"MongoDB_ID",
@@ -692,7 +702,8 @@
             "_rules":{
                "Name":"Regeln",
                "type":"text",
-               "componentType":"textarea"
+               "componentType":"textarea",
+               "searchable":true
             },
             "rules":{
                "Name":"Regeln",
@@ -713,7 +724,7 @@
                "immutable":false,
                "type":"text",
                "componentType":"textarea"
-            },
+            },          
             "name":{
                "Name":"Regel",
                "immutable":true
