@@ -457,6 +457,7 @@
             "nation_string":{
                "Name":"Nation",
                "immutable":true,
+               "searchable":true,
                "type":"text"
             },
             "people":{
