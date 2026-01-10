@@ -89,7 +89,7 @@ const BaseData = () => {
   return (
     <div>      
       <Tabs>
-        <h1 style = {{paddingLeft: 10 +'px'}}>Lord of the Rings - Data Overview</h1> 
+        <h1 style={{ paddingLeft: 10 + 'px' }}>Lord of the Rings - Data Overview</h1>
         <TabList>
           <Tab onClick={() => handleTabClick('Nations')}>Nations</Tab>
           <Tab onClick={() => handleTabClick('Buildings')}>Buildings</Tab>

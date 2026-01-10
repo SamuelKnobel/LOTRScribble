@@ -1,45 +1,62 @@
+/* 1. Import the Fonts Globally */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap');
+
 * {
-box-sizing: border-box;
+  box-sizing: border-box;
 }
+
 body {
-    margin:0;
+  margin: 0;
+  /* 2. Apply Lato globally (Nav, Paragraphs, Body text) */
+  font-family: 'Lato', sans-serif;
+  color: #2c241b; /* Optional: Uses your nice ink color from the table */
 }
 
-.site-title{
-    font-size: 2rem;
+/* 3. Make the Main Titles match the Table Headers (Fantasy Look) */
+h1, h2, h3, .site-title {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  color: #4a3b32; /* Matches your Table Header Brown */
 }
 
+.site-title {
+  font-size: 2rem;
+}
 
 .nav {
-background-color: #333;
-color: white;
-display: flex;
-justify-content: space-between;
-align-items: stretch;
-gap: 2rem;
-padding: 0 1rem;
+  background-color: #333;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 2rem;
+  padding: 0 1rem;
+  /* Nav inherits Lato from body, but you can force it here if needed */
+  font-family: 'Lato', sans-serif; 
 }
+
 .nav ul {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    display: flex;
-    gap: 2rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  gap: 2rem;
 }
 
-.nav a{
-    color: inherit;
-    text-decoration: none;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-}
-.nav li.active{
-    background-color: #555;
-    }
-
-.nav li:hover{
-    background-color: #777;
+.nav a {
+  color: inherit;
+  text-decoration: none;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  font-weight: 700; /* Makes the nav links pop a bit more */
 }
 
+.nav li.active {
+  background-color: #555;
+}
+
+.nav li:hover {
+  background-color: #777;
+}

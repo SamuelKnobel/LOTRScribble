@@ -1,54 +1,150 @@
 /* EditPopup.css */
-.edit-popup {
+
+/* --- Overlay --- */
+.popup-overlay {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  background-color: #d3d3d3;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  height: 'auto';
-  max-height: 80%; /* Limit the width of the popup */
-  width: 'auto';
-  min-width: 40%;
-  max-width: 100%; /* Limit the width of the popup */
-  overflow-y: auto  ; /* Enable vertical scrolling if needed */
-  border: 2px solid black; /* Add a solid black border */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Slightly darker for focus */
+  z-index: 999; 
+  backdrop-filter: blur(3px); /* Stronger blur for depth */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.key-value-pairs {
+/* --- Main Popup Container --- */
+.edit-popup {
+  position: relative; /* Changed from fixed/transform to relative since overlay handles centering */
+  width: 500px;
+  max-width: 90%;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
+
+  /* Theme: Parchment */
+  background-color: #fcfbf7; 
+  border: 1px solid #8c7360; /* Leather brown border */
+  box-shadow: 0 10px 25px rgba(20, 15, 10, 0.5); /* Deep shadow */
+  border-radius: 8px;
+  padding: 24px;
+  
+  z-index: 1000;
+  font-family: 'Lato', sans-serif; /* Body font */
 }
 
+/* --- Typography --- */
+.edit-popup h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-family: 'Cinzel', serif; /* Header font */
+  color: #4a3b32;
+  border-bottom: 2px solid #e0d8c8; /* Separator line */
+  padding-bottom: 10px;
+  text-align: center;
+}
+
+/* --- Scrollable Area for Inputs --- */
+.key-value-pairs {
+  overflow-y: auto;
+  padding-right: 10px; /* Space for scrollbar */
+  margin-bottom: 20px;
+}
+
+/* Custom Scrollbar for Webkit */
+.key-value-pairs::-webkit-scrollbar {
+  width: 8px;
+}
+.key-value-pairs::-webkit-scrollbar-thumb {
+  background-color: #dcd6cc;
+  border-radius: 4px;
+}
+
+/* --- Input Rows --- */
 .key-value-pair {
   display: flex;
-  margin-bottom: 10px;
-  width: 100%;
-
+  flex-direction: column; /* Stack Label on top of Input for better space */
+  margin-bottom: 15px;
 }
 
 .key {
-  flex: 1;
-  font-weight: bold;
-  margin-right: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #5c4b3f; /* Dark brown label */
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.value {
-  width: 100%; /* Set the width to 100% to fill the available space */
-  flex: 1;
+/* --- Inputs & Textareas --- */
+.edit-popup input[type="text"],
+.edit-popup input[type="number"],
+.edit-popup textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #c9c0b1;
+  background-color: #fffefb; /* Very light paper */
+  border-radius: 4px;
+  font-family: 'Lato', sans-serif;
+  color: #2c241b;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
+.edit-popup input:focus,
+.edit-popup textarea:focus {
+  outline: none;
+  border-color: #8c7360; /* Highlight brown */
+  box-shadow: 0 0 0 2px rgba(140, 115, 96, 0.1);
+}
+
+.edit-popup textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* --- Buttons Container --- */
 .buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 16px;
+  justify-content: flex-end; /* Align to right */
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #e0d8c8;
 }
 
-.save-button,
+/* --- Button Styling --- */
+.edit-popup button {
+  padding: 10px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+/* Save Button (Primary Leather) */
+.save-button {
+  background-color: #5c4b3f;
+  color: #fff;
+  border: none;
+}
+
+.save-button:hover {
+  background-color: #4a3b32;
+  transform: translateY(-1px);
+}
+
+/* Cancel Button (Outline Style) */
 .cancel-button {
-  padding: 8px 16px;
+  background-color: transparent;
+  color: #5c4b3f;
+  border: 1px solid #5c4b3f;
 }
 
-
-
+.cancel-button:hover {
+  background-color: #f0eadd;
+}

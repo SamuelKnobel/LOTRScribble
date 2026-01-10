@@ -254,7 +254,7 @@
                "Name":"Base Pop"
             },
             "ConstructionTime":{
-               "Name":"Construction Time"
+               "Name":"Bauzeit"
             },
             "FoodPerFertility":{
                "Name":"Food Per Fertility"
@@ -342,22 +342,13 @@
             "unitType",
             "Equipment",
             "nation_string",
-            "attack_KK_FK",
-            "attack_KK_NK",
-            "attack_S",
-            "defense_KK",
-            "defense_RM",
-            "defense_S",
-            "lifes",
-            "NbOfAttacks",
-            "fernkampfTreffer",
-            "nahkampfTreffer",
-            "heldentum",
-            "willenskraft",
-            "Schicksal",
+            "Stats_Attack",
+            "Stats_Def",            
+            "Stats_Treffer",
+            "Stats_HWS",
+            "Stats_AL",
             "mut",
             "price",
-            "people",
             "movedistance",
             "_rules"
          ],
@@ -367,7 +358,8 @@
                "searchable":false,
                "immutable":false,
                "type":"number",
-               "componentType":"input"
+               "componentType":"input",
+               "isComposite":false
             },
             "Unit_name":{
                "Name":"Name",
@@ -429,10 +421,10 @@
                "Name":"Lifes"
             },
             "mut":{
-               "Name":"Courage"
+               "Name":"Mut"
             },
             "price":{
-               "Name":"Price"
+               "Name":"Preis"
             },
             "_id":{
                "Name":"MongoDB_ID",
@@ -440,12 +432,12 @@
                "type":"text"
             },
             "rules":{
-               "Name":"Rules",
+               "Name":"Regeln",
                "type":"text",
                "componentType":"textarea"
             },
             "_rules":{
-               "Name":"Rules",
+               "Name":"Regeln",
                "type":"text",
                "componentType":"textarea"
             },
@@ -468,12 +460,43 @@
                "Name":"Bew"
             },
             "unitType":{
-               "Name":"Unit Typ"
+               "Name":"Unit Typ",
+               "searchable":true
             },
             "size":{
                "Name":"Size"
+            },
+            "Stats_HWS": {
+               "Name": "H/W/S",
+               "isComposite": true,
+               "compositeFields": ["heldentum", "willenskraft", "Schicksal"],
+               "separator": "/"
+            },
+            "Stats_AL": {
+               "Name": "A/L",
+               "isComposite": true,
+               "compositeFields": ["NbOfAttacks","lifes" ],
+               "separator": "/"
+            },
+            "Stats_Def": {
+               "Name": "Verteidigung KK/RM/S",
+               "isComposite": true,
+               "compositeFields": ["defense_KK","defense_RM","defense_S" ],
+               "separator": " / "
+            },
+            "Stats_Attack": {
+               "Name": "Angriff KK_FK/NK/ S",
+               "isComposite": true,
+               "compositeFields": ["attack_KK_FK","attack_KK_NK","attack_S" ],
+               "separator": " / "
+            },
+            "Stats_Treffer":  {
+               "Name": "Treffer FK/NK",
+               "isComposite": true,
+               "compositeFields": ["fernkampfTreffer","nahkampfTreffer" ],
+               "separator": " / "
             }
-         }
+         } 
       },
       "Ships":{
          "columns":[
@@ -486,9 +509,9 @@
             "crew",
             "movedistance",
             "price",
-            "rammen",
-            "rules",
-            "treffer"
+            "rammen",            
+            "treffer",
+            "rules"            
          ],
          "columnProps":{
             "Default":{
@@ -541,20 +564,35 @@
                "type":"text"
             },            
             "movedistance":{
-               "Name":"Move Distance",
+               "Name":"Bewegung",
                "type":"text"
             },
+            "Structurepoints":{
+               "Name":"Strukturpunkte"
+            },         
             "treffer":{
                "Name":"Treffer",
                "type":"text"
             },
+            "capacity":{
+               "Name":"Kapazität"
+            },  
+            "crew":{
+               "Name":"Besatzung"
+            },                      
+            "rammen":{
+               "Name":"Rammen"
+            },     
+            "price":{
+               "Name":"Preis"
+            },                     
             "rules":{
-               "Name":"Rules",
+               "Name":"Regeln",
                "type":"text",
                "componentType":"textarea"
             },
             "_rules":{
-               "Name":"Rules",
+               "Name":"Regeln",
                "type":"text",
                "componentType":"textarea"
             }
@@ -598,11 +636,18 @@
                "Name":"Besatzungs Einheiten",
                "type":"text"
             },
-            "Maschine_name":{
-               "Name":"Maschine name",
-               "searchable":true,
+            "BesatzungsAnzahl":{
+               "Name":"Besatzungs Anzahl",
                "type":"text"
             },            
+            "Maschine_name":{
+               "Name":"Maschine Name",
+               "searchable":true,
+               "type":"text"
+            },
+            "Structurepoints":{
+               "Name":"Strukturpunkte"
+            },                       
             "_id":{
                "Name":"MongoDB_ID",
                "immutable":true,
@@ -614,6 +659,22 @@
                "searchable":true,
                "type":"text"
             },
+            "ShootingDistance":{
+               "Name":"Schuss Distanz"
+            },
+            "angriff":{
+               "Name":"Angriff"
+            },
+            "defense":{
+               "Name":"Verteidigung"
+            },
+            "price":{
+               "Name":"Preis"
+            },
+            "movedistance":{
+               "Name":"Bewegung",
+               "type":"text"
+            },            
             "eNation":{
                "Name":"Nation",
                "searchable":true,
@@ -629,12 +690,12 @@
                "type":"text"
             },         
             "_rules":{
-               "Name":"Rules",
+               "Name":"Regeln",
                "type":"text",
                "componentType":"textarea"
             },
             "rules":{
-               "Name":"Rules",
+               "Name":"Regeln",
                "type":"text",
                "componentType":"textarea"
             }

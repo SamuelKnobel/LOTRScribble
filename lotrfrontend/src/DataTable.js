@@ -8,7 +8,13 @@ import { ToastContainer } from 'react-toastify';
 import { getConfigValue} from './Utils'
 
 const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
-  return <input value={filterValue || ''} onChange={(e) => setFilter(e.target.value)} />;
+  return (
+    <input
+      value={filterValue || ''}
+      onChange={(e) => setFilter(e.target.value)}
+      onClick={(e) => e.stopPropagation()} 
+    />
+  );
 };
 
 const DataTable = ({ rawdata, tableName ,refetchData}) => {
@@ -27,46 +33,75 @@ const DataTable = ({ rawdata, tableName ,refetchData}) => {
 
   }, [rawdata.isSuccess,rawdata.isPending,rawdata.length]);
 
-
-  const columns = React.useMemo(() => {
-    // console.log("call UseMemo")
-    if (data.length === 0 | (rawdata.length===0 )) {
+const columns = React.useMemo(() => {
+    if (data.length === 0 | (rawdata.length === 0)) {
       return [];
     }
 
     return tableConfig.columns.map((key, columnIndex) => {
 
-      let header= getConfigValue(tableConfig,key, "Name", false);
-      let isSearchable =  getConfigValue(tableConfig,key, "searchable", true)
-
-      let mapValue = (key,value)=>{
- 
-        if (enumConfig[key])
-        {
-          return enumConfig[key][value]         
+      // 1. Helper for mapping values (moved up so it can be used by composite columns too)
+      let mapValue = (colKey, val) => {
+        if (enumConfig[colKey]) {
+          return enumConfig[colKey][val]
         }
-        else if (value ===-99)
-        {
-          return NaN
-        } 
-        else 
-        {
-          if (key === "fernkampfTreffer")
-          {
-            if (value === 0)
-            {
-              return NaN
-            }
-            else {return value}          
-          } 
-          else {return value}                
+        else if (val === -99) {
+          return "-"
+        }
+        else {
+          if (colKey === "fernkampfTreffer") {
+            if (val === 0) return "-"
+            else return val
+          }
+          else { return val }
         }
       }
+
+      // 2. Check if this is a composite (grouped) column
+      let isComposite = getConfigValue(tableConfig, key, "isComposite", true);
+
+      if (isComposite) {
+         let header = getConfigValue(tableConfig, key, "Name", key);
+         // Safety: Add '|| []' to ensure it never returns undefined
+         let fields = getConfigValue(tableConfig, key, "compositeFields", []) || []; 
+         let separator = getConfigValue(tableConfig, key, "separator", " / ");
+         let isSearchable = getConfigValue(tableConfig, key, "searchable", true);
+        
+         // DEBUG: Check what is actually happening during setup
+         console.log(`[Setup] Column: ${key}, Fields:`, fields);
+        
+         return {
+            Header: header,
+            id: key,
+            accessor: (row) => {
+                // GUARD CLAUSE: If fields is undefined/null/not-array, STOP immediately.
+               if (!fields || !Array.isArray(fields) || fields.length === 0) {
+                   console.error(`[Runtime Error] Column '${key}' has invalid fields:`, fields);
+                   return "CONFIG ERROR"; 
+               }
+
+               return fields.map(fieldKey => {
+                  let val = row[fieldKey];
+                  // DEBUG: See if we are finding data
+                  if (val === undefined) console.warn(`[Missing Data] Row ${row.Identifier} missing key '${fieldKey}'`);                  
+                  return mapValue(fieldKey, val); 
+               }).join(separator);
+            },
+            Filter: isSearchable ? DefaultColumnFilter : false,
+            Cell: ({ value }) => <span>{value}</span>
+         };
+      }
+
+      // 3. Standard Column Logic (Existing code)
+      let header = getConfigValue(tableConfig, key, "Name", false);
+      let isSearchable = getConfigValue(tableConfig, key, "searchable", true);
+
       return {
         Header: header,
-        accessor: key,
+        id: key,
+        accessor: (row) => mapValue(key, row[key]),
         Filter: isSearchable ? DefaultColumnFilter : false,
-        Cell: ({ row, value }) =>
+        Cell: ({ value }) =>
           typeof value === 'boolean' ? (
             <input
               type="checkbox"
@@ -75,13 +110,12 @@ const DataTable = ({ rawdata, tableName ,refetchData}) => {
               disabled={true}
             />
           ) : (
-            <span>{mapValue(key,value)}</span>
+            <span>{value}</span>
           ),
       };
     });
 
-  }, [data, tableConfig, enumConfig,rawdata.length]);
-
+  }, [data, tableConfig, enumConfig, rawdata.length]);
   const {
     getTableProps,
     getTableBodyProps,
@@ -94,7 +128,7 @@ const DataTable = ({ rawdata, tableName ,refetchData}) => {
     nextPage,
     canPreviousPage,
     canNextPage,
-  } = useTable({ columns, data, initialState: { pageIndex: 0, pageSize: 15 } }, useFilters, useSortBy, usePagination, useRowSelect);
+  } = useTable({ columns, data, initialState: { pageIndex: 0, pageSize: 100 } }, useFilters, useSortBy, usePagination, useRowSelect);
 
   const openEditPopup = (row) => {
     setSelectedRow(row);
@@ -141,7 +175,7 @@ const DataTable = ({ rawdata, tableName ,refetchData}) => {
         })}
       </tbody>
       </table>
-      <div>
+      <div className="pagination">
         <button onClick={() => previousPage()} disabled={!canPreviousPage}>
           Previous Page
         </button>
