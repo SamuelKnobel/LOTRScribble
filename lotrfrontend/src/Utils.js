@@ -36,7 +36,7 @@ export const getConfigValue = (tableConfig, fieldName, property, returnDefault) 
     return fieldName;
 };
 
-async function fetchData (query)
+export async function fetchData (query)
 {
     console.log(query)
     let headers= {
@@ -96,8 +96,6 @@ export function DataUpdater(onSucess)
     onSuccess: onSucess
   })
 }
-
-
 
 
 

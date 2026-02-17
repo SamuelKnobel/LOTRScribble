@@ -8,6 +8,7 @@ export default function NavBar()
             <CustomLink to="/">Data Overview</CustomLink>
             <CustomLink to="/changelog">Change Log</CustomLink>
             <CustomLink to="/gamestate">Game State</CustomLink>
+            <CustomLink to="/downloads">Downloads</CustomLink>            
             <CustomLink to="/about">About</CustomLink>    
         </ul>
     </nav>
