@@ -33,6 +33,7 @@ dictConfig({
 client = Utils.connect_to_mongodb()
 db_BaseData = client['LOTR_BaseData']
 db_GameData = client['LOTR_GameData']
+db_Admin = client['LOTR_Admin']
 
 
 # Create Flask app
@@ -143,6 +144,15 @@ def get_startdata_buildings():
     return get_start_data_generic("StartBuildings")
 
 
+@app.route('/admin/versions', methods=['GET'])
+@swag_template('docs/versions.yml')
+def get_versions():
+    collection = db_Admin["Versions"]
+    items = list(collection.find())
+    items_clean = Utils.convert_objectid_to_string(items)
+
+    return items_clean
+    
 
 def get_item_by_id(collection_name, item_id):
     """
@@ -179,10 +189,6 @@ def get_baseData(collection_name):
         type: string
         description: The name of the collection to retrieve data from.
     responses:
-      200:
-        description: List of items.
-      404:
-        description: Items not found.
     """
     logging.info(f'Collection Name: {collection_name}')
     collection = db_BaseData[collection_name]

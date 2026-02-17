@@ -1,0 +1,24 @@
+summary: Get App Versions
+description: Retrieve versions currently available (PUT operations).
+tags:
+  - Admin
+responses:
+  200:
+    description: List of versins
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          versionp:
+            type: string
+            description: Version
+          date:
+            type: string
+            description: release date
+          notes:
+            type: string
+            description: What has changed
+          url:
+            type: string
+            description: Download URL            
