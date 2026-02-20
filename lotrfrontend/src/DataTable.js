@@ -35,13 +35,13 @@ const DataTable = ({ rawdata, tableName ,refetchData}) => {
 
 const columns = React.useMemo(() => {
     if (data.length === 0 | (rawdata.length === 0)) {
-      console.log("tableName:",tableName)
-      console.log("No Data")
+      // console.log("tableName:",tableName)
+      // console.log("No Data")
       return [];
     }
-    console.log(data)
+    // console.log(data)
     return tableConfig.columns.map((key, columnIndex) => {
-      console.log(key)
+      // console.log(key)
       // 1. Helper for mapping values (moved up so it can be used by composite columns too)
       let mapValue = (colKey, val) => {
         if (enumConfig[colKey]) {

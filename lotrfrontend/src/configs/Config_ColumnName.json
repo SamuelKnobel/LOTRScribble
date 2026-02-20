@@ -434,13 +434,15 @@
             "rules":{
                "Name":"Regeln",
                "type":"text",
-               "componentType":"textarea"
+               "componentType":"textarea",
+               "immutable":true
             },
             "_rules":{
                "Name":"Regeln",
                "type":"text",
                "componentType":"textarea",
-                "searchable":true
+                "searchable":true,
+               "immutable":true                
             },
             "nation_id":{
                "Name":"Nation mongo ID",
@@ -785,7 +787,8 @@
                "Name":"Würfel 6"
             },
             "additionalNotes":{
-               "Name":"Details"
+               "Name":"Details",
+               "immutable":true
             }
          }      
       },
