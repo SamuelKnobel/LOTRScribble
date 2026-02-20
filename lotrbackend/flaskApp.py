@@ -102,6 +102,29 @@ def get_rules():
 def get_rule(id):
     return get_item_by_id('RuleData', id)
 
+#-------------------- SPELLS --------------------# 
+@app.route('/spells', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='Spells', tag='Spells')
+def get_spells():
+    return get_baseData('SpellData')
+
+@app.route('/spells/<id>', methods=['GET'])
+@swag_template('docs/generic_get_id.yml', name='Spell', tag='Spells')
+def get_spell(id):
+    return get_item_by_id('SpellData', id)
+
+
+#-------------------- BATTLEFIELD RULES --------------------# 
+@app.route('/battlefield', methods=['GET'])
+@swag_template('docs/generic_get.yml', name='Battlefield Rules', tag='Battlefield')
+def get_battlefield_rules():
+    return get_baseData('BattleRuleData')
+
+@app.route('/battlefield/<id>', methods=['GET'])
+@swag_template('docs/generic_get_id.yml', name='Battlefield Rule', tag='Battlefield')
+def get_battlefield_rule(id):
+    return get_item_by_id('BattleRuleData', id)
+
 #### TODO: Needs Identifier field to be added to RuleData collection, if added then it can be put back into the ENTITY_CONFIGS and registered automatically
 # @app.route('/rules/<id>', methods=['PUT'])
 # @swag_template('docs/generic_put_id.yml', name='Rule', tag='Rules')

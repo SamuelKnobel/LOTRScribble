@@ -10,7 +10,7 @@ responses:
       items:
         type: object
         properties:
-          versionp:
+          version:
             type: string
             description: Version
           date:
