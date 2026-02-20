@@ -276,10 +276,13 @@ def update_item_by_id(collection_name, item_id):
         if changes:
             identifier = "item"
             # Log changes
-            if existing_item['Identifier']:
+            if existing_item.get('Identifier'):
                 identifier = existing_item['Identifier']
-            elif existing_item['name']:
+            elif existing_item.get('name'):
                 identifier = existing_item['name']
+            else:
+                logging.error("No identifier found, Changes are performed but NOT logged")
+                
 
             # currently logs are not saved, each trigger of this function recreates the ChangeLog Collection
             Utils.log_changes(db_BaseData, collection_name, item_id, identifier, changes)
