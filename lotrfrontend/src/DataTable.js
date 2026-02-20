@@ -35,11 +35,13 @@ const DataTable = ({ rawdata, tableName ,refetchData}) => {
 
 const columns = React.useMemo(() => {
     if (data.length === 0 | (rawdata.length === 0)) {
+      console.log("tableName:",tableName)
+      console.log("No Data")
       return [];
     }
-
+    console.log(data)
     return tableConfig.columns.map((key, columnIndex) => {
-
+      console.log(key)
       // 1. Helper for mapping values (moved up so it can be used by composite columns too)
       let mapValue = (colKey, val) => {
         if (enumConfig[colKey]) {
@@ -67,6 +69,7 @@ const columns = React.useMemo(() => {
          let separator = getConfigValue(tableConfig, key, "separator", " / ");
          let isSearchable = getConfigValue(tableConfig, key, "searchable", true);
         
+         let alignProp = getConfigValue(tableConfig, key, "align", "center");
          // DEBUG: Check what is actually happening during setup
          console.log(`[Setup] Column: ${key}, Fields:`, fields);
         
@@ -88,14 +91,14 @@ const columns = React.useMemo(() => {
                }).join(separator);
             },
             Filter: isSearchable ? DefaultColumnFilter : false,
-            Cell: ({ value }) => <span>{value}</span>
+            Cell: ({ value }) => <div style={{ whiteSpace: 'pre-wrap', textAlign: alignProp }}>{value}</div>
          };
       }
 
       // 3. Standard Column Logic (Existing code)
       let header = getConfigValue(tableConfig, key, "Name", false);
       let isSearchable = getConfigValue(tableConfig, key, "searchable", true);
-
+      let alignProp = getConfigValue(tableConfig, key, "align", "center");
       return {
         Header: header,
         id: key,
@@ -110,7 +113,7 @@ const columns = React.useMemo(() => {
               disabled={true}
             />
           ) : (
-            <span>{value}</span>
+            <div style={{ whiteSpace: 'pre-wrap', textAlign: alignProp }}>{value}</div>
           ),
       };
     });

@@ -723,7 +723,86 @@
                "searchable":true,
                "immutable":false,
                "type":"text",
+               "componentType":"textarea",
+               "align": "left"
+            },          
+            "name":{
+               "Name":"Regel",
+               "immutable":true
+            },
+            "_id":{
+               "Name":"MongoDB_ID",
+               "immutable":true,
+               "componentType":"input"
+            },
+            "Description":{
+               "Name":"Beschreibung"
+            }
+         }
+      },
+      "Spells":{
+         "columns":[
+            "school",            
+            "name",
+            "focus",
+            "targetDescription",
+            "effectStandard",
+            "effectCritical",
+            "additionalNotes"
+
+         ],
+         "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":true,
+               "immutable":false,
+               "type":"text",
                "componentType":"textarea"
+            },          
+            "name":{
+               "Name":"Zauber",
+               "immutable":true
+            },
+            "_id":{
+               "Name":"MongoDB_ID",
+               "immutable":true,
+               "componentType":"input"
+            },
+            "school":{
+               "Name":"Zauberschule"
+            },
+            "focus":{
+               "Name":"Fokus",
+               "type":"number"
+            },
+            "targetDescription":{
+               "Name":"Reichweite / Max Betroffen"
+            },
+            "effectStandard":{
+               "Name":"Würfel 2-5"
+            },
+            "effectCritical":{
+               "Name":"Würfel 6"
+            },
+            "additionalNotes":{
+               "Name":"Details"
+            }
+         }      
+      },
+      "Battlefield":{
+         "columns":[
+            "category",
+            "name",
+            "Description"
+         ],
+         "columnProps":{
+            "Default":{
+               "Name":"Default",
+               "searchable":true,
+               "immutable":false,
+               "type":"text",
+               "componentType":"textarea",
+               "align": "left"
             },          
             "name":{
                "Name":"Regel",

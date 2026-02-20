@@ -17,6 +17,9 @@ const BaseData = () => {
   const [buildings, setBuildings] = useState([]);
   const [fields, setFields] = useState([]);
   const [rules, setRules] = useState([]);
+  const [battlerules, setBattleRules] = useState([]);
+  const [spells, setSpells] = useState([]);
+
 
   const handleTabClick = (tabName) => {
     setActiveTab(tabName);
@@ -45,6 +48,12 @@ const BaseData = () => {
       case 'rules':
         setRules(data);
         break;
+      case 'battlefield':
+        setBattleRules(data);
+        break;
+      case 'spells':
+        setSpells(data);
+        break;                
       default:
         break;
     }
@@ -93,11 +102,14 @@ const BaseData = () => {
         <TabList>
           <Tab onClick={() => handleTabClick('Nations')}>Nations</Tab>
           <Tab onClick={() => handleTabClick('Buildings')}>Buildings</Tab>
-          <Tab onClick={() => handleTabClick('Units')}>Units</Tab>
+          <Tab onClick={() => handleTabClick('Units')}>Einheiten</Tab>
           <Tab onClick={() => handleTabClick('Ships')}>Ships</Tab>
           <Tab onClick={() => handleTabClick('Machines')}>Machines</Tab>
           <Tab onClick={() => handleTabClick('Fields')}>Fields</Tab>
-          <Tab onClick={() => handleTabClick('Rules')}>Rules</Tab>
+          <Tab onClick={() => handleTabClick('Rules')}>Einheiten Regeln </Tab>
+          <Tab onClick={() => handleTabClick('Battlefield')}>Battle-Rules</Tab>
+          <Tab onClick={() => handleTabClick('Spells')}>Spells</Tab>
+
         </TabList>
 
         <TabPanel>
@@ -127,6 +139,14 @@ const BaseData = () => {
         <TabPanel>
           <DataTable rawdata={rules} tableName="Rules"  refetchData={ReloadData}  />
         </TabPanel>
+
+        <TabPanel>
+          <DataTable rawdata={battlerules} tableName="Battlefield"  refetchData={ReloadData}  />
+        </TabPanel>        
+        <TabPanel>
+
+          <DataTable rawdata={spells} tableName="Spells"  refetchData={ReloadData}  />
+        </TabPanel>           
       </Tabs>
 
       <ToastContainer />
