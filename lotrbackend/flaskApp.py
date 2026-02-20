@@ -102,6 +102,12 @@ def get_rules():
 def get_rule(id):
     return get_item_by_id('RuleData', id)
 
+#### TODO: Needs Identifier field to be added to RuleData collection, if added then it can be put back into the ENTITY_CONFIGS and registered automatically
+@app.route('/rules/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name='Rule', tag='Rules')
+def update_rules(id):
+    return update_item_by_id("RuleData", id)
+
 #-------------------- SPELLS --------------------# 
 @app.route('/spells', methods=['GET'])
 @swag_template('docs/generic_get.yml', name='Spells', tag='Spells')
@@ -113,6 +119,10 @@ def get_spells():
 def get_spell(id):
     return get_item_by_id('SpellData', id)
 
+@app.route(f'/spells/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name="Spell", tag="Spells")
+def update_spells(id):
+    return update_item_by_id('SpellData', id)
 
 #-------------------- BATTLEFIELD RULES --------------------# 
 @app.route('/battlefield', methods=['GET'])
@@ -125,11 +135,12 @@ def get_battlefield_rules():
 def get_battlefield_rule(id):
     return get_item_by_id('BattleRuleData', id)
 
-#### TODO: Needs Identifier field to be added to RuleData collection, if added then it can be put back into the ENTITY_CONFIGS and registered automatically
-# @app.route('/rules/<id>', methods=['PUT'])
-# @swag_template('docs/generic_put_id.yml', name='Rule', tag='Rules')
-# def update_rules(id):
-#     return update_item_by_id("RuleData", id)
+@app.route(f'/battlefield/<id>', methods=['PUT'])
+@swag_template('docs/generic_put_id.yml', name="Battlefield Rule", tag="Battlefield")
+def update_battlerules(id):
+    return update_item_by_id('BattleRuleData', id)
+
+
 
 
 #-------------------- CHANGE LOGS --------------------#
