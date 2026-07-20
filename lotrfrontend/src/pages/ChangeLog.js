@@ -24,6 +24,10 @@ function friendlyCollection(name) {
   return typeof name === 'string' ? name.replace(/Data$/, '') : name;
 }
 
+// Derived fields that mirror another field (e.g. "_rules" is the joined form of
+// "rules"). They change together, so we hide the derived one from the log.
+const DERIVED_FIELDS = ['_rules'];
+
 export default function ChangeLog() {
   const [changeData, setChangeData] = useState([]);
   const [query, setQuery] = useState('');
@@ -44,6 +48,7 @@ export default function ChangeLog() {
     (changeData || []).forEach((entry) => {
       const changes = entry.changes || {};
       Object.entries(changes).forEach(([field, diff]) => {
+        if (DERIVED_FIELDS.includes(field)) return; // hide derived mirror fields
         const revertedInfo = entry.reverted ? entry.reverted[field] : undefined;
         out.push({
           key: `${entry._id}:${field}`,
