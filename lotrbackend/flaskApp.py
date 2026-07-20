@@ -148,7 +148,10 @@ def update_battlerules(id):
 @app.route('/changelog', methods=['GET'])
 @swag_template('docs/changelog_get.yml')
 def get_changelog():
-    return get_baseData('ChangeLogs')
+    # Drop the deprecated _rules from each entry's nested 'changes' (legacy
+    # entries logged it alongside 'rules'); it is never returned.
+    items = list(db_BaseData['ChangeLogs'].find({}, {'changes._rules': 0}))
+    return jsonify(Utils.convert_objectid_to_string(items))
 
 
 # Collections whose entries may be reverted (base data + the manually-registered ones)
@@ -290,6 +293,11 @@ def get_versions():
     return items_clean
     
 
+# Fields retained in the DB but never returned by the API (derived / deprecated).
+# _rules is the old joined-string mirror of the rules list; clients use rules.
+API_HIDDEN_FIELDS = {'_rules': 0}
+
+
 def get_item_by_id(collection_name, item_id):
     """
       Helper function to retrieve a specific item by its ID from the database.
@@ -306,7 +314,7 @@ def get_item_by_id(collection_name, item_id):
                   print(collection_name)
     """
     collection = db_BaseData[collection_name]
-    item = collection.find_one({'_id': ObjectId(item_id)})
+    item = collection.find_one({'_id': ObjectId(item_id)}, API_HIDDEN_FIELDS)
 
     if item:
         item_clean = Utils.convert_objectid_to_string(item)
@@ -328,7 +336,7 @@ def get_baseData(collection_name):
     """
     logging.info(f'Collection Name: {collection_name}')
     collection = db_BaseData[collection_name]
-    items = list(collection.find())
+    items = list(collection.find({}, API_HIDDEN_FIELDS))
     logging.info(f'Nb of Items in Collection: {len(items)}')
     logging.debug(f'Items in Collection: {items}')
 
