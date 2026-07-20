@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/LOTRScribble/static/css/main.dd01ad75.css",
-    "main.js": "/LOTRScribble/static/js/main.7b4e9423.js",
+    "main.css": "/LOTRScribble/static/css/main.3c631dce.css",
+    "main.js": "/LOTRScribble/static/js/main.3b1f796e.js",
     "index.html": "/LOTRScribble/index.html",
-    "main.dd01ad75.css.map": "/LOTRScribble/static/css/main.dd01ad75.css.map",
-    "main.7b4e9423.js.map": "/LOTRScribble/static/js/main.7b4e9423.js.map"
+    "main.3c631dce.css.map": "/LOTRScribble/static/css/main.3c631dce.css.map",
+    "main.3b1f796e.js.map": "/LOTRScribble/static/js/main.3b1f796e.js.map"
   },
   "entrypoints": [
-    "static/css/main.dd01ad75.css",
-    "static/js/main.7b4e9423.js"
+    "static/css/main.3c631dce.css",
+    "static/js/main.3b1f796e.js"
   ]
 }
