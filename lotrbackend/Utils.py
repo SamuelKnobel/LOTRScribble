@@ -191,7 +191,7 @@ def convert_objectid_to_string(data):
 # units_json = json_util.dumps(convert_objectid_to_string(units), indent=2)
 
 
-def log_changes(db, collection_name, item_id, item_identifier, changes):
+def log_changes(db, collection_name, item_id, item_identifier, changes, extra=None):
     """
     Log changes between existing data and updated data.
 
@@ -199,6 +199,10 @@ def log_changes(db, collection_name, item_id, item_identifier, changes):
     - collection_name: The name of the collection where the update occurred.
     - item_id: The ID of the item that was updated.
     - changes: A dictionary containing the changes.
+    - extra: Optional dict of additional fields to store on the entry
+             (e.g. {'type': 'revert', 'reverted_from': <id>}).
+
+    Returns the ObjectId of the inserted ChangeLogs document.
     """
     # change_logs_collection = recreate_collection(db, db['ChangeLogs'], 'ChangeLogs', False)
 
@@ -209,7 +213,20 @@ def log_changes(db, collection_name, item_id, item_identifier, changes):
         'item_identifier': item_identifier,
         'changes': changes
     }
-    db['ChangeLogs'].insert_one(change_log_entry)
+    if extra:
+        change_log_entry.update(extra)
+    result = db['ChangeLogs'].insert_one(change_log_entry)
+    return result.inserted_id
+
+
+def values_equal(a, b):
+    """
+    Compare two values for the revert guard. Ints and floats are treated
+    interchangeably (5 == 5.0); lists/dicts compare structurally. Python's
+    '==' already covers all of these, so this is a single, explicit place
+    to adjust the comparison rules later if needed.
+    """
+    return a == b
 
 
 # Helper to stringify complex objects for logging

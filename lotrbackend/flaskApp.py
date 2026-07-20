@@ -13,6 +13,7 @@ from logging.config import dictConfig
 from dotenv import load_dotenv
 from decorators import swag_template
 from typing import Optional
+from datetime import datetime
 
 dictConfig({
     'version': 1,
@@ -148,6 +149,107 @@ def update_battlerules(id):
 @swag_template('docs/changelog_get.yml')
 def get_changelog():
     return get_baseData('ChangeLogs')
+
+
+# Collections whose entries may be reverted (base data + the manually-registered ones)
+VALID_REVERT_COLLECTIONS = {cfg[1] for cfg in ENTITY_CONFIGS} | {'RuleData', 'SpellData', 'BattleRuleData'}
+
+
+@app.route('/revert/<changelog_id>', methods=['POST'])
+@swag_template('docs/revert_post.yml')
+def revert_change(changelog_id):
+    """
+    Revert a single field of a logged change back to its previous ('old') value.
+
+    Body: { "field": "<field name from the changelog entry's 'changes'>" }
+
+    Guard: the field's CURRENT value in the target document must still equal the
+    'new' value recorded in the changelog entry. If it drifted (a later edit, or
+    an already-applied revert), the revert is aborted with 409 and nothing is written.
+
+    On success it also (1) logs the revert as its own changelog entry and
+    (2) stamps the original entry with reverted.<field> metadata.
+    """
+    body = request.get_json(silent=True) or {}
+    field = body.get('field')
+    if not field:
+        return jsonify({'error': "Missing 'field' in request body"}), 400
+
+    changelogs = db_BaseData['ChangeLogs']
+    try:
+        log_entry = changelogs.find_one({'_id': ObjectId(changelog_id)})
+    except Exception:
+        return jsonify({'error': f'Invalid changelog id: {changelog_id}'}), 400
+    if not log_entry:
+        return jsonify({'error': f'Changelog entry {changelog_id} not found'}), 404
+
+    changes = log_entry.get('changes', {})
+    if field not in changes:
+        return jsonify({'error': f"Field '{field}' is not part of this changelog entry"}), 400
+
+    # Already reverted? (per-field metadata stamp)
+    if field in (log_entry.get('reverted') or {}):
+        return jsonify({'error': f"Field '{field}' has already been reverted"}), 409
+
+    collection_name = log_entry.get('collection_name')
+    if collection_name not in VALID_REVERT_COLLECTIONS:
+        return jsonify({'error': f"Collection '{collection_name}' cannot be reverted"}), 400
+
+    item_id = log_entry.get('item_id')
+    collection = db_BaseData[collection_name]
+    try:
+        doc = collection.find_one({'_id': ObjectId(item_id)})
+    except Exception:
+        return jsonify({'error': f'Invalid item id: {item_id}'}), 400
+    if not doc:
+        return jsonify({'error': f'Item {item_id} not found in {collection_name}'}), 404
+
+    old_value = changes[field].get('old')
+    expected_value = changes[field].get('new')
+    current_value = doc.get(field)
+
+    # GUARD: current value must still match the change we are reverting
+    if not Utils.values_equal(current_value, expected_value):
+        return jsonify({
+            'error': 'Revert aborted: the current value no longer matches the change being reverted.',
+            'field': field,
+            'expected_current': expected_value,
+            'actual_current': current_value,
+        }), 409
+
+    # Perform the revert
+    collection.update_one({'_id': ObjectId(item_id)}, {'$set': {field: old_value}})
+
+    # Record the revert as its own changelog entry
+    revert_log_id = Utils.log_changes(
+        db_BaseData,
+        collection_name,
+        item_id,
+        log_entry.get('item_identifier', 'item'),
+        {field: {'old': current_value, 'new': old_value}},
+        extra={
+            'type': 'revert',
+            'reverted_from': str(changelog_id),
+            'reverted_field': field,
+        },
+    )
+
+    # Stamp the original entry with additive per-field metadata (no delete)
+    changelogs.update_one(
+        {'_id': ObjectId(changelog_id)},
+        {'$set': {f'reverted.{field}': {
+            'reverted_at': datetime.now(),
+            'reverted_by_log_id': str(revert_log_id),
+        }}},
+    )
+
+    updated = collection.find_one({'_id': ObjectId(item_id)})
+    return jsonify({
+        'message': f"Reverted '{field}' successfully.",
+        'field': field,
+        'reverted_to': old_value,
+        'item': Utils.convert_objectid_to_string(updated),
+    }), 200
 
 
 #-------------------- START DATA --------------------#

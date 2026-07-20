@@ -1,0 +1,79 @@
+summary: Revert a single changed field
+description: >
+  Revert one field of a previously logged change back to its 'old' value.
+  A guard first checks that the field's CURRENT value in the target document
+  still equals the 'new' value recorded in the changelog entry; if it has
+  drifted (a later edit, or an already-applied revert) the revert is aborted
+  and nothing is written. On success the revert is itself recorded as a new
+  changelog entry, and the original entry is stamped with reverted.<field>
+  metadata (the history is never deleted).
+tags:
+  - System Info
+parameters:
+  - name: changelog_id
+    in: path
+    type: string
+    required: true
+    description: The MongoDB _id of the ChangeLogs entry to revert from.
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - field
+        properties:
+          field:
+            type: string
+            description: Name of the field (a key of the entry's 'changes') to revert.
+            example: attack_KK_FK
+responses:
+  200:
+    description: Field reverted successfully.
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Reverted 'attack_KK_FK' successfully."
+        field:
+          type: string
+          example: attack_KK_FK
+        reverted_to:
+          description: The value the field was restored to (the logged 'old' value).
+        item:
+          type: object
+          description: The full target document after the revert.
+  400:
+    description: >
+      Bad request - missing 'field' in body, the field is not part of this
+      changelog entry, an id is malformed, or the collection is not revertable.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+  404:
+    description: The changelog entry or the target item was not found.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+  409:
+    description: >
+      Conflict - the field was already reverted, or the guard failed because the
+      current value no longer matches the 'new' value being reverted. No write is
+      performed. The body includes expected_current and actual_current for guard failures.
+    schema:
+      type: object
+      properties:
+        error:
+          type: string
+        field:
+          type: string
+        expected_current:
+          description: The value the guard expected the field to still hold.
+        actual_current:
+          description: The value the field actually holds now.
