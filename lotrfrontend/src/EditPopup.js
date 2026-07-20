@@ -179,10 +179,6 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
               }
             }
             setInvalidRules([]);
-            // Keep the derived display string "_rules" in sync with the "rules" list
-            if (Array.isArray(finalData.rules)) {
-              finalData._rules = finalData.rules.join(', ');
-            }
             mutation.mutate({ tableName, editedData: finalData });
             onCancel();
           }}>

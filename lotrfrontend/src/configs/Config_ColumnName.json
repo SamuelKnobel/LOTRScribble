@@ -350,7 +350,7 @@
             "mut",
             "price",
             "movedistance",
-            "_rules"
+            "rules"
          ],
          "columnProps":{
             "Default":{
@@ -435,15 +435,8 @@
                "Name":"Regeln",
                "type":"text",
                "componentType":"textarea",
-               "isList":true
-            },
-            "_rules":{
-               "Name":"Regeln",
-               "type":"text",
-               "componentType":"textarea",
-                "searchable":true,
-               "immutable":true,
-               "hidden":true
+               "isList":true,
+               "searchable":true
             },
             "nation_id":{
                "Name":"Nation mongo ID",
@@ -602,15 +595,8 @@
                "Name":"Regeln",
                "type":"text",
                "componentType":"textarea",
-               "isList":true
-            },
-            "_rules":{
-               "Name":"Regeln",
-               "type":"text",
-               "componentType":"textarea",
-                "searchable":true,
-               "immutable":true,
-               "hidden":true
+               "isList":true,
+               "searchable":true
             }
          }
       },
@@ -627,7 +613,7 @@
             "defense",
             "movedistance",
             "price",
-            "_rules"
+            "rules"
          ],
          "columnProps":{
             "Default":{
@@ -705,19 +691,12 @@
                "searchable":true,
                "type":"text"
             },         
-            "_rules":{
-               "Name":"Regeln",
-               "type":"text",
-               "componentType":"textarea",
-               "searchable":true,
-               "immutable":true,
-               "hidden":true
-            },
             "rules":{
                "Name":"Regeln",
                "type":"text",
                "componentType":"textarea",
-               "isList":true
+               "isList":true,
+               "searchable":true
             }
          }
       },

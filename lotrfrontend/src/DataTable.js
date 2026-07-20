@@ -44,6 +44,9 @@ const columns = React.useMemo(() => {
       // console.log(key)
       // 1. Helper for mapping values (moved up so it can be used by composite columns too)
       let mapValue = (colKey, val) => {
+        if (Array.isArray(val)) {
+          return val.join(', ')
+        }
         if (enumConfig[colKey]) {
           return enumConfig[colKey][val]
         }
