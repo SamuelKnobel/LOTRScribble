@@ -147,6 +147,28 @@
   font-weight: 600;
 }
 
+/* --- Inline diff (long text + rules lists) --- */
+.cl-diff {
+  line-height: 1.7;
+}
+.cl-diff-del {
+  text-decoration: line-through;
+  color: #9b4a3a;
+  background: #f6e3de;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+.cl-diff-add {
+  text-decoration: none;
+  color: #3d5a3d;
+  background: #e3efd9;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+.cl-row-reverted .cl-diff-add {
+  text-decoration: line-through;
+}
+
 /* --- Revert-type marker --- */
 .cl-tag {
   margin-left: 6px;

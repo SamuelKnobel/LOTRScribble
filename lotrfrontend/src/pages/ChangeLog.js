@@ -5,6 +5,10 @@ import { useTable, useSortBy } from 'react-table';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { diffWords, diffArrays } from 'diff';
+
+// Long strings get a word-level diff instead of the old -> new pill.
+const LONG_TEXT = 40;
 
 // Render a raw value (string / number / bool / null / list) for display.
 function formatValue(v) {
@@ -24,13 +28,64 @@ function friendlyCollection(name) {
   return typeof name === 'string' ? name.replace(/Data$/, '') : name;
 }
 
-// Shared cells so the flat table and the grouped view render identically.
+// Render jsdiff parts (from diffWords) as inline <ins>/<del> spans.
+function DiffText({ parts }) {
+  return (
+    <span className="cl-diff">
+      {parts.map((p, i) => {
+        if (p.added) return <ins key={i} className="cl-diff-add">{p.value}</ins>;
+        if (p.removed) return <del key={i} className="cl-diff-del">{p.value}</del>;
+        return <span key={i}>{p.value}</span>;
+      })}
+    </span>
+  );
+}
+
+// Render a list diff (from diffArrays) as comma-joined items, added/removed marked.
+function DiffList({ parts }) {
+  const tokens = [];
+  parts.forEach((p) => {
+    (p.value || []).forEach((item) => tokens.push({ item, added: p.added, removed: p.removed }));
+  });
+  return (
+    <span className="cl-diff">
+      {tokens.map((t, i) => (
+        <React.Fragment key={i}>
+          {i > 0 && <span>, </span>}
+          {t.added ? (
+            <ins className="cl-diff-add">{t.item}</ins>
+          ) : t.removed ? (
+            <del className="cl-diff-del">{t.item}</del>
+          ) : (
+            <span>{t.item}</span>
+          )}
+        </React.Fragment>
+      ))}
+    </span>
+  );
+}
+
+// Shared change cell so the flat table and the grouped view render identically.
 function ChangeCell({ r }) {
+  const o = r.old;
+  const n = r.new;
+
+  // List fields (e.g. rules): item-level diff, so added/removed rules stand out.
+  if (Array.isArray(o) && Array.isArray(n)) {
+    return <DiffList parts={diffArrays(o, n)} />;
+  }
+
+  // Long text (rule / battle-rule descriptions): word-level diff.
+  if (typeof o === 'string' && typeof n === 'string' && (o.length > LONG_TEXT || n.length > LONG_TEXT)) {
+    return <DiffText parts={diffWords(o, n)} />;
+  }
+
+  // Scalars and short values: keep the compact old -> new pill.
   return (
     <span className="cl-change">
-      <span className="cl-old">{formatValue(r.old)}</span>
+      <span className="cl-old">{formatValue(o)}</span>
       <span className="cl-arrow">→</span>
-      <span className="cl-new">{formatValue(r.new)}</span>
+      <span className="cl-new">{formatValue(n)}</span>
     </span>
   );
 }
