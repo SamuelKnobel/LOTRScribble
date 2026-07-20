@@ -6,6 +6,9 @@ import Enums from './configs/Enums.json';
 import Tooltip from './Tooltip/Tooltip';
 import { getConfigValue, DataUpdater, GameData } from './Utils';
 
+// Sentinel Unity uses for "no value" on numeric fields (its int fields cannot be null).
+const EMPTY_NUMBER = -99;
+
 // Parameterized rules: Unity matches these by prefix, not literally
 // (see RulesOverview.GetRuleSet in the Unity project). e.g. "Leibwache (Gondor)"
 // is valid because the canonical rule "Leibwache (...)" exists.
@@ -34,6 +37,8 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
   }, [rowData]);
 
   const isListField = (fieldName) => getConfigValue(tableConfig, fieldName, "isList", true) === true;
+  const isNumberField = (fieldName) => getConfigValue(tableConfig, fieldName, "type", true) === 'number';
+  const isEmptyNumber = (v) => v === '' || v === null || v === undefined || Number.isNaN(v);
 
   // Set of valid rule names from the "Rules" collection (cached by react-query)
   const rulesQuery = GameData('Rules');
@@ -79,10 +84,15 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
   const getCommonAttributes = (fieldName) => {
     const CommonAttributes = {
       type: getConfigValue(tableConfig, fieldName, "type", true),
-      // For list fields, show the array as a comma-separated string in the textarea
+      // For list fields, show the array as a comma-separated string in the textarea.
+      // For number fields, show the -99 sentinel (and empty/NaN) as a blank box.
       value: isListField(fieldName) && Array.isArray(editedData[fieldName])
         ? editedData[fieldName].join(', ')
-        : (editedData[fieldName] || ''), // Handle nulls gracefully
+        : isNumberField(fieldName)
+          ? (isEmptyNumber(editedData[fieldName]) || editedData[fieldName] === EMPTY_NUMBER
+              ? ''
+              : editedData[fieldName])
+          : (editedData[fieldName] || ''), // Handle nulls gracefully
       onChange: (e) => handleInputChange(fieldName, e.target.value),
       disabled: getConfigValue(tableConfig, fieldName, "immutable", true) === true,
     };
@@ -150,6 +160,13 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
             Object.keys(finalData).forEach((key) => {
               if (isListField(key) && typeof finalData[key] === 'string') {
                 finalData[key] = toList(finalData[key]);
+              }
+            });
+            // Empty numeric fields -> -99 sentinel so they are never saved as null
+            // (Unity's int fields cannot parse null and the app fails to start).
+            Object.keys(finalData).forEach((key) => {
+              if (isNumberField(key) && isEmptyNumber(finalData[key])) {
+                finalData[key] = EMPTY_NUMBER;
               }
             });
             // Block saving if any rule does not exist in the Rules collection.
