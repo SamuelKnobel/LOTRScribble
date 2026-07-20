@@ -16,8 +16,18 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
     setEditedData({ ...rowData });
   }, [rowData]);
 
+  const isListField = (fieldName) => getConfigValue(tableConfig, fieldName, "isList", true) === true;
+
   const handleInputChange = (fieldName, value) => {
-    const typedValue = getConfigValue(tableConfig, fieldName, "type", true) === 'number' ? parseFloat(value) : value;
+    let typedValue;
+    if (isListField(fieldName)) {
+      // Store list fields (e.g. "rules") as an array, not the comma-joined display string
+      typedValue = value.split(',').map((s) => s.trim()).filter((s) => s.length > 0);
+    } else if (getConfigValue(tableConfig, fieldName, "type", true) === 'number') {
+      typedValue = parseFloat(value);
+    } else {
+      typedValue = value;
+    }
     setEditedData((prevData) => ({
       ...prevData,
       [fieldName]: typedValue,
@@ -29,7 +39,10 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
   const getCommonAttributes = (fieldName) => {
     const CommonAttributes = {
       type: getConfigValue(tableConfig, fieldName, "type", true),
-      value: editedData[fieldName] || '', // Handle nulls gracefully
+      // For list fields, show the array as a comma-separated string in the textarea
+      value: isListField(fieldName) && Array.isArray(editedData[fieldName])
+        ? editedData[fieldName].join(', ')
+        : (editedData[fieldName] || ''), // Handle nulls gracefully
       onChange: (e) => handleInputChange(fieldName, e.target.value),
       disabled: getConfigValue(tableConfig, fieldName, "immutable", true) === true,
     };
@@ -82,7 +95,12 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
             Cancel
           </button>
           <button className="save-button" onClick={() => {
-            mutation.mutate({ tableName, editedData });
+            const finalData = { ...editedData };
+            // Keep the derived display string "_rules" in sync with the "rules" list
+            if (Array.isArray(finalData.rules)) {
+              finalData._rules = finalData.rules.join(', ');
+            }
+            mutation.mutate({ tableName, editedData: finalData });
             onCancel();
           }}>
             Save Changes

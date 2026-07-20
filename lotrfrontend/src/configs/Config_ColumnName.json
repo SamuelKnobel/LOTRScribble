@@ -435,14 +435,14 @@
                "Name":"Regeln",
                "type":"text",
                "componentType":"textarea",
-               "immutable":true
+               "isList":true
             },
             "_rules":{
                "Name":"Regeln",
                "type":"text",
                "componentType":"textarea",
                 "searchable":true,
-               "immutable":true                
+               "immutable":true
             },
             "nation_id":{
                "Name":"Nation mongo ID",
@@ -600,14 +600,16 @@
             "rules":{
                "Name":"Regeln",
                "type":"text",
-               "componentType":"textarea"
+               "componentType":"textarea",
+               "isList":true
             },
             "_rules":{
                "Name":"Regeln",
                "type":"text",
                "componentType":"textarea",
-                "searchable":true
-            }         
+                "searchable":true,
+               "immutable":true
+            }
          }
       },
       "Machines":{
@@ -705,12 +707,14 @@
                "Name":"Regeln",
                "type":"text",
                "componentType":"textarea",
-               "searchable":true
+               "searchable":true,
+               "immutable":true
             },
             "rules":{
                "Name":"Regeln",
                "type":"text",
-               "componentType":"textarea"
+               "componentType":"textarea",
+               "isList":true
             }
          }
       },
