@@ -3,7 +3,7 @@ name: Build and Deploy Frontend
 on:
   push:
     branches: [master]
-    paths: ['lotrfrontend/**', '.github/workflows/deploy.yml']
+    paths: ['lotrfrontend/**', '.github/workflows/main.yml']
   workflow_dispatch:
 
 permissions:
@@ -17,6 +17,8 @@ jobs:
         working-directory: lotrfrontend
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history so the commit count (build number) is correct
 
       - uses: actions/setup-node@v4
         with:

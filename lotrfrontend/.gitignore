@@ -12,6 +12,9 @@
 # production
 /build
 
+# auto-generated at build time by scripts/genVersion.js
+/src/version.js
+
 # misc
 .DS_Store
 .env.local

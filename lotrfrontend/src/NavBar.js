@@ -6,7 +6,7 @@ export default function NavBar()
     return<nav className="nav">
         <div className="site-brand">
             <Link to="/" className="site-title">LOTR</Link>
-            <span className="app-version">v{APP_VERSION}</span>
+            <span className="app-version">{APP_VERSION}</span>
         </div>
         <ul>
             <CustomLink to="/">Data Overview</CustomLink>

@@ -49,6 +49,40 @@
   color: #8c7360;
 }
 
+/* --- View toggle (Flat / Grouped) --- */
+.cl-viewtoggle {
+  display: inline-flex;
+  border: 1px solid #c9c0b1;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.cl-viewtoggle button {
+  border: none;
+  background: transparent;
+  color: #7b6a5b;
+  padding: 7px 14px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.cl-viewtoggle button + button {
+  border-left: 1px solid #c9c0b1;
+}
+.cl-viewtoggle button.active {
+  background: #5c4b3f;
+  color: #fff;
+}
+
+.cl-linkbtn {
+  border: none;
+  background: transparent;
+  color: #5c4b3f;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
 .cl-empty {
   color: #8c7360;
   font-style: italic;
@@ -163,4 +197,96 @@
 }
 .cl-row-reverted .cl-new {
   text-decoration: line-through;
+}
+
+/* --- Grouped-by-item accordion --- */
+.cl-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cl-group {
+  background-color: #fcfbf7;
+  border: 1px solid #e0d8c8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cl-group-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  background: #efe8db;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Lato', sans-serif;
+  color: #2c241b;
+}
+.cl-group-header:hover {
+  background: #e8dfcf;
+}
+
+.cl-chevron {
+  color: #8c7360;
+  font-size: 0.75rem;
+  width: 12px;
+}
+
+.cl-badge-collection {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #e3d9c6;
+  color: #5c4b3f;
+  white-space: nowrap;
+}
+
+.cl-group-name {
+  font-weight: 700;
+  color: #4a3b32;
+}
+
+.cl-group-meta {
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: #8c7360;
+  white-space: nowrap;
+}
+
+.cl-group-body {
+  padding: 2px 14px 8px;
+}
+
+.cl-group-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid #ece5d8;
+}
+
+.cl-cell-field {
+  width: 150px;
+  flex-shrink: 0;
+  font-size: 0.88rem;
+  color: #5c4b3f;
+}
+.cl-cell-change {
+  flex: 1;
+  font-size: 0.9rem;
+  min-width: 120px;
+}
+.cl-cell-when {
+  width: 150px;
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: #8c7360;
+  white-space: nowrap;
+}
+.cl-cell-action {
+  flex-shrink: 0;
 }

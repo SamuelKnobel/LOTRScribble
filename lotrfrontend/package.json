@@ -24,6 +24,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "genversion": "node scripts/genVersion.js",
+    "postinstall": "node scripts/genVersion.js",
+    "prestart": "node scripts/genVersion.js",
+    "prebuild": "node scripts/genVersion.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -b main -d build",
     "start": "react-scripts start",
