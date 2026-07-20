@@ -1,22 +1,58 @@
 // EditPopup.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import './EditPopup.css';
 import Config_ColumnName from './configs/Config_ColumnName.json';
 import Enums from './configs/Enums.json';
 import Tooltip from './Tooltip/Tooltip';
-import { getConfigValue, DataUpdater } from './Utils';
+import { getConfigValue, DataUpdater, GameData } from './Utils';
+
+// Parameterized rules: Unity matches these by prefix, not literally
+// (see RulesOverview.GetRuleSet in the Unity project). e.g. "Leibwache (Gondor)"
+// is valid because the canonical rule "Leibwache (...)" exists.
+const PARAMETERIZED_RULES = [
+  ['Entsetzlich (', 'Entsetzlich (...)'],
+  ['Erzfeinde', 'Erzfeinde (...)'],
+  ['Fallensteller (', 'Fallensteller (...)'],
+  ['General', 'General (...)'],
+  ['Kundschafter (', 'Kundschafter (...)'],
+  ['Inspirierender Anführer (', 'Inspirierender Anführer (...)'],
+  ['Leibwache (', 'Leibwache (...)'],
+  ['Rudelführer', 'Rudelführer (...)'],
+  ['Uralte Feindschaft', 'Uralte Feindschaft (...)'],
+];
 
 const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
   let tableConfig = Config_ColumnName.tables[tableName];
   const enumConfig = Enums.Enums;
 
   const [editedData, setEditedData] = useState({ ...rowData });
+  const [invalidRules, setInvalidRules] = useState([]);
 
   useEffect(() => {
     setEditedData({ ...rowData });
+    setInvalidRules([]);
   }, [rowData]);
 
   const isListField = (fieldName) => getConfigValue(tableConfig, fieldName, "isList", true) === true;
+
+  // Set of valid rule names from the "Rules" collection (cached by react-query)
+  const rulesQuery = GameData('Rules');
+  const validRuleNames = useMemo(() => {
+    const set = new Set();
+    (Array.isArray(rulesQuery.data) ? rulesQuery.data : []).forEach((r) => {
+      if (r && r.name) set.add(r.name.trim());
+    });
+    return set;
+  }, [rulesQuery.data]);
+
+  // Mirrors Unity's matching: exact name, or a parameterized-rule prefix
+  const isKnownRule = (rule) => {
+    const item = rule.trim();
+    if (validRuleNames.has(item)) return true;
+    return PARAMETERIZED_RULES.some(
+      ([needle, canonical]) => item.includes(needle) && validRuleNames.has(canonical)
+    );
+  };
 
   const handleInputChange = (fieldName, value) => {
     let typedValue;
@@ -96,6 +132,14 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
           ))}
         </div>
 
+        {invalidRules.length > 0 && (
+          <div className="rule-validation-error">
+            <strong>Speichern blockiert – unbekannte Regeln:</strong>
+            <div>{invalidRules.join(', ')}</div>
+            <small>Diese Regeln existieren nicht in der Rules-Tabelle. Bitte korrigieren oder die Regel zuerst anlegen.</small>
+          </div>
+        )}
+
         <div className="buttons">
           <button className="cancel-button" onClick={onCancel}>
             Cancel
@@ -108,6 +152,16 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
                 finalData[key] = toList(finalData[key]);
               }
             });
+            // Block saving if any rule does not exist in the Rules collection.
+            // (Skip if the rules list could not be loaded, to avoid trapping the user.)
+            if (validRuleNames.size > 0 && Array.isArray(finalData.rules)) {
+              const unknown = finalData.rules.filter((r) => !isKnownRule(r));
+              if (unknown.length > 0) {
+                setInvalidRules(unknown);
+                return; // keep popup open, do not save
+              }
+            }
+            setInvalidRules([]);
             // Keep the derived display string "_rules" in sync with the "rules" list
             if (Array.isArray(finalData.rules)) {
               finalData._rules = finalData.rules.join(', ');

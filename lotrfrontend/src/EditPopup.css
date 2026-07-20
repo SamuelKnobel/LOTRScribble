@@ -106,6 +106,27 @@
   resize: vertical;
 }
 
+/* --- Rule validation error --- */
+.rule-validation-error {
+  background-color: #fbeeee;
+  border: 1px solid #c0392b;
+  border-radius: 4px;
+  color: #922b21;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+.rule-validation-error strong {
+  display: block;
+  margin-bottom: 4px;
+}
+.rule-validation-error small {
+  display: block;
+  margin-top: 6px;
+  color: #7b241c;
+  font-size: 0.78rem;
+}
+
 /* --- Buttons Container --- */
 .buttons {
   display: flex;
