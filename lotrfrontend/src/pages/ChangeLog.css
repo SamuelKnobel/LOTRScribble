@@ -1,64 +1,166 @@
-.changeField_box {
+/* ChangeLog.css — parchment theme, consistent with EditPopup */
 
-  position: relative;
-
-    /* 
-    background-color: #e4e3e3; 
-    border-bottom: 1px solid #ccc */
-    width: 60%;
-    padding: 10px; 
-    margin: 0.4rem; 
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    list-style: none;
-
-
+.cl-page {
+  padding: 10px 16px 40px;
+  font-family: 'Lato', sans-serif;
+  color: #2c241b;
 }
 
-.changeField_box:hover {
-    /* background-color: #f16161    ; */
-    background-color: #b8b4b4    ;
-
+.cl-page h1 {
+  font-family: 'Cinzel', serif;
+  color: #4a3b32;
 }
 
+/* --- Toolbar --- */
+.cl-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 12px 0 16px;
+  flex-wrap: wrap;
+}
 
-  
-  /* Style for list items */
-  /* .changeField_box li {
-    border-bottom: 1px solid #ccc; /* Add a bottom border 
-  } */
-  
-  /* Remove border from last item */
-  /* .changeField_box li:last-child {
-    border-bottom: none;
-  } */
+.cl-search {
+  flex: 1 1 260px;
+  max-width: 360px;
+  padding: 8px 10px;
+  border: 1px solid #c9c0b1;
+  border-radius: 4px;
+  background-color: #fffefb;
+  font-size: 0.95rem;
+}
+.cl-search:focus {
+  outline: none;
+  border-color: #8c7360;
+  box-shadow: 0 0 0 2px rgba(140, 115, 96, 0.12);
+}
 
-  .changeField_content{
-    position: relative;
-    text-align:left;
-    margin-top: 10px;
-    left:0;
-    top:0;    
-    font-size: large;
-  }
-  .changeField_content p {
-    margin: 5px 0;
-  }
+.cl-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: #5c4b3f;
+}
 
-  .changeField_date{
-   position: absolute;
-   right:0;
-   top:0;
-   text-align:right;
-   padding: 10px;
-   /* width: 80%; */    
-  }  
-  .changeField_content ul {
-    margin: 0;
-  }
-  .changeField_content ul li {
-  }
+.cl-count {
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: #8c7360;
+}
 
+.cl-empty {
+  color: #8c7360;
+  font-style: italic;
+  padding: 16px 0;
+}
 
-  
+/* --- Table --- */
+.cl-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fcfbf7;
+  border: 1px solid #e0d8c8;
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 0.92rem;
+}
+
+.cl-table thead th {
+  background-color: #efe8db;
+  color: #4a3b32;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 2px solid #e0d8c8;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.cl-table tbody td {
+  padding: 9px 12px;
+  border-bottom: 1px solid #ece5d8;
+  vertical-align: middle;
+}
+
+.cl-table tbody tr:nth-child(even) {
+  background-color: #f7f4ed;
+}
+.cl-table tbody tr:hover {
+  background-color: #f0eadd;
+}
+
+/* --- Old -> New change cell --- */
+.cl-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.cl-old {
+  color: #9b8579;
+  text-decoration: line-through;
+  text-decoration-color: #c9b7a8;
+}
+.cl-arrow {
+  color: #8c7360;
+  font-weight: 700;
+}
+.cl-new {
+  color: #3d5a3d;
+  font-weight: 600;
+}
+
+/* --- Revert-type marker --- */
+.cl-tag {
+  margin-left: 6px;
+  font-size: 0.72rem;
+  color: #7a5c3a;
+  background: #f0e4d2;
+  border-radius: 3px;
+  padding: 1px 5px;
+  vertical-align: middle;
+}
+
+/* --- Action button + reverted badge --- */
+.cl-revert-btn {
+  padding: 5px 14px;
+  border-radius: 4px;
+  border: 1px solid #5c4b3f;
+  background: transparent;
+  color: #5c4b3f;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cl-revert-btn:hover:not(:disabled) {
+  background: #5c4b3f;
+  color: #fff;
+}
+.cl-revert-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cl-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 10px;
+}
+.cl-badge-reverted {
+  background: #e7ded0;
+  color: #7b6a5b;
+}
+
+.cl-row-reverted {
+  opacity: 0.6;
+}
+.cl-row-reverted .cl-new {
+  text-decoration: line-through;
+}

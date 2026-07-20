@@ -1,301 +1,248 @@
-import { DataChanges } from '../Utils';
+import { DataChanges, RevertChanger } from '../Utils';
 import '../pages/ChangeLog.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTable, useSortBy } from 'react-table';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
+// Render a raw value (string / number / bool / null / list) for display.
+function formatValue(v) {
+  if (v === null || v === undefined || v === '') return '—';
+  if (Array.isArray(v)) return v.length ? v.join(', ') : '—';
+  if (typeof v === 'boolean') return v ? 'true' : 'false';
+  return String(v);
+}
 
-export default function ChangeLog()
-{
-  const [checkbox, setCheckbox] = useState(false)
+function formatTimestamp(ts) {
+  const d = new Date(ts);
+  return isNaN(d.getTime()) ? String(ts) : d.toLocaleString();
+}
 
-  const [changeData, setChangeData] = useState([])
+// "UnitData" -> "Units" for friendlier display
+function friendlyCollection(name) {
+  return typeof name === 'string' ? name.replace(/Data$/, '') : name;
+}
 
-  const changesraw = DataChanges()
+export default function ChangeLog() {
+  const [changeData, setChangeData] = useState([]);
+  const [query, setQuery] = useState('');
+  const [hideReverted, setHideReverted] = useState(false);
+  const [pendingKey, setPendingKey] = useState(null);
 
-  // const groupedData = {};
+  const changesraw = DataChanges();
+  const queryClient = useQueryClient();
+  const revertMutation = RevertChanger();
 
   useEffect(() => {
+    setChangeData(changesraw.data === undefined ? [] : changesraw.data);
+  }, [changesraw.data, changesraw.isSuccess]);
 
-    if (changesraw.data=== undefined)
-        setChangeData([])
-      else{
+  // Flatten each changelog entry into one row per changed field.
+  const rows = useMemo(() => {
+    const out = [];
+    (changeData || []).forEach((entry) => {
+      const changes = entry.changes || {};
+      Object.entries(changes).forEach(([field, diff]) => {
+        const revertedInfo = entry.reverted ? entry.reverted[field] : undefined;
+        out.push({
+          key: `${entry._id}:${field}`,
+          _id: entry._id,
+          collection_name: entry.collection_name,
+          item_identifier: entry.item_identifier,
+          field,
+          old: diff ? diff.old : undefined,
+          new: diff ? diff.new : undefined,
+          timestamp: entry.timestamp,
+          type: entry.type || 'edit',
+          reverted: !!revertedInfo,
+          reverted_at: revertedInfo ? revertedInfo.reverted_at : undefined,
+        });
+      });
+    });
+    return out;
+  }, [changeData]);
 
-        setChangeData(changesraw.data)
+  const filteredRows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return rows.filter((r) => {
+      if (hideReverted && r.reverted) return false;
+      if (!q) return true;
+      return (
+        String(r.item_identifier).toLowerCase().includes(q) ||
+        String(r.field).toLowerCase().includes(q) ||
+        String(friendlyCollection(r.collection_name)).toLowerCase().includes(q)
+      );
+    });
+  }, [rows, query, hideReverted]);
+
+  const handleRevert = (r) => {
+    if (r.reverted || pendingKey) return;
+    const ok = window.confirm(
+      `Revert "${r.field}" of ${r.item_identifier} back to its previous value?\n\n` +
+        `${formatValue(r.new)}  →  ${formatValue(r.old)}`
+    );
+    if (!ok) return;
+    setPendingKey(r.key);
+    revertMutation.mutate(
+      { changelogId: r._id, field: r.field },
+      {
+        onSuccess: (res) => {
+          toast.success((res && res.data && res.data.message) || 'Reverted.');
+          queryClient.invalidateQueries({ queryKey: ['changelog'] });
+        },
+        onError: (err) => {
+          const msg =
+            (err && err.response && err.response.data && err.response.data.error) ||
+            (err && err.message) ||
+            'Revert failed.';
+          toast.error(msg);
+        },
+        onSettled: () => setPendingKey(null),
       }
+    );
+  };
 
-
-
-  }, [changesraw.data,changesraw.isSuccess]);
-
-
-  const groupedData = changeData.reduce((acc, item) => {
-    const key = `${item.collection_name}_${item.item_identifier}`;
-    if (!acc[key]) {
-      acc[key] = [];
-    }
-    acc[key].push(item);
-    return acc;
-  }, {});
-  
-  const transformedData = Object.values(groupedData).map((group) => {
-    return {
-      collection_name: group[0].collection_name,
-      item_identifier: group[0].item_identifier,
-      changes: group.map((item) => item.changes),
-      timestamps: group.map((item) => item.timestamp),
-    };
-  });
-  
-  console.log(groupedData)
-  console.log(transformedData)
-
-
-
-    return (
-        <>
-          <h1 style = {{paddingLeft: 10 +'px'}}>Change Log</h1>     
-          <label>
-        <input
-          type="checkbox"
-          checked={checkbox}
-          onChange={() => setCheckbox(!checkbox)}
-          />{' '}
-          Change to Grouped View
-        </label>
-        {/* 
-        {
-          changeData.map((el, index)=> Box(el,index))
-        }     */}
-      <span>{!checkbox ? <DataTable data={changeData} /> : <TransformedTable2 data={transformedData} /> } </span>
-      
-
-      </>
-    )
-}
-  
-function Box(test,id) {
-  const data=test;
-  return (    
-    <div className="changeField_box" key={id}>
-      <div className="changeField_date">{data.timestamp}</div>
-      <div className="changeField_content">
-      <p><strong>Collection Name:</strong> {data.collection_name}</p>
-        <p><strong>Item Identifier:</strong> {data.item_identifier}</p>
-        {Object.entries(data.changes).map(([key, value]) => (
-          <div key={key}>
-            <p><strong>{key}:</strong></p>
-            <ul>
-              <li>Old Value: {value.old}</li>
-              <li>New Value: {value.new}</li>
-            </ul>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-const DataTable = ({ data }) => {
-  const columns = React.useMemo(
+  const columns = useMemo(
     () => [
       {
-        Header: 'Collection Name',
-        accessor: 'collection_name',
+        Header: 'When',
+        accessor: 'timestamp',
+        Cell: ({ value }) => <span title={String(value)}>{formatTimestamp(value)}</span>,
+        sortType: (a, b, id) =>
+          new Date(a.values[id]).getTime() - new Date(b.values[id]).getTime(),
       },
       {
-        Header: 'Identifier',
-        accessor: 'item_identifier',
+        Header: 'Collection',
+        accessor: (row) => friendlyCollection(row.collection_name),
+        id: 'collection',
       },
+      { Header: 'Item', accessor: 'item_identifier' },
       {
         Header: 'Field',
-        accessor: (row) => Object.keys(row.changes)[0],
+        accessor: 'field',
+        Cell: ({ row }) => (
+          <span>
+            {row.original.field}
+            {row.original.type === 'revert' && <span className="cl-tag">↩ revert</span>}
+          </span>
+        ),
       },
       {
-        Header: 'Old Value',
-        accessor: (row) => row.changes[Object.keys(row.changes)[0]].old,
+        Header: 'Change',
+        id: 'change',
+        disableSortBy: true,
+        Cell: ({ row }) => (
+          <span className="cl-change">
+            <span className="cl-old">{formatValue(row.original.old)}</span>
+            <span className="cl-arrow">→</span>
+            <span className="cl-new">{formatValue(row.original.new)}</span>
+          </span>
+        ),
       },
       {
-        Header: 'New Value',
-        accessor: (row) => row.changes[Object.keys(row.changes)[0]].new,
-      },
-      {
-        Header: 'Date of Change',
-        accessor: 'timestamp',
-        sortType: (rowA, rowB, columnId) => {
-          const dateA = new Date(rowA.values[columnId]);
-          const dateB = new Date(rowB.values[columnId]);
-          return dateA.getTime() - dateB.getTime();
-        },        
+        Header: 'Action',
+        id: 'action',
+        disableSortBy: true,
+        Cell: ({ row }) => {
+          const r = row.original;
+          if (r.reverted) {
+            return (
+              <span className="cl-badge cl-badge-reverted" title={formatTimestamp(r.reverted_at)}>
+                Reverted
+              </span>
+            );
+          }
+          return (
+            <button
+              className="cl-revert-btn"
+              disabled={!!pendingKey}
+              onClick={() => handleRevert(r)}
+            >
+              {pendingKey === r.key ? 'Reverting…' : 'Revert'}
+            </button>
+          );
+        },
       },
     ],
-    []
+    // handleRevert closes over current state; rebuild when a revert is in-flight
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pendingKey]
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable(
+  const table = useTable(
     {
       columns,
-      data,
-      initialState: {
-        sortBy: [{ id: 'collection_name', desc: false }],
-      },
+      data: filteredRows,
+      initialState: { sortBy: [{ id: 'timestamp', desc: true }] },
     },
     useSortBy
   );
 
-  return (
-    <table {...getTableProps()} className="react-table">
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps(column.getSortByToggleProps())}>
-                {column.render('Header')}
-                <span>
-                  {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
-                </span>
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(row => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map(cell => {
-                return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-              })}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-};
-
-const TransformedTable2 = ({ data }) => {
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Collection Name',
-        accessor: 'collection_name',
-      },
-      {
-        Header: 'Item Identifier',
-        accessor: 'item_identifier',
-      },
-      {
-        Header: 'Changes',
-        accessor: 'changes',
-        Cell: ({ value }) => (
-          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-            <thead>
-              <tr>
-                <th style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>Field</th>
-                <th style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>Old Value</th>
-                <th style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>New Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {value.map((change, index) => (
-                <tr key={index} style={{ borderBottom: '1px solid #ddd' }}>
-                  <td style={{ padding: '8px' }}>{Object.keys(change)[0]}</td>
-                  <td style={{ padding: '8px' }}>{change[Object.keys(change)[0]].old}</td>
-                  <td style={{ padding: '8px' }}>{change[Object.keys(change)[0]].new}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ),
-      },
-      {
-        Header: 'Timestamps',
-        accessor: 'timestamps',
-        Cell: ({ value }) => (
-          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-            <thead>
-              <tr>
-                <th style={{ borderBottom: '1px solid #ddd', padding: '8px' }}>Timestamps </th>
-              </tr>
-            </thead>
-            <tbody>
-              {value.map((timestamp, index) => (
-                <tr key={index} style={{ borderBottom: '1px solid #ddd' }}>
-                  <td style={{ padding: '8px' }}>{timestamp}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ),
-      },
-      
-    ],
-    []
-  );
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data });
+  const { getTableProps, getTableBodyProps, headerGroups, rows: tableRows, prepareRow } = table;
 
   return (
-    <table {...getTableProps()} style={{ borderCollapse: 'collapse', width: '100%' }}>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th
-                {...column.getHeaderProps()}
-                style={{
-                  background: '#f2f2f2',
-                  padding: '8px',
-                  textAlign: 'left',
-                  borderBottom: '1px solid #ddd',
-                }}
-              >
-                {column.render('Header')}
-              </th>
+    <div className="cl-page">
+      <h1>Change Log</h1>
+
+      <div className="cl-toolbar">
+        <input
+          className="cl-search"
+          type="text"
+          placeholder="Search item, field or collection…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <label className="cl-check">
+          <input
+            type="checkbox"
+            checked={hideReverted}
+            onChange={() => setHideReverted(!hideReverted)}
+          />
+          Hide reverted
+        </label>
+        <span className="cl-count">
+          {filteredRows.length} change{filteredRows.length === 1 ? '' : 's'}
+        </span>
+      </div>
+
+      {changesraw.isPending ? (
+        <p className="cl-empty">Loading…</p>
+      ) : filteredRows.length === 0 ? (
+        <p className="cl-empty">No changes to show.</p>
+      ) : (
+        <table {...getTableProps()} className="cl-table">
+          <thead>
+            {headerGroups.map((hg) => (
+              <tr {...hg.getHeaderGroupProps()}>
+                {hg.headers.map((column) => (
+                  <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render('Header')}
+                    {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+                  </th>
+                ))}
+              </tr>
             ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(row => {
-          prepareRow(row);
-          return (
-            <tr
-              {...row.getRowProps()}
-              style={{
-                background: row.index % 2 === 0 ? '#f9f9f9' : '#ffffff',
-                borderBottom: '1px solid #ddd',
-              }}
-            >
-              {row.cells.map(cell => (
-                <td
-                  {...cell.getCellProps()}
-                  style={{
-                    padding: '8px',
-                    borderRight: '1px solid #ddd',
-                  }}
+          </thead>
+          <tbody {...getTableBodyProps()}>
+            {tableRows.map((row) => {
+              prepareRow(row);
+              return (
+                <tr
+                  {...row.getRowProps()}
+                  className={row.original.reverted ? 'cl-row-reverted' : ''}
                 >
-                  {cell.render('Cell')}
-                </td>
-              ))}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-};
+                  {row.cells.map((cell) => (
+                    <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
 
+      <ToastContainer position="top-center" autoClose={4000} />
+    </div>
+  );
+}

@@ -91,10 +91,24 @@ export function DataUpdater(onSucess)
 {
   return useMutation({
     mutationFn: (tableName, dataToUpdate)=>{
-      return updateData(tableName, dataToUpdate)      
+      return updateData(tableName, dataToUpdate)
     },
     onSuccess: onSucess
   })
+}
+
+
+// Revert a single field of a changelog entry back to its previous value.
+// Backend guards that the current value still matches before writing.
+export function revertChange({ changelogId, field })
+{
+  const URL = `${BackendPath.BackEnd}revert/${changelogId}`
+  return axios.post(URL, { field }, { headers: { 'Content-Type': 'application/json' } })
+}
+
+export function RevertChanger()
+{
+  return useMutation({ mutationFn: revertChange })
 }
 
 
