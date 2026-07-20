@@ -442,7 +442,8 @@
                "type":"text",
                "componentType":"textarea",
                 "searchable":true,
-               "immutable":true
+               "immutable":true,
+               "hidden":true
             },
             "nation_id":{
                "Name":"Nation mongo ID",
@@ -608,7 +609,8 @@
                "type":"text",
                "componentType":"textarea",
                 "searchable":true,
-               "immutable":true
+               "immutable":true,
+               "hidden":true
             }
          }
       },
@@ -708,7 +710,8 @@
                "type":"text",
                "componentType":"textarea",
                "searchable":true,
-               "immutable":true
+               "immutable":true,
+               "hidden":true
             },
             "rules":{
                "Name":"Regeln",
