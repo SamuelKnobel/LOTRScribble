@@ -6,6 +6,7 @@ import Enums from './configs/Enums.json';
 import EditPopup from './EditPopup';
 import { ToastContainer } from 'react-toastify';
 import { getConfigValue} from './Utils'
+import { EMPTY_NUMBER } from './constants'
 
 const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
   return (
@@ -19,13 +20,12 @@ const DefaultColumnFilter = ({ column: { filterValue, setFilter } }) => {
 
 const DataTable = ({ rawdata, tableName ,refetchData}) => {
   const [data, setData] = useState([])
-  console.log("tableName:",tableName)
   const tableConfig = Config_ColumnName.tables[tableName];
   const enumConfig = Enums.Enums;
   const [selectedRow, setSelectedRow] = useState(null);
-  
+
   useEffect(() => {
-    if ((rawdata.isPending) | (rawdata.length===0 ))  { 
+    if ((rawdata.isPending) || (rawdata.length===0 ))  {
       setData([])
     }
     else
@@ -34,14 +34,10 @@ const DataTable = ({ rawdata, tableName ,refetchData}) => {
   }, [rawdata.isSuccess,rawdata.isPending,rawdata.length]);
 
 const columns = React.useMemo(() => {
-    if (data.length === 0 | (rawdata.length === 0)) {
-      // console.log("tableName:",tableName)
-      // console.log("No Data")
+    if (data.length === 0 || (rawdata.length === 0)) {
       return [];
     }
-    // console.log(data)
     return tableConfig.columns.map((key, columnIndex) => {
-      // console.log(key)
       // 1. Helper for mapping values (moved up so it can be used by composite columns too)
       let mapValue = (colKey, val) => {
         if (Array.isArray(val)) {
@@ -50,7 +46,7 @@ const columns = React.useMemo(() => {
         if (enumConfig[colKey]) {
           return enumConfig[colKey][val]
         }
-        else if (val === -99) {
+        else if (val === EMPTY_NUMBER) {
           return "-"
         }
         else {
@@ -73,9 +69,7 @@ const columns = React.useMemo(() => {
          let isSearchable = getConfigValue(tableConfig, key, "searchable", true);
         
          let alignProp = getConfigValue(tableConfig, key, "align", "center");
-         // DEBUG: Check what is actually happening during setup
-         console.log(`[Setup] Column: ${key}, Fields:`, fields);
-        
+
          return {
             Header: header,
             id: key,

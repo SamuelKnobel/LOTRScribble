@@ -67,8 +67,7 @@ const GameState = () => {
     function ReloadData()
     {
       queryClient.resetQueries("StartData/"+ activeTab.toLowerCase, { exact: true })
-      console.log("reload Data")
-      currentTabData = GameData("StartData/"+activeTab)    
+      currentTabData = GameData("StartData/"+activeTab)
     }
 
 

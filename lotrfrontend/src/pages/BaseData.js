@@ -78,8 +78,7 @@ const BaseData = () => {
   function ReloadData()
   {
     queryClient.resetQueries(activeTab.toLowerCase, { exact: true })
-    console.log("reload Data")
-    currentTabData = GameData(activeTab)    
+    currentTabData = GameData(activeTab)
   }
 
   useEffect(() => {

@@ -5,9 +5,7 @@ import Config_ColumnName from './configs/Config_ColumnName.json';
 import Enums from './configs/Enums.json';
 import Tooltip from './Tooltip/Tooltip';
 import { getConfigValue, DataUpdater, GameData } from './Utils';
-
-// Sentinel Unity uses for "no value" on numeric fields (its int fields cannot be null).
-const EMPTY_NUMBER = -99;
+import { EMPTY_NUMBER } from './constants';
 
 // Parameterized rules: Unity matches these by prefix, not literally
 // (see RulesOverview.GetRuleSet in the Unity project). e.g. "Leibwache (Gondor)"

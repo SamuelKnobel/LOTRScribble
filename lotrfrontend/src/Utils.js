@@ -42,22 +42,12 @@ export const getConfigValue = (tableConfig, fieldName, property, returnDefault) 
 
 export async function fetchData (query)
 {
-    console.log(query)
-    let headers= {
+    let headers = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     }
     let URL = BackendPath.BackEnd + query
-    console.log(URL)
-    const response = await axios.get(URL, {
-        headers: headers})
-        .catch((error)=>{
-            console.log(response)            
-            console.log(error.message)
-            return error.message
-        })        
-        console.log(response)
-        console.log(response.data)
+    const response = await axios.get(URL, { headers })
     return response.data
 }
 
@@ -85,16 +75,16 @@ export function DataChanges()
 {
   return useQuery({
     queryKey: ['changelog'],
-    queryFn: () => fetchData('changelog')})
+    queryFn: () => fetchData('changelog?limit=500')})
 }
 
 export function updateData({tableName,editedData})
 {
   const dataToUpdate = editedData
   const URL = `${BackendPath.BackEnd}${tableName.toLowerCase()}/${dataToUpdate._id}`
-  // Backend reads data['body']; the API key must go in real HTTP headers (3rd arg).
+  // Send the fields directly as the JSON body; the API key goes in real headers.
   return axios.put(URL,
-    { body: JSON.stringify(dataToUpdate) },
+    dataToUpdate,
     { headers: writeHeaders() }
   );
 }
