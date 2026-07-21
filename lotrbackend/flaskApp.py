@@ -60,6 +60,22 @@ def require_write_key(view):
         return view(*args, **kwargs)
     return wrapper
 
+
+def require_download_key(view):
+    """Gate the downloads listing behind the download password.
+
+    Compares the X-Download-Key header (a SHA-256 hash sent by the webpage)
+    against DOWNLOAD_PASSWORD_HASH. Fails closed if the env var is unset.
+    """
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        expected = os.getenv('DOWNLOAD_PASSWORD_HASH')
+        provided = request.headers.get('X-Download-Key')
+        if not expected or provided != expected:
+            return jsonify({'error': 'Unauthorized'}), 401
+        return view(*args, **kwargs)
+    return wrapper
+
 @app.route('/apidocs/')
 def APIHOME():
     return " LOTR Backend API Documentation Home. Navigate to /apidocs/index.html for Swagger UI."
@@ -308,6 +324,7 @@ def get_startdata_buildings():
 
 @app.route('/admin/versions', methods=['GET'])
 @swag_template('docs/versions.yml')
+@require_download_key
 def get_versions():
     collection = db_Admin["Versions"]
     items = list(collection.find())

@@ -14,9 +14,11 @@ BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BACKEND_DIR)
 os.chdir(BACKEND_DIR)
 
-# Configure the shared write key before the app imports/reads it.
+# Configure the shared keys before the app imports/reads them.
 TEST_WRITE_KEY = "test-key"
+TEST_DOWNLOAD_KEY = "test-download-key"
 os.environ["WRITE_API_KEY"] = TEST_WRITE_KEY
+os.environ["DOWNLOAD_PASSWORD_HASH"] = TEST_DOWNLOAD_KEY
 
 import Utils  # noqa: E402
 
@@ -53,10 +55,16 @@ def base_db():
     return _mock_client["LOTR_BaseData"]
 
 
+@pytest.fixture
+def admin_db():
+    return _mock_client["LOTR_Admin"]
+
+
 @pytest.fixture(autouse=True)
 def _clean_db():
     """Empty every collection before each test for isolation."""
-    db = _mock_client["LOTR_BaseData"]
-    for name in db.list_collection_names():
-        db[name].delete_many({})
+    for db_name in ("LOTR_BaseData", "LOTR_Admin"):
+        db = _mock_client[db_name]
+        for name in db.list_collection_names():
+            db[name].delete_many({})
     yield
