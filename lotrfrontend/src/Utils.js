@@ -2,6 +2,10 @@ import axios from 'axios';
 import BackendPath from './configs/Config_Path.json';
 import { useQuery , useMutation} from '@tanstack/react-query'
 
+// Shared key sent on write requests (GETs stay open). Baked in at build time.
+const WRITE_KEY = process.env.REACT_APP_WRITE_KEY;
+const writeHeaders = () => ({ 'Content-Type': 'application/json', 'X-API-Key': WRITE_KEY });
+
 
 export const getConfigValue = (tableConfig, fieldName, property, returnDefault) => {
     // 1. Check if the field exists in the specific table config
@@ -76,14 +80,12 @@ export function DataChanges()
 export function updateData({tableName,editedData})
 {
   const dataToUpdate = editedData
-  const header = { 'Content-Type': 'application/json'}
   const URL = `${BackendPath.BackEnd}${tableName.toLowerCase()}/${dataToUpdate._id}`
-  const response =  axios.put(URL, {
-    headers: header,
-    body: JSON.stringify(dataToUpdate),
-  });
-  console.log(response)
-  return response;
+  // Backend reads data['body']; the API key must go in real HTTP headers (3rd arg).
+  return axios.put(URL,
+    { body: JSON.stringify(dataToUpdate) },
+    { headers: writeHeaders() }
+  );
 }
 
 
@@ -103,7 +105,7 @@ export function DataUpdater(onSucess)
 export function revertChange({ changelogId, field })
 {
   const URL = `${BackendPath.BackEnd}revert/${changelogId}`
-  return axios.post(URL, { field }, { headers: { 'Content-Type': 'application/json' } })
+  return axios.post(URL, { field }, { headers: writeHeaders() })
 }
 
 export function RevertChanger()
