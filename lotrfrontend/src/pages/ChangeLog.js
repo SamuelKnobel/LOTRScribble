@@ -112,6 +112,7 @@ export default function ChangeLog() {
   const [pendingKey, setPendingKey] = useState(null);
   const [viewMode, setViewMode] = useState('grouped'); // 'flat' | 'grouped'
   const [expandedGroups, setExpandedGroups] = useState(() => new Set());
+  const [selectedCollections, setSelectedCollections] = useState(() => new Set()); // empty = all
 
   const changesraw = DataChanges();
   const queryClient = useQueryClient();
@@ -147,9 +148,28 @@ export default function ChangeLog() {
     return out;
   }, [changeData]);
 
+  // Collections present in the data, with change counts, for the filter chips.
+  const collectionOptions = useMemo(() => {
+    const counts = new Map();
+    rows.forEach((r) => counts.set(r.collection_name, (counts.get(r.collection_name) || 0) + 1));
+    return Array.from(counts.entries())
+      .map(([name, count]) => ({ name, label: friendlyCollection(name), count }))
+      .sort((a, b) => String(a.label).localeCompare(String(b.label)));
+  }, [rows]);
+
+  const toggleCollection = (name) => {
+    setSelectedCollections((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  };
+
   const filteredRows = useMemo(() => {
     const q = query.trim().toLowerCase();
     return rows.filter((r) => {
+      if (selectedCollections.size > 0 && !selectedCollections.has(r.collection_name)) return false;
       if (hideReverted && r.reverted) return false;
       if (!q) return true;
       return (
@@ -158,7 +178,7 @@ export default function ChangeLog() {
         String(friendlyCollection(r.collection_name)).toLowerCase().includes(q)
       );
     });
-  }, [rows, query, hideReverted]);
+  }, [rows, query, hideReverted, selectedCollections]);
 
   // Group the (already filtered) rows by item for the grouped view.
   const groups = useMemo(() => {
@@ -331,6 +351,27 @@ export default function ChangeLog() {
           {filteredRows.length} change{filteredRows.length === 1 ? '' : 's'}
         </span>
       </div>
+
+      {collectionOptions.length > 1 && (
+        <div className="cl-filters">
+          <button
+            className={`cl-chip${selectedCollections.size === 0 ? ' active' : ''}`}
+            onClick={() => setSelectedCollections(new Set())}
+          >
+            All
+          </button>
+          {collectionOptions.map((c) => (
+            <button
+              key={c.name}
+              className={`cl-chip${selectedCollections.has(c.name) ? ' active' : ''}`}
+              onClick={() => toggleCollection(c.name)}
+            >
+              {c.label}
+              <span className="cl-chip-count">{c.count}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {changesraw.isPending ? (
         <p className="cl-empty">Loading…</p>

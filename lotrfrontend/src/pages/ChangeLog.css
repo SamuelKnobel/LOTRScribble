@@ -89,6 +89,49 @@
   padding: 16px 0;
 }
 
+/* --- Collection filter chips --- */
+.cl-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.cl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d6cbb8;
+  background: #f7f4ed;
+  color: #5c4b3f;
+  border-radius: 14px;
+  padding: 4px 12px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.cl-chip:hover {
+  background: #efe8db;
+}
+.cl-chip.active {
+  background: #5c4b3f;
+  border-color: #5c4b3f;
+  color: #fff;
+}
+
+.cl-chip-count {
+  font-size: 0.72rem;
+  color: #8c7360;
+  background: #e7ded0;
+  border-radius: 8px;
+  padding: 0 6px;
+}
+.cl-chip.active .cl-chip-count {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
 /* --- Table --- */
 .cl-table {
   width: 100%;
