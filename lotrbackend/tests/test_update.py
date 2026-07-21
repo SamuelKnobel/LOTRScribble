@@ -3,8 +3,6 @@
 This is what produces the ChangeLogs entries that the revert endpoint consumes,
 so the logged {field: {old, new}} shape is contractually important.
 """
-import json
-
 from bson.objectid import ObjectId
 
 
@@ -15,8 +13,8 @@ def _seed(base_db, **fields):
 
 
 def _put(flask_client, oid, update):
-    # The frontend wraps the payload as {"body": "<json string>"}.
-    return flask_client.put(f"/units/{oid}", json={"body": json.dumps(update)})
+    # The update fields are sent directly as the JSON body.
+    return flask_client.put(f"/units/{oid}", json=update)
 
 
 def test_update_changes_field_and_logs_change(flask_client, base_db):

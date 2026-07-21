@@ -42,3 +42,24 @@ def test_changelog_strips_nested_rules(flask_client, base_db):
     assert len(data) == 1
     assert "rules" in data[0]["changes"]
     assert "_rules" not in data[0]["changes"]
+
+
+def test_changelog_is_newest_first_and_paginated(flask_client, base_db):
+    import datetime
+    for i, ts in enumerate([
+        datetime.datetime(2026, 1, 1),
+        datetime.datetime(2026, 2, 1),
+        datetime.datetime(2026, 3, 1),
+    ]):
+        base_db["ChangeLogs"].insert_one({
+            "_id": ObjectId(),
+            "collection_name": "UnitData",
+            "item_id": str(i),
+            "item_identifier": f"U{i}",
+            "timestamp": ts,
+            "changes": {"attack_KK_FK": {"old": i, "new": i + 1}},
+        })
+    data = flask_client.get("/changelog?limit=2").get_json()
+    assert len(data) == 2
+    assert data[0]["item_identifier"] == "U2"  # newest first
+    assert data[1]["item_identifier"] == "U1"

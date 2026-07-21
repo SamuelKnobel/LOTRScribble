@@ -186,10 +186,16 @@ def update_battlerules(id):
 @app.route('/changelog', methods=['GET'])
 @swag_template('docs/changelog_get.yml')
 def get_changelog():
-    # Drop the deprecated _rules from each entry's nested 'changes' (legacy
-    # entries logged it alongside 'rules'); it is never returned.
-    items = list(db_BaseData['ChangeLogs'].find({}, {'changes._rules': 0}))
-    return jsonify(Utils.convert_objectid_to_string(items))
+    # Newest first, with optional pagination (?skip=&limit=). Also drops the
+    # deprecated nested changes._rules so it is never returned.
+    skip = request.args.get('skip', default=0, type=int)
+    limit = request.args.get('limit', default=0, type=int)
+    cursor = db_BaseData['ChangeLogs'].find({}, {'changes._rules': 0}).sort('timestamp', -1)
+    if skip:
+        cursor = cursor.skip(skip)
+    if limit:
+        cursor = cursor.limit(limit)
+    return jsonify(Utils.convert_objectid_to_string(list(cursor)))
 
 
 # Collections whose entries may be reverted (base data + the manually-registered ones)
@@ -376,7 +382,15 @@ def get_baseData(collection_name):
     """
     logging.info(f'Collection Name: {collection_name}')
     collection = db_BaseData[collection_name]
-    items = list(collection.find({}, API_HIDDEN_FIELDS))
+    # Optional pagination (default: everything, so Unity's full reads are unaffected).
+    skip = request.args.get('skip', default=0, type=int)
+    limit = request.args.get('limit', default=0, type=int)
+    cursor = collection.find({}, API_HIDDEN_FIELDS)
+    if skip:
+        cursor = cursor.skip(skip)
+    if limit:
+        cursor = cursor.limit(limit)
+    items = list(cursor)
     logging.info(f'Nb of Items in Collection: {len(items)}')
     logging.debug(f'Items in Collection: {items}')
 
@@ -401,11 +415,10 @@ def update_item_by_id(collection_name, item_id):
             - int: The HTTP status code (200 for success, 404 for not found).
     """
 
-    # Returns the result from the PUT request<-- new data that should be written
-    data = request.get_json()
-    logging.debug(f'Data = {data}')
-    # Ensure that the data is structured as {'$set': {field_name: new_value}}
-    update_data = json.loads(data['body'])
+    # The update payload is the JSON body itself (the fields to change).
+    update_data = request.get_json(silent=True)
+    if not isinstance(update_data, dict):
+        return jsonify({'error': 'Request body must be a JSON object'}), 400
     logging.debug(f'Update Data = {update_data}')
     update_data.pop("_id", None)
 

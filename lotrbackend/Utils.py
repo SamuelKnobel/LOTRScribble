@@ -204,8 +204,6 @@ def log_changes(db, collection_name, item_id, item_identifier, changes, extra=No
 
     Returns the ObjectId of the inserted ChangeLogs document.
     """
-    # change_logs_collection = recreate_collection(db, db['ChangeLogs'], 'ChangeLogs', False)
-
     change_log_entry = {
         'timestamp': datetime.now(),
         'collection_name': collection_name,
