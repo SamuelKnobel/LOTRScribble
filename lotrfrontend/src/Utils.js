@@ -47,7 +47,7 @@ export async function fetchData (query)
       Accept: 'application/json',
       'Content-Type': 'application/json',
     }
-    let URL= [BackendPath.BackEnd+ query ]
+    let URL = BackendPath.BackEnd + query
     console.log(URL)
     const response = await axios.get(URL, {
         headers: headers})
@@ -59,6 +59,17 @@ export async function fetchData (query)
         console.log(response)
         console.log(response.data)
     return response.data
+}
+
+// Fetch the download versions, authenticated with the download-password hash.
+// Throws (rejects) on 401 so the caller can treat failure as "wrong password".
+export async function fetchVersions(downloadKey)
+{
+  const URL = `${BackendPath.BackEnd}admin/versions`
+  const response = await axios.get(URL, {
+    headers: { Accept: 'application/json', 'X-Download-Key': downloadKey },
+  })
+  return response.data
 }
 
 export function GameData(tabName)
