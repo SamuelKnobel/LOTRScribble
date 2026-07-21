@@ -32,6 +32,7 @@ jobs:
         env:
           CI: false   # CRA treats warnings as errors under CI=true; your code has lint warnings
           REACT_APP_DOWNLOAD_PASSWORD: ${{ secrets.REACT_APP_DOWNLOAD_PASSWORD }}
+          REACT_APP_WRITE_KEY: ${{ secrets.REACT_APP_WRITE_KEY }}
 
       - uses: peaceiris/actions-gh-pages@v4
         with:

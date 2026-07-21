@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 from decorators import swag_template
 from typing import Optional
 from datetime import datetime
+from functools import wraps
 
 dictConfig({
     'version': 1,
@@ -41,6 +42,23 @@ db_Admin = client['LOTR_Admin']
 app = Flask(__name__)
 CORS(app)  # Enable CORS
 Swagger(app)
+
+
+def require_write_key(view):
+    """Gate write endpoints behind a shared key sent in the X-API-Key header.
+
+    The expected key is read from WRITE_API_KEY at request time. Reads (GET) and
+    the Unity-used /startdata/constants PUT are intentionally left open. Fails
+    closed: if WRITE_API_KEY is unset, all guarded writes are rejected.
+    """
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        expected = os.getenv('WRITE_API_KEY')
+        provided = request.headers.get('X-API-Key')
+        if not expected or provided != expected:
+            return jsonify({'error': 'Unauthorized'}), 401
+        return view(*args, **kwargs)
+    return wrapper
 
 @app.route('/apidocs/')
 def APIHOME():
@@ -89,6 +107,7 @@ def register_entity_routes(app, url_slug, collection_name, display_name, tag_nam
     # --- 3. UPDATE BY ID ---
     @app.route(f'/{url_slug}/<id>', methods=['PUT'], endpoint=f'update_{url_slug}')
     @swag_template('docs/generic_put_id.yml', name=display_name[:-1], tag=tag_name)
+    @require_write_key
     def update_one(id):
         return update_item_by_id(collection_name, id)
 
@@ -106,6 +125,7 @@ def get_rule(id):
 #### TODO: Needs Identifier field to be added to RuleData collection, if added then it can be put back into the ENTITY_CONFIGS and registered automatically
 @app.route('/rules/<id>', methods=['PUT'])
 @swag_template('docs/generic_put_id.yml', name='Rule', tag='Rules')
+@require_write_key
 def update_rules(id):
     return update_item_by_id("RuleData", id)
 
@@ -122,6 +142,7 @@ def get_spell(id):
 
 @app.route(f'/spells/<id>', methods=['PUT'])
 @swag_template('docs/generic_put_id.yml', name="Spell", tag="Spells")
+@require_write_key
 def update_spells(id):
     return update_item_by_id('SpellData', id)
 
@@ -138,6 +159,7 @@ def get_battlefield_rule(id):
 
 @app.route(f'/battlefield/<id>', methods=['PUT'])
 @swag_template('docs/generic_put_id.yml', name="Battlefield Rule", tag="Battlefield")
+@require_write_key
 def update_battlerules(id):
     return update_item_by_id('BattleRuleData', id)
 
@@ -160,6 +182,7 @@ VALID_REVERT_COLLECTIONS = {cfg[1] for cfg in ENTITY_CONFIGS} | {'RuleData', 'Sp
 
 @app.route('/revert/<changelog_id>', methods=['POST'])
 @swag_template('docs/revert_post.yml')
+@require_write_key
 def revert_change(changelog_id):
     """
     Revert a single field of a logged change back to its previous ('old') value.
