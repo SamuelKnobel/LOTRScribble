@@ -31,6 +31,7 @@ jobs:
       - run: npm run build
         env:
           CI: false   # CRA treats warnings as errors under CI=true; your code has lint warnings
+          REACT_APP_DOWNLOAD_PASSWORD: ${{ secrets.REACT_APP_DOWNLOAD_PASSWORD }}
 
       - uses: peaceiris/actions-gh-pages@v4
         with:
