@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { GameData } from '../Utils';
 import { useQueryClient} from '@tanstack/react-query'
 import { trackPageview } from '../analytics'
+import StartSettings from './StartSettings'
 
 
 const BaseData = () => {
@@ -72,8 +73,10 @@ const BaseData = () => {
     });
   };
 
-  let currentTabData = GameData(activeTab)
-  
+  // The settings tab manages its own data (Constants), so skip the list fetch.
+  const isSettingsTab = activeTab === 'StartSettings'
+  let currentTabData = GameData(activeTab, !isSettingsTab)
+
   const queryClient = useQueryClient()
 
   function ReloadData()
@@ -88,7 +91,7 @@ const BaseData = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    // console.log("call use Effect")
+    if (isSettingsTab) return;
     if(currentTabData.isError)
       {
         console.error(`Error fetching ${activeTab}:`, currentTabData.error);
@@ -116,6 +119,7 @@ const BaseData = () => {
           <Tab onClick={() => handleTabClick('Rules')}>Einheiten Regeln </Tab>
           <Tab onClick={() => handleTabClick('Battlefield')}>Battle-Rules</Tab>
           <Tab onClick={() => handleTabClick('Spells')}>Spells</Tab>
+          <Tab onClick={() => handleTabClick('StartSettings')}>Start Settings</Tab>
 
         </TabList>
 
@@ -153,7 +157,10 @@ const BaseData = () => {
         <TabPanel>
 
           <DataTable rawdata={spells} tableName="Spells"  refetchData={ReloadData}  />
-        </TabPanel>           
+        </TabPanel>
+        <TabPanel>
+          <StartSettings />
+        </TabPanel>
       </Tabs>
 
       <ToastContainer />

@@ -7,7 +7,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { GameData } from '../Utils';
 import { useQueryClient} from '@tanstack/react-query'
 import { trackPageview } from '../analytics'
-import StartSettings from './StartSettings'
 
 
 const GameState = () => {
@@ -62,10 +61,8 @@ const GameState = () => {
       progress: undefined,
     });
   };
-    // The settings tab manages its own data (Constants), so skip the list fetch.
-    const isSettingsTab = activeTab === 'StartSettings'
     const tabQueryKey = "StartData/" + activeTab.toLowerCase()
-    let currentTabData = GameData(tabQueryKey, !isSettingsTab)
+    let currentTabData = GameData(tabQueryKey)
 
     const queryClient = useQueryClient()
 
@@ -83,7 +80,6 @@ const GameState = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    if (isSettingsTab) return;
     if(currentTabData.isError)
       {
         console.error(`Error fetching ${activeTab}:`, currentTabData.error);
@@ -106,7 +102,6 @@ const GameState = () => {
           {/* <Tab onClick={() => handleTabClick('StartNations')}>Start Nations</Tab> */}
             <Tab onClick={() => handleTabClick('StartBuildings')}>Start Buildings</Tab>
             <Tab onClick={() => handleTabClick('StartFields')}>Start Fields</Tab>
-            <Tab onClick={() => handleTabClick('StartSettings')}>Start Settings</Tab>
 
           {/* 
           <Tab onClick={() => handleTabClick('Units')}>Units</Tab>
@@ -123,9 +118,6 @@ const GameState = () => {
         </TabPanel>             
         <TabPanel>
           <DataTable rawdata={fields} tableName="StartFields" refetchData={ReloadData}  />
-        </TabPanel>
-        <TabPanel>
-          <StartSettings />
         </TabPanel>
 
 {/* 
