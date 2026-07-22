@@ -66,8 +66,8 @@ const GameState = () => {
   
     function ReloadData()
     {
-      queryClient.resetQueries("StartData/"+ activeTab.toLowerCase, { exact: true })
-      currentTabData = GameData("StartData/"+activeTab)
+      // Invalidate the active tab's query so react-query refetches it.
+      queryClient.invalidateQueries({ queryKey: ["StartData/" + activeTab] })
     }
 
 

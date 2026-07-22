@@ -4,6 +4,7 @@ import './EditPopup.css';
 import Config_ColumnName from './configs/Config_ColumnName.json';
 import Enums from './configs/Enums.json';
 import Tooltip from './Tooltip/Tooltip';
+import { toast } from 'react-toastify';
 import { getConfigValue, DataUpdater, GameData } from './Utils';
 import { EMPTY_NUMBER } from './constants';
 
@@ -177,8 +178,20 @@ const EditPopup = ({ tableName, rowData, onCancel, refetchData }) => {
               }
             }
             setInvalidRules([]);
-            mutation.mutate({ tableName, editedData: finalData });
-            onCancel();
+            // Close only once the save succeeded; surface the reason if it failed
+            // (e.g. the backend's 400 for an unsafe field change).
+            mutation.mutate(
+              { tableName, editedData: finalData },
+              {
+                onSuccess: () => onCancel(),
+                onError: (err) => {
+                  const msg =
+                    (err && err.response && err.response.data && err.response.data.error) ||
+                    'Save failed. Please try again.';
+                  toast.error(msg);
+                },
+              }
+            );
           }}>
             Save Changes
           </button>
