@@ -92,14 +92,17 @@ def shutdown_db_client():
 
 
 # Configuration: (URL Slug, DB Collection Name, Display Name for Docs, Tag)
+# Every data entity is registered from here; see register_entity_routes below.
 ENTITY_CONFIGS = [
-    ('units',     'UnitData',     'Units',     'Units'),
-    ('ships',     'ShipData',     'Ships',     'Ships'),
-    ('machines',  'MachineData',  'Machines',  'Machines'),
-    ('nations',   'NationData',   'Nations',   'Nations'),
-    ('fields',    'FieldData',    'Fields',    'Fields'),
-    ('buildings', 'BuildingData', 'Buildings', 'Buildings')
-    # ('rules',     'RuleData',     'Rules',     'Rules'),
+    ('units',       'UnitData',       'Units',             'Units'),
+    ('ships',       'ShipData',       'Ships',             'Ships'),
+    ('machines',    'MachineData',    'Machines',          'Machines'),
+    ('nations',     'NationData',     'Nations',           'Nations'),
+    ('fields',      'FieldData',      'Fields',            'Fields'),
+    ('buildings',   'BuildingData',   'Buildings',         'Buildings'),
+    ('rules',       'RuleData',       'Rules',             'Rules'),
+    ('spells',      'SpellData',      'Spells',            'Spells'),
+    ('battlefield', 'BattleRuleData', 'Battlefield Rules', 'Battlefield'),
 ]
 
 def register_entity_routes(app, url_slug, collection_name, display_name, tag_name):
@@ -127,61 +130,6 @@ def register_entity_routes(app, url_slug, collection_name, display_name, tag_nam
     def update_one(id):
         return update_item_by_id(collection_name, id)
 
-#-------------------- RULES --------------------# 
-@app.route('/rules', methods=['GET'])
-@swag_template('docs/generic_get.yml', name='Rules', tag='Rules')
-def get_rules():
-    return get_baseData('RuleData')
-
-@app.route('/rules/<id>', methods=['GET'])
-@swag_template('docs/generic_get_id.yml', name='Rule', tag='Rules')
-def get_rule(id):
-    return get_item_by_id('RuleData', id)
-
-#### TODO: Needs Identifier field to be added to RuleData collection, if added then it can be put back into the ENTITY_CONFIGS and registered automatically
-@app.route('/rules/<id>', methods=['PUT'])
-@swag_template('docs/generic_put_id.yml', name='Rule', tag='Rules')
-@require_write_key
-def update_rules(id):
-    return update_item_by_id("RuleData", id)
-
-#-------------------- SPELLS --------------------# 
-@app.route('/spells', methods=['GET'])
-@swag_template('docs/generic_get.yml', name='Spells', tag='Spells')
-def get_spells():
-    return get_baseData('SpellData')
-
-@app.route('/spells/<id>', methods=['GET'])
-@swag_template('docs/generic_get_id.yml', name='Spell', tag='Spells')
-def get_spell(id):
-    return get_item_by_id('SpellData', id)
-
-@app.route(f'/spells/<id>', methods=['PUT'])
-@swag_template('docs/generic_put_id.yml', name="Spell", tag="Spells")
-@require_write_key
-def update_spells(id):
-    return update_item_by_id('SpellData', id)
-
-#-------------------- BATTLEFIELD RULES --------------------# 
-@app.route('/battlefield', methods=['GET'])
-@swag_template('docs/generic_get.yml', name='Battlefield Rules', tag='Battlefield')
-def get_battlefield_rules():
-    return get_baseData('BattleRuleData')
-
-@app.route('/battlefield/<id>', methods=['GET'])
-@swag_template('docs/generic_get_id.yml', name='Battlefield Rule', tag='Battlefield')
-def get_battlefield_rule(id):
-    return get_item_by_id('BattleRuleData', id)
-
-@app.route(f'/battlefield/<id>', methods=['PUT'])
-@swag_template('docs/generic_put_id.yml', name="Battlefield Rule", tag="Battlefield")
-@require_write_key
-def update_battlerules(id):
-    return update_item_by_id('BattleRuleData', id)
-
-
-
-
 #-------------------- CHANGE LOGS --------------------#
 @app.route('/changelog', methods=['GET'])
 @swag_template('docs/changelog_get.yml')
@@ -198,8 +146,8 @@ def get_changelog():
     return jsonify(Utils.convert_objectid_to_string(list(cursor)))
 
 
-# Collections whose entries may be reverted (base data + the manually-registered ones)
-VALID_REVERT_COLLECTIONS = {cfg[1] for cfg in ENTITY_CONFIGS} | {'RuleData', 'SpellData', 'BattleRuleData'}
+# Collections whose entries may be reverted (every registered data entity)
+VALID_REVERT_COLLECTIONS = {cfg[1] for cfg in ENTITY_CONFIGS}
 
 
 @app.route('/revert/<changelog_id>', methods=['POST'])
@@ -460,17 +408,19 @@ def update_item_by_id(collection_name, item_id):
 
         logging.info(changes)
         if changes:
+            # Label for the changelog entry: prefer Identifier, fall back to name
+            # (RuleData/SpellData/BattleRuleData only have a name).
             identifier = "item"
-            # Log changes
             if existing_item.get('Identifier'):
                 identifier = existing_item['Identifier']
             elif existing_item.get('name'):
                 identifier = existing_item['name']
             else:
-                logging.error("No identifier found, Changes are performed but NOT logged")
-                
+                logging.warning(
+                    "No Identifier or name on %s/%s; logging the change as 'item'.",
+                    collection_name, item_id,
+                )
 
-            # currently logs are not saved, each trigger of this function recreates the ChangeLog Collection
             Utils.log_changes(db_BaseData, collection_name, item_id, identifier, changes)
 
         collection.update_one(filter_, new_values)
