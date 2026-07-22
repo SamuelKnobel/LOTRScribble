@@ -248,21 +248,6 @@ def values_equal(a, b):
     return a == b
 
 
-# Helper to stringify complex objects for logging
-def format_for_log(val):
-    # If it's a simple primitive, keep it as is
-    if isinstance(val, (int, float, str, bool)):
-        return val
-    # If it's none, return None
-    if val is None:
-        return None
-    # Otherwise (dict, list, tuple, etc.), dump to JSON string
-    try:
-        import json
-        return json.dumps(val)
-    except:
-        return str(val)
-
 def validate_type_compatibility(current_value, new_value):
     """
     Validates if new_value can overwrite current_value.

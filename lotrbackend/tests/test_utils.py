@@ -1,6 +1,4 @@
 """Unit tests for the pure helpers in Utils (no database)."""
-import json
-
 from bson.objectid import ObjectId
 
 import Utils
@@ -44,8 +42,3 @@ def test_convert_objectid_to_string_recurses():
     assert out["list"][1] == 1 and out["n"] == 5
 
 
-def test_format_for_log():
-    assert Utils.format_for_log(5) == 5
-    assert Utils.format_for_log("x") == "x"
-    assert Utils.format_for_log(None) is None
-    assert json.loads(Utils.format_for_log(["a", "b"])) == ["a", "b"]

@@ -146,8 +146,9 @@ def get_changelog():
     return jsonify(Utils.convert_objectid_to_string(list(cursor)))
 
 
-# Collections whose entries may be reverted (every registered data entity)
-VALID_REVERT_COLLECTIONS = {cfg[1] for cfg in ENTITY_CONFIGS}
+# Collections whose entries may be reverted: every registered data entity, plus
+# the StartData constants edited from the Start Settings tab.
+VALID_REVERT_COLLECTIONS = {cfg[1] for cfg in ENTITY_CONFIGS} | {'Constants'}
 
 
 @app.route('/revert/<changelog_id>', methods=['POST'])
@@ -519,11 +520,11 @@ def update_start_data_generic(collection_name, doc_name):
 
     # --- 4. LOGGING ---
     if current_value != new_value:
+        # Log the raw values (Mongo stores nested objects natively). Stringifying
+        # them here would make tuple fields like FoodSize impossible to revert,
+        # and this matches how update_item_by_id logs base-data changes.
         changes = {
-            target_key: {
-                'old': Utils.format_for_log(current_value), 
-                'new': Utils.format_for_log(new_value)
-            }
+            target_key: {'old': current_value, 'new': new_value}
         }
         try:
             # Use identifier if available, fallback to doc_name
