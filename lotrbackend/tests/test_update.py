@@ -60,6 +60,35 @@ def test_update_item_not_found_returns_404(flask_client):
     assert resp.status_code == 404
 
 
+def test_update_with_malformed_id_returns_400(flask_client):
+    resp = flask_client.put("/units/not-an-objectid", json={"attack_KK_FK": 6})
+    assert resp.status_code == 400
+
+
+def test_update_rejects_null_on_numeric_field(flask_client, base_db):
+    """The Unity-crash guard: an int field may never be set to null."""
+    oid = _seed(base_db, attack_KK_FK=4)
+    resp = _put(flask_client, oid, {"attack_KK_FK": None})
+    assert resp.status_code == 400
+    assert base_db["UnitData"].find_one({"_id": oid})["attack_KK_FK"] == 4  # untouched
+    assert base_db["ChangeLogs"].count_documents({}) == 0
+
+
+def test_update_rejects_string_for_list_field(flask_client, base_db):
+    oid = _seed(base_db, rules=["A"])
+    resp = _put(flask_client, oid, {"rules": "A, B"})
+    assert resp.status_code == 400
+    assert base_db["UnitData"].find_one({"_id": oid})["rules"] == ["A"]
+
+
+def test_update_allows_repairing_a_null_field(flask_client, base_db):
+    """null -> value must stay allowed so bad data can be fixed."""
+    oid = _seed(base_db, attack_KK_FK=None)
+    resp = _put(flask_client, oid, {"attack_KK_FK": 5})
+    assert resp.status_code == 200
+    assert base_db["UnitData"].find_one({"_id": oid})["attack_KK_FK"] == 5
+
+
 def test_revert_can_undo_a_logged_update_end_to_end(flask_client, base_db):
     # PUT logs the change, then revert restores it — proves the two share a contract.
     oid = _seed(base_db, attack_KK_FK=4)

@@ -359,8 +359,13 @@ def get_item_by_id(collection_name, item_id):
 
                   print(collection_name)
     """
+    try:
+        oid = ObjectId(item_id)
+    except Exception:
+        return jsonify({'error': f'Invalid id: {item_id}'}), 400
+
     collection = db_BaseData[collection_name]
-    item = collection.find_one({'_id': ObjectId(item_id)}, API_HIDDEN_FIELDS)
+    item = collection.find_one({'_id': oid}, API_HIDDEN_FIELDS)
 
     if item:
         item_clean = Utils.convert_objectid_to_string(item)
@@ -422,19 +427,37 @@ def update_item_by_id(collection_name, item_id):
     logging.debug(f'Update Data = {update_data}')
     update_data.pop("_id", None)
 
+    try:
+        oid = ObjectId(item_id)
+    except Exception:
+        return jsonify({'error': f'Invalid id: {item_id}'}), 400
+
     # Get the existing item data
     collection = db_BaseData[collection_name]
-    existing_item = collection.find_one({'_id': ObjectId(item_id)})
+    existing_item = collection.find_one({'_id': oid})
 
     if existing_item:
-        filter_ = {'_id': ObjectId(item_id)}
+        filter_ = {'_id': oid}
         new_values = {"$set": update_data}
 
-        # Compare existing values with new values to detect changes
+        # Compare existing values with new values to detect changes, and refuse
+        # any change that would corrupt the data for other clients (e.g. Unity).
         changes = {}
+        rejected = {}
         for key, value in existing_item.items():
             if key in update_data and value != update_data[key]:
-                changes[key] = {'old': value, 'new': update_data[key]}
+                reason = Utils.is_unsafe_change(value, update_data[key])
+                if reason:
+                    rejected[key] = reason
+                else:
+                    changes[key] = {'old': value, 'new': update_data[key]}
+
+        if rejected:
+            return jsonify({
+                'error': 'Update rejected: unsafe field change(s).',
+                'fields': rejected,
+            }), 400
+
         logging.info(changes)
         if changes:
             identifier = "item"

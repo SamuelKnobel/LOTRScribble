@@ -217,6 +217,27 @@ def log_changes(db, collection_name, item_id, item_identifier, changes, extra=No
     return result.inserted_id
 
 
+def is_unsafe_change(old_value, new_value):
+    """
+    Guard writes that would corrupt data other clients depend on:
+      - a numeric field set to null (Unity's int fields cannot parse null and
+        the game then fails to start)
+      - a list field (e.g. rules) overwritten by a non-list
+
+    Setting a currently-null field to a real value IS allowed, so existing bad
+    data can still be repaired.
+
+    Returns a short reason string, or None when the change is safe.
+    """
+    if isinstance(old_value, bool):
+        return None
+    if isinstance(old_value, (int, float)) and new_value is None:
+        return 'numeric field cannot be set to null'
+    if isinstance(old_value, list) and not isinstance(new_value, list):
+        return 'list field must stay a list'
+    return None
+
+
 def values_equal(a, b):
     """
     Compare two values for the revert guard. Ints and floats are treated
