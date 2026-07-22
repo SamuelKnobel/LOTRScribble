@@ -62,13 +62,27 @@ export async function fetchVersions(downloadKey)
   return response.data
 }
 
-export function GameData(tabName)
+export function GameData(tabName, enabled = true)
 {
-  // console.log("LoadGameData")
   let temp = tabName.toLowerCase()
   return useQuery({
     queryKey: [tabName],
-    queryFn: () => fetchData(temp)})
+    queryFn: () => fetchData(temp),
+    enabled})
+}
+
+// --- StartData constants (Food_UnitType, FoodSize, FertSeason, Trade, ...) ---
+
+export function fetchConstant(docName)
+{
+  return fetchData(`startdata/constants/${docName}`)
+}
+
+// The endpoint updates ONE key per request: { key, value }.
+export function updateConstant({ docName, key, value })
+{
+  const URL = `${BackendPath.BackEnd}startdata/constants/${docName}`
+  return axios.put(URL, { key, value }, { headers: writeHeaders() })
 }
 
 export function DataChanges()

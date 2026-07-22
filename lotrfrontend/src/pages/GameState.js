@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { GameData } from '../Utils';
 import { useQueryClient} from '@tanstack/react-query'
 import { trackPageview } from '../analytics'
+import StartSettings from './StartSettings'
 
 
 const GameState = () => {
@@ -61,14 +62,18 @@ const GameState = () => {
       progress: undefined,
     });
   };
-    let currentTabData = GameData("StartData/"+activeTab.toLowerCase())
-    
+    // The settings tab manages its own data (Constants), so skip the list fetch.
+    const isSettingsTab = activeTab === 'StartSettings'
+    const tabQueryKey = "StartData/" + activeTab.toLowerCase()
+    let currentTabData = GameData(tabQueryKey, !isSettingsTab)
+
     const queryClient = useQueryClient()
-  
+
     function ReloadData()
     {
-      // Invalidate the active tab's query so react-query refetches it.
-      queryClient.invalidateQueries({ queryKey: ["StartData/" + activeTab] })
+      // Must use the same key GameData registered (it was lowercased there,
+      // so invalidating the mixed-case name never matched).
+      queryClient.invalidateQueries({ queryKey: [tabQueryKey] })
     }
 
 
@@ -78,7 +83,7 @@ const GameState = () => {
   }, [activeTab]);
 
   useEffect(() => {
-    // console.log("call use Effect")
+    if (isSettingsTab) return;
     if(currentTabData.isError)
       {
         console.error(`Error fetching ${activeTab}:`, currentTabData.error);
@@ -99,8 +104,9 @@ const GameState = () => {
         <h1 style = {{paddingLeft: 10 +'px'}}>Lord of the Rings - Game State</h1> 
         <TabList>
           {/* <Tab onClick={() => handleTabClick('StartNations')}>Start Nations</Tab> */}
-            <Tab onClick={() => handleTabClick('StartBuildings')}>Start Buildings</Tab>  
+            <Tab onClick={() => handleTabClick('StartBuildings')}>Start Buildings</Tab>
             <Tab onClick={() => handleTabClick('StartFields')}>Start Fields</Tab>
+            <Tab onClick={() => handleTabClick('StartSettings')}>Start Settings</Tab>
 
           {/* 
           <Tab onClick={() => handleTabClick('Units')}>Units</Tab>
@@ -117,8 +123,11 @@ const GameState = () => {
         </TabPanel>             
         <TabPanel>
           <DataTable rawdata={fields} tableName="StartFields" refetchData={ReloadData}  />
-        </TabPanel>    
-       
+        </TabPanel>
+        <TabPanel>
+          <StartSettings />
+        </TabPanel>
+
 {/* 
 
 

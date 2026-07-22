@@ -1,0 +1,149 @@
+/* StartSettings.css — parchment theme, mirrors the Unity start-settings screen */
+
+.ss-page {
+  padding: 10px 16px 40px;
+  font-family: 'Lato', sans-serif;
+  color: #2c241b;
+}
+
+.ss-empty {
+  color: #8c7360;
+  font-style: italic;
+  padding: 16px;
+}
+
+.ss-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.ss-group {
+  background-color: #fcfbf7;
+  border: 1px solid #e0d8c8;
+  border-radius: 8px;
+  padding: 14px 16px;
+  min-width: 230px;
+}
+
+.ss-group-head {
+  border-bottom: 2px solid #e0d8c8;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.ss-group-head h3 {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: #4a3b32;
+}
+
+.ss-formula {
+  display: block;
+  font-size: 0.75rem;
+  color: #8c7360;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.ss-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ss-label {
+  flex: 1;
+  font-size: 0.88rem;
+  color: #5c4b3f;
+}
+
+.ss-row input[type='number'] {
+  width: 72px;
+  padding: 6px 8px;
+  border: 1px solid #c9c0b1;
+  border-radius: 4px;
+  background-color: #fffefb;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.9rem;
+  text-align: right;
+}
+.ss-row input[type='number']:focus {
+  outline: none;
+  border-color: #8c7360;
+  box-shadow: 0 0 0 2px rgba(140, 115, 96, 0.12);
+}
+
+.ss-tuple {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.ss-default-btn {
+  margin-top: 6px;
+  border: 1px solid #c9c0b1;
+  background: #f7f4ed;
+  color: #5c4b3f;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.ss-default-btn:hover {
+  background: #efe8db;
+}
+
+/* --- Sticky action bar --- */
+.ss-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid #e0d8c8;
+}
+
+.ss-changecount {
+  margin-right: auto;
+  font-size: 0.85rem;
+  color: #8c7360;
+}
+
+.ss-save-btn,
+.ss-reset-btn {
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ss-save-btn {
+  background: #5c4b3f;
+  color: #fff;
+  border: none;
+}
+.ss-save-btn:hover:not(:disabled) {
+  background: #4a3b32;
+}
+
+.ss-reset-btn {
+  background: transparent;
+  color: #5c4b3f;
+  border: 1px solid #5c4b3f;
+}
+.ss-reset-btn:hover:not(:disabled) {
+  background: #f0eadd;
+}
+
+.ss-save-btn:disabled,
+.ss-reset-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
