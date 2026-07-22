@@ -88,7 +88,9 @@ const GameState = () => {
     {
       updateState(activeTab,currentTabData)
     }
-  }, [currentTabData.isSuccess, activeTab]);
+    // Depend on the data itself: after a refetch (e.g. following a save)
+    // isSuccess stays true, so watching it alone never propagated new data.
+  }, [currentTabData.data, currentTabData.isError, activeTab]);
 
   
   return (

@@ -25,13 +25,14 @@ const DataTable = ({ rawdata, tableName ,refetchData}) => {
   const [selectedRow, setSelectedRow] = useState(null);
 
   useEffect(() => {
-    if ((rawdata.isPending) || (rawdata.length===0 ))  {
+    if (rawdata.isPending || !rawdata.data) {
       setData([])
     }
     else
       {setData(rawdata.data);}
-
-  }, [rawdata.isSuccess,rawdata.isPending,rawdata.length]);
+    // Depend on the data itself: after a refetch isSuccess/isPending do not
+    // change, so watching only those left the table showing stale rows.
+  }, [rawdata.data, rawdata.isPending]);
 
 const columns = React.useMemo(() => {
     if (data.length === 0 || (rawdata.length === 0)) {
