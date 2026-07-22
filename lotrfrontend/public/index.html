@@ -29,7 +29,11 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <!-- no_onload: the app is a HashRouter SPA, so count.js's automatic count
+         would record the same hash-stripped path for every page. The app counts
+         each view itself (see src/analytics.js). -->
     <script data-goatcounter="https://lundasamor.goatcounter.com/count"
+        data-goatcounter-settings='{"no_onload": true}'
         async src="//gc.zgo.at/count.js"></script>
     <!--
       This HTML file is a template.

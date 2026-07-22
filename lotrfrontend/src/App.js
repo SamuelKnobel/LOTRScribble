@@ -14,6 +14,7 @@ import About from './pages/About';
 import Downloads from './pages/Downloads';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools"
+import PageviewTracker from './PageviewTracker'
 function App () {
 
   const client = new QueryClient({
@@ -27,7 +28,8 @@ function App () {
   return (
     <>
       <QueryClientProvider client={client}>
-      <NavBar/>  
+      <PageviewTracker/>
+      <NavBar/>
         <div className='router-container'>
           <Routes>
             <Route path= "/" element = {<BaseData/> }/>

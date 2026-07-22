@@ -6,6 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { GameData } from '../Utils';
 import { useQueryClient} from '@tanstack/react-query'
+import { trackPageview } from '../analytics'
 
 
 const GameState = () => {
@@ -70,6 +71,11 @@ const GameState = () => {
       queryClient.invalidateQueries({ queryKey: ["StartData/" + activeTab] })
     }
 
+
+  // Count one pageview per tab so the dashboard shows which ones are used.
+  useEffect(() => {
+    trackPageview(`/gamestate/${activeTab}`, `Game State: ${activeTab}`);
+  }, [activeTab]);
 
   useEffect(() => {
     // console.log("call use Effect")
